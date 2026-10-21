@@ -16,7 +16,7 @@ STATUS={"no_face":"Tidak ada wajah", "multiple_faces":"Lebih dari satu wajah; gu
 
 
 class AiLab(QMainWindow):
-    def __init__(self,config,*,capture_target=None,inference_target=None):
+    def __init__(self,config,*,capture_target=None,inference_target=None,consent_required=True):
         super().__init__()
         self.setWindowTitle("StarGate — Uji AI Tahap 7")
         self.resize(1040,820)
@@ -41,8 +41,9 @@ class AiLab(QMainWindow):
         note=QLabel("Alat uji sementara. Tidak menyimpan foto atau embedding dan tidak mencatat absensi. Semua referensi hilang saat dihentikan. Ini belum bukti akurasi atau ketahanan anti-spoof produksi.")
         note.setWordWrap(True)
         body.addWidget(note)
-        self.consent=QCheckBox("Saya setuju memproses wajah peserta yang mengizinkan, hanya di memori selama pengujian ini")
-        body.addWidget(self.consent)
+        self.consent=QCheckBox("Saya setuju memproses wajah peserta yang mengizinkan, hanya di memori selama pengujian ini") if consent_required else None
+        if self.consent is not None:
+            body.addWidget(self.consent)
         row=QHBoxLayout()
         row.addWidget(QLabel("Nomor kamera lokal"))
         self.index=QSpinBox()
@@ -81,15 +82,17 @@ class AiLab(QMainWindow):
         self.summary=QLabel("Belum ada hasil yang dicatat. Catat satu hasil per percobaan, bukan per frame.")
         self.summary.setWordWrap(True)
         body.addWidget(self.summary)
-        body.addWidget(QLabel(f"Similarity {config.similarity_threshold:.2f} • anti-spoof "
+        self.threshold_label=QLabel(f"Similarity {config.similarity_threshold:.2f} • anti-spoof "
             f"{'aktif' if config.liveness_enabled else 'NONAKTIF — hasil bukan bukti liveness'}, "
-            f"ambang {config.liveness_threshold:.2f} • timeout {config.recognition_timeout:g} detik"))
+            f"ambang {config.liveness_threshold:.2f} • timeout {config.recognition_timeout:g} detik")
+        body.addWidget(self.threshold_label)
         self.start_button.clicked.connect(self.start)
         self.stop_button.clicked.connect(self.stop)
         self.reference_button.clicked.connect(self.take_reference)
         self.clear_button.clicked.connect(self.clear_reference)
         self.record_button.clicked.connect(self.record)
-        self.consent.toggled.connect(self.consent_changed)
+        if self.consent is not None:
+            self.consent.toggled.connect(self.consent_changed)
         self.cameras.frame_ready.connect(self.frame)
         self.cameras.changed.connect(self.camera_state)
         self.inference.changed.connect(self.engine_state)
@@ -100,9 +103,13 @@ class AiLab(QMainWindow):
         self.timer.start()
         self.controls()
 
+    @property
+    def processing_allowed(self):
+        return self.consent is None or self.consent.isChecked()
+
     def controls(self):
         active=self.cameras.busy or self.inference.active
-        self.start_button.setEnabled(self.consent.isChecked() and not active and not self.closing)
+        self.start_button.setEnabled(self.processing_allowed and not active and not self.closing)
         self.stop_button.setEnabled(active and not self.closing)
         self.index.setEnabled(not active)
         ready=self.inference.state in ("ready","busy") and self.cameras.busy and not self.closing
@@ -116,7 +123,7 @@ class AiLab(QMainWindow):
         self.controls()
 
     def start(self):
-        if not self.consent.isChecked() or self.closing or self.cameras.busy or self.inference.active:
+        if not self.processing_allowed or self.closing or self.cameras.busy or self.inference.active:
             return
         self.last_result=None
         self.detail.clear()
@@ -140,7 +147,7 @@ class AiLab(QMainWindow):
         self.controls()
 
     def frame(self,device,image):
-        if image.isNull() or self.closing or not self.consent.isChecked():
+        if image.isNull() or self.closing or not self.processing_allowed:
             if self.latest is not None:
                 self.latest.fill(0)
             self.latest=None
@@ -196,7 +203,7 @@ class AiLab(QMainWindow):
 
     def pump(self):
         import time
-        if self.closing or not self.consent.isChecked() or self.inference.state!="ready":
+        if self.closing or not self.processing_allowed or self.inference.state!="ready":
             return
         if self.want_clear:
             if self.inference.clear_reference():

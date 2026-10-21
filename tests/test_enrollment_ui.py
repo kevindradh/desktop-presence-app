@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
 import pytest
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QPoint,QRect,QTimer
+from PyQt6.QtTest import QTest
 from sqlalchemy import select,func
 from app.models.entities import Member,FaceEmbedding
 from app.ui.enrollment import EnrollmentDialog
@@ -38,7 +39,7 @@ def install(view,monkeypatch):
 
 
 def capture_all(dialog,wait_until):
-    dialog.lab.consent.setChecked(True)
+    assert dialog.lab.consent is None and dialog.lab.start_button.isEnabled()
     dialog.lab.start_button.click()
     wait_until(lambda:dialog.lab.last_result is not None,timeout=8000)
     assert not dialog.save_button.isEnabled()
@@ -60,7 +61,17 @@ def test_ui_register_reregister_and_no_partial_before_save(auth,store,views,wait
     settled(view,wait_until)
     wait_until(lambda:view.enrollment_dialog is not None)
     dialog=view.enrollment_dialog
+    assert dialog.cancel_button.text()=='Batal' and dialog.save_button.text()=='Simpan'
+    assert dialog.cancel_button.y()==dialog.save_button.y()
+    assert abs(dialog.cancel_button.width()-dialog.save_button.width())<=1
     capture_all(dialog,wait_until)
+    for width,height in ((900,720),(1120,820)):
+        dialog.resize(width,height)
+        QTest.qWait(50)
+        assert dialog.rect().contains(dialog.cancel_button.geometry())
+        assert dialog.rect().contains(dialog.save_button.geometry())
+        assert dialog.rect().contains(QRect(dialog.lab.preview.mapTo(dialog,QPoint()),dialog.lab.preview.size()))
+        assert dialog.lab.preview.width()>=640 and dialog.lab.preview.height()>=360
     with store.db.transaction() as session:
         assert session.scalar(select(Member).where(Member.member_code=='CAP-UI-1')) is None
     destination=os.environ.get('STARGATE_ENROLLMENT_EVIDENCE')
@@ -86,6 +97,28 @@ def test_ui_register_reregister_and_no_partial_before_save(auth,store,views,wait
         assert session.scalar(select(func.count()).select_from(FaceEmbedding).where(FaceEmbedding.member_id==member_id))==5
 
 
+def test_stop_discards_complete_capture_and_restart_can_capture_again(auth,store,views,wait_until,monkeypatch):
+    view,page=ready(auth,views,wait_until)
+    install(view,monkeypatch)
+    page.capture_button.click()
+    settled(view,wait_until)
+    dialog=view.enrollment_dialog
+    capture_all(dialog,wait_until)
+    assert dialog.lab.stop_button.isEnabled()
+    dialog.lab.stop_button.click()
+    assert dialog.packet is None and not dialog.save_button.isEnabled()
+    assert dialog.lab.latest is None and dialog.lab.completed_photo is None
+    assert dialog.lab.preview.text()=='' and dialog.lab.preview.pixmap().isNull()
+    assert dialog.lab.guide.text().startswith('1/5')
+    assert dialog.lab.start_button.isEnabled()
+    capture_all(dialog,wait_until)
+    assert dialog.packet is not None and dialog.save_button.isEnabled()
+    dialog.cancel_button.click()
+    wait_until(lambda:view.enrollment_dialog is None,timeout=10000)
+    with store.db.transaction() as session:
+        assert session.scalar(select(func.count()).select_from(Member))==0
+
+
 @pytest.mark.parametrize('action',['cancel','logout','password','close','timeout'])
 def test_capture_cancel_and_session_end_leave_no_member(auth,store,views,wait_until,monkeypatch,action):
     view,page=ready(auth,views,wait_until)
@@ -93,7 +126,6 @@ def test_capture_cancel_and_session_end_leave_no_member(auth,store,views,wait_un
     page.capture_button.click()
     settled(view,wait_until)
     dialog=view.enrollment_dialog
-    dialog.lab.consent.setChecked(True)
     dialog.lab.start_button.click()
     wait_until(lambda:dialog.lab.last_result is not None,timeout=8000)
     dialog.lab.reference_button.click()
@@ -133,7 +165,6 @@ def test_stored_face_verification_after_window_restart(auth,store,views,wait_unt
     settled(restarted,wait_until)
     dialog=restarted.enrollment_dialog
     assert dialog.verification
-    dialog.lab.consent.setChecked(True)
     dialog.lab.start_button.click()
     wait_until(lambda:dialog.lab.last_result is not None,timeout=8000)
     dialog.lab.reference_button.click()

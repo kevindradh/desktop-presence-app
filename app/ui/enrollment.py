@@ -4,7 +4,7 @@ from dataclasses import replace
 import base64
 import json
 from PyQt6.QtCore import QTimer,pyqtSignal
-from PyQt6.QtWidgets import QDialog,QLabel,QPushButton,QVBoxLayout
+from PyQt6.QtWidgets import QDialog,QHBoxLayout,QLabel,QPushButton,QVBoxLayout
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QImage,QPixmap
 from ai.enrollment import GUIDES
@@ -14,28 +14,35 @@ from app.ui.ai_lab import AiLab
 
 class CaptureLab(AiLab):
     completed=pyqtSignal(object)
+    discarded=pyqtSignal()
 
     def __init__(self,config,target,*,capture_target=None,verification=False):
         self.verification=verification
         self.capture_requested=False
         self.complete=False
         self.completed_photo=None
+        self.preview_active=False
         effective=config if verification else replace(config,liveness_enabled=True,liveness_threshold=.85)
-        super().__init__(effective,capture_target=capture_target,inference_target=target)
+        super().__init__(effective,capture_target=capture_target,inference_target=target,consent_required=False)
         self.setWindowTitle('StarGate')
-        self.reference_button.setText('Ambil sudut ini')
+        self.reference_button.setText('Capture')
         if verification:self.reference_button.setText('Periksa wajah ini')
         self.reference_button.clicked.disconnect()
         self.reference_button.clicked.connect(self.request_capture)
-        for widget in (self.clear_button,self.record_button,self.condition,self.summary):
+        self.start_button.setText('Mulai')
+        self.stop_button.setText('Hentikan && hapus')
+        self.preview.setMinimumSize(640,360)
+        self.preview.setMaximumHeight(16777215)
+        self.preview.setStyleSheet('background: #142d25; border: 1px solid #d3ded4; border-radius: 6px;')
+        self.preview.clear()
+        for widget in (self.clear_button,self.record_button,self.condition,self.summary,
+                       self.state_label,self.detail,self.threshold_label):
             widget.hide()
-        self.consent.setText('Peserta menyetujui penyimpanan foto profil dan lima embedding untuk absensi sampai dinonaktifkan')
-        if verification:self.consent.setText('Peserta menyetujui pemeriksaan wajah sementara; probe ini tidak disimpan')
         for label in self.findChildren(QLabel):
             if label.text().startswith('Alat uji sementara.'):
-                label.setText('Probe wajah dibandingkan dengan data anggota tersimpan tanpa membuat absensi atau menyimpan sampel baru.' if verification else 'Ambil depan, kiri, kanan, atas dan bawah. Data baru disimpan setelah lima sudut lengkap dan Anda memilih Simpan. Sampel lama baru diganti setelah transaksi berhasil.')
+                label.hide()
             if label.objectName()=='pageTitle':
-                label.setText('Uji wajah tersimpan' if verification else 'Registrasi wajah — lima sudut')
+                label.hide()
         self.guide=QLabel(GUIDES['FRONT'] if verification else '1/5 • '+GUIDES['FRONT'])
         self.guide.setWordWrap(True)
         self.centralWidget().layout().insertWidget(1,self.guide)
@@ -48,19 +55,22 @@ class CaptureLab(AiLab):
                 and self.inference.state in ('ready','busy'))
             if self.complete:
                 self.start_button.setEnabled(False)
+                self.stop_button.setEnabled(not self.closing)
 
     def request_capture(self):
         self.capture_requested=True
         self.pump()
 
     def pump(self):
-        if self.complete or self.closing or not self.consent.isChecked() or self.inference.state!='ready':
+        if self.complete or self.closing or not self.processing_allowed or self.inference.state!='ready':
             return
         if self.latest is not None and time.monotonic()-self.latest_at<1:
             if self.inference.submit(self.latest,capture=self.capture_requested):
                 self.capture_requested=False
 
     def analyzed(self,response):
+        if self.closing or (response.get('event')=='result' and not self.preview_active):
+            return
         if response.get('event')=='result':
             response=dict(response)
             packet=response.pop('packet',None)
@@ -94,14 +104,38 @@ class CaptureLab(AiLab):
             else:
                 self.preview.setText('Probe diterima; kamera sudah dihentikan.' if self.verification else 'Lima sudut lengkap; kamera sudah dihentikan.')
             return
+        if not self.preview_active:
+            self.preview.clear()
+            return
         super().frame(device,image)
+        if image.isNull():
+            self.preview.clear()
+
+    def start(self):
+        super().start()
+        self.preview_active=self.cameras.busy or self.inference.active
+
+    def engine_state(self,state):
+        super().engine_state(state)
+        self.state_label.setVisible(state in ('failed','timeout'))
+
+    def camera_state(self,device):
+        super().camera_state(device)
+        if self.cameras.nodes[device].state=='failed':
+            self.state_label.show()
 
     def stop(self):
+        self.preview_active=False
         self.capture_requested=False
         if hasattr(self,'complete'):
             self.complete=False
             self.completed_photo=None
         super().stop()
+        self.preview.clear()
+        self.state_label.hide()
+        if hasattr(self,'guide'):
+            self.guide.setText(GUIDES['FRONT'] if self.verification else '1/5 • '+GUIDES['FRONT'])
+        self.discarded.emit()
 
 
 class EnrollmentDialog(QDialog):
@@ -118,7 +152,8 @@ class EnrollmentDialog(QDialog):
         self.result_code=QDialog.DialogCode.Rejected
         self.verification=binding.get('purpose')=='verification'
         self.setWindowTitle('StarGate')
-        self.resize(1040,860)
+        self.resize(1120,820)
+        self.setMinimumSize(900,720)
         from app.services.settings import configured
         config=configured(controller.config,binding['settings'])
         self.lab=CaptureLab(config,target or EnrollmentTarget(controller.enrollment_service.key,binding),
@@ -131,15 +166,19 @@ class EnrollmentDialog(QDialog):
         self.message=QLabel('Belum ada data yang disimpan.')
         self.message.setWordWrap(True)
         body.addWidget(self.message)
-        self.save_button=QPushButton('Simpan anggota dan lima sampel')
+        self.save_button=QPushButton('Simpan')
+        self.save_button.setProperty('variant','primary')
         if self.verification:self.save_button.setText('Bandingkan dengan database')
-        self.cancel_button=QPushButton('Batalkan')
+        self.cancel_button=QPushButton('Batal')
         self.save_button.setEnabled(False)
         self.save_button.clicked.connect(self.save)
         self.cancel_button.clicked.connect(self.reject)
-        body.addWidget(self.save_button)
-        body.addWidget(self.cancel_button)
+        actions=QHBoxLayout()
+        actions.addWidget(self.cancel_button,1)
+        actions.addWidget(self.save_button,1)
+        body.addLayout(actions)
         self.lab.completed.connect(self.complete)
+        self.lab.discarded.connect(self.discard)
         self.lab.inference.changed.connect(self.state_changed)
         self.lab.cameras.changed.connect(lambda unused:self.state_changed('camera'))
 
@@ -153,8 +192,13 @@ class EnrollmentDialog(QDialog):
             self.save_button.setEnabled(True)
             self.message.setText('Probe siap; bandingkan dengan data tersimpan. Probe ini tidak akan disimpan.' if self.verification else 'Lima sudut lengkap; foto profil diambil dari sampel depan. Simpan untuk menyelesaikan registrasi.')
 
+    def discard(self):
+        self.packet=None
+        self.save_button.setEnabled(False)
+        self.message.clear()
+
     def state_changed(self,state):
-        if state in ('failed','timeout') or not self.lab.consent.isChecked():
+        if state in ('failed','timeout') or not self.lab.processing_allowed:
             self.packet=None
             self.save_button.setEnabled(False)
 
@@ -167,7 +211,7 @@ class EnrollmentDialog(QDialog):
         self.saving=True
         self.save_button.setEnabled(False)
         self.cancel_button.setEnabled(False)
-        self.message.setText('Membandingkan probe dengan database…' if self.verification else 'Menyimpan dalam satu transaksi…')
+        self.message.setText('Membandingkan wajah...' if self.verification else 'Menyimpan...')
         token=self.controller.login.token
         packet=self.packet
         options=dict(self.fields,member_id=self.binding['member_id'],revision=self.binding['revision'])
@@ -181,9 +225,8 @@ class EnrollmentDialog(QDialog):
             else:
                 self.packet=None
                 if self.verification:
-                    score=result.value.similarity
                     self.message.setText(('Cocok dengan anggota terpilih.' if result.value.matched else 'Tidak cocok dengan anggota terpilih.')+
-                        (f' Skor kandidat tertinggi: {score:.3f}.' if score is not None else ' Tidak ada sampel versi model yang cocok.')+' Probe tidak disimpan.')
+                        ' Probe tidak disimpan.')
                     self.cancel_button.setText('Tutup')
                     return
                 self.result_code=QDialog.DialogCode.Accepted
