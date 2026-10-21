@@ -74,7 +74,7 @@ def test_ui_register_reregister_and_no_partial_before_save(auth,store,views,wait
     page.table.selectRow(0)
     settled(view,wait_until)
     member_id=page.selected.id
-    assert page.capture_button.text()=='Registrasi ulang wajah'
+    assert page.capture_button.text()=='Registrasi wajah'
     page.capture_button.click()
     settled(view,wait_until)
     capture_all(view.enrollment_dialog,wait_until)
