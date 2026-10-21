@@ -256,7 +256,7 @@ buat revision berikutnya untuk perubahan schema.
 ## Data simulasi sekolah SMP
 
 Untuk mengisi data sekolah SMP setelah migrasi, jalankan `.venv/bin/python scripts/manage_database.py seed-school`.
-Seeder menyediakan 80 anggota simulasi, enam kelas, guru/staf, kalender, dan beberapa skenario kehadiran.
+Seeder menyediakan 80 anggota bernama fiktif, enam kelas, guru/staf, kalender, beberapa skenario kehadiran, serta akun uji Super Admin, Admin, Operator, dan Viewer.
 Lihat [panduan seeder SMP](docs/school-seeder.md) untuk urutan perintah, kode skenario, dan aturan pengulangan.
 
 ## Reset database untuk testing

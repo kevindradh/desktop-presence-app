@@ -13,7 +13,7 @@ from app.services.dashboard import DashboardService
 from app.services.database import DataValidationError
 from app.services.reports import ReportFilter, ReportsService
 from app.settings.config import DatabaseConfig, load_config
-from database.seed.school import seed_school
+from database.seed.school import seed_school, TEST_ACCOUNTS, fictional_names
 from scripts.manage_database import main
 from tests.test_database import store, graph
 
@@ -29,12 +29,16 @@ def counts(session):
 
 
 @pytest.mark.database
-def test_school_seed_counts_timestamps_flags_no_faces_accounts_and_repeat(store):
+def test_school_seed_counts_timestamps_flags_fictional_names_accounts_and_repeat(store):
     with store.db.transaction() as session:
         result = seed_school(session, anchor=DAY, now=NOW)
         before = counts(session)
         assert (result['members'], result['active_members'], result['groups'], result['shifts'], result['devices']) == (80,74,8,4,3)
-        assert before['users'] == before['face_embeddings'] == 0
+        assert before['users']==4 and before['face_embeddings']==0
+        members=list(session.scalars(select(Member)))
+        assert len({m.full_name for m in members})==80
+        assert all(m.full_name==fictional_names()[m.member_code][0] for m in members)
+        assert next(m for m in members if m.member_code=='SIM-SMP-7A-01').full_name=='Budi Pamungkas'
         assert before['members'] == 80 and before['member_leaves'] == 12
         assert before['shift_assignments'] == 74
         assert all(d.camera_index is None and d.rtsp_url is None for d in session.scalars(select(Device)))
@@ -62,11 +66,11 @@ def test_school_seed_counts_timestamps_flags_no_faces_accounts_and_repeat(store)
 
 @pytest.mark.database
 def test_school_seed_real_dashboard_reports_and_overnight_semantics(store,tmp_path):
-    with store.db.transaction() as session:
-        result = seed_school(session, anchor=DAY, now=NOW)
     config = load_config(tmp_path, environ={})
     auth = AuthService(store.db, clock=lambda:NOW)
     auth.bootstrap('school-review','Penguji Simulasi','Synthetic-school-2026!')
+    with store.db.transaction() as session:
+        result = seed_school(session, anchor=DAY, now=NOW)
     login = auth.login('school-review','Synthetic-school-2026!')
     dashboard = DashboardService(auth,config,clock=lambda:NOW)
     data = dashboard.load(login.token,DAY)
@@ -187,5 +191,67 @@ def test_school_cli_runs_after_upgrade_and_keeps_existing_login(store,monkeypatc
     assert '"members": 80' in capsys.readouterr().out
     assert auth.login('school-review','Synthetic-school-2026!').principal.username=='school-review'
     with store.db.transaction() as session:
-        assert session.scalar(select(func.count()).select_from(User))==1
+        assert session.scalar(select(func.count()).select_from(User))==5
         assert session.scalar(select(func.count()).select_from(FaceEmbedding))==0
+
+
+@pytest.mark.database
+def test_school_accounts_login_roles_hashes_and_repeat_preserves_changed_password(store):
+    with store.db.transaction() as session:
+        seed_school(session,anchor=DAY,now=NOW)
+        audits=list(session.scalars(select(AuditLog.details)))
+        for _,_,_,password in TEST_ACCOUNTS:
+            assert all(password not in str(details) for details in audits)
+    auth=AuthService(store.db,clock=lambda:NOW)
+    for username,fullname,role,password in TEST_ACCOUNTS:
+        login=auth.login(username,password)
+        assert login.principal.role==role and login.principal.fullname==fullname
+        assert not login.principal.must_change_password
+        with store.db.transaction() as session:
+            user=session.scalar(select(User).where(User.username==username))
+            assert user.password_hash.startswith('$2b$') and user.password_hash!=password
+    login=auth.login(TEST_ACCOUNTS[0][0],TEST_ACCOUNTS[0][3])
+    auth.change_password(login.token,TEST_ACCOUNTS[0][3],'Changed-school-2026!')
+    with store.db.transaction() as session:
+        assert seed_school(session,anchor=DAY,now=NOW)['accounts_created']==[]
+    assert auth.login(TEST_ACCOUNTS[0][0],'Changed-school-2026!').principal.role==TEST_ACCOUNTS[0][2]
+
+
+@pytest.mark.database
+def test_existing_reserved_username_causes_atomic_refusal_without_password_reset(store):
+    auth=AuthService(store.db,clock=lambda:NOW)
+    auth.bootstrap('SMP.ADMIN','Akun Penguji','Original-school-2026!')
+    with store.db.transaction() as session:
+        before=counts(session)
+    with pytest.raises(DataValidationError,match='smp.admin sudah dipakai'):
+        with store.db.transaction() as session:
+            seed_school(session,anchor=DAY,now=NOW)
+    with store.db.transaction() as session:
+        assert counts(session)==before
+    assert auth.login('smp.admin','Original-school-2026!').principal.role==TEST_ACCOUNTS[0][2]
+
+
+@pytest.mark.database
+def test_legacy_school_seed_can_upgrade_without_resetting_attendance_or_custom_names(store,monkeypatch):
+    import database.seed.school as school
+    legacy_names={code:(old,old) for code,(_,old) in fictional_names().items()}
+    with monkeypatch.context() as patch:
+        patch.setattr(school,'VERSION','smp-v1')
+        patch.setattr(school,'create_test_accounts',lambda session:[])
+        patch.setattr(school,'fictional_names',lambda:legacy_names)
+        with store.db.transaction() as session:
+            seed_school(session,anchor=DAY,now=NOW)
+            changed=session.scalar(select(Member).where(Member.member_code=='SIM-SMP-7A-03'))
+            changed.full_name='Nama Pilihan Penguji'
+            previous=counts(session)
+    with store.db.transaction() as session:
+        result=seed_school(session,anchor=DAY,now=NOW)
+        assert result['upgraded'] and len(result['accounts_created'])==4
+        after=counts(session)
+        assert after['attendance']==previous['attendance']
+        assert after['members']==previous['members']
+        assert session.scalar(select(Member.full_name).where(Member.member_code=='SIM-SMP-7A-01'))=='Budi Pamungkas'
+        assert session.scalar(select(Member.full_name).where(Member.member_code=='SIM-SMP-7A-03'))=='Nama Pilihan Penguji'
+    with store.db.transaction() as session:
+        assert not seed_school(session,anchor=DAY,now=NOW)['upgraded']
+        assert counts(session)==after

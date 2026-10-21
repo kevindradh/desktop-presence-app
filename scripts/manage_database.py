@@ -78,7 +78,7 @@ def main(argv=None):
             db = Database(engine)
             if args.action == 'seed-school':
                 from app.settings.config import load_config
-                from database.seed.school import seed_school
+                from database.seed.school import seed_school, TEST_ACCOUNTS
                 with engine.connect() as connection:
                     status = schema_status(connection)
                 if not status['at_head'] or not status['schema_valid']:
@@ -88,7 +88,13 @@ def main(argv=None):
                         history_days=30 if args.days is None else args.days,
                         timezone_name=load_config(data_root, env_file=args.config).timezone)
                 print(json.dumps(result, indent=2))
-                print('Data SIM SMP siap. Gunakan akun Anda sendiri; anggota simulasi belum memiliki wajah terdaftar.')
+                print('Data SIM SMP siap. Nama anggota fiktif; wajah belum terdaftar.')
+                if result['accounts_created']:
+                    print('Akun uji lokal yang baru dibuat (hanya untuk testing):')
+                    for username, fullname, role, password in TEST_ACCOUNTS:
+                        print(f'{role.value}: {username} / {password}')
+                else:
+                    print('Akun uji yang sudah ada tidak diubah; gunakan password terakhir masing-masing akun.')
             elif args.action == "seed":
                 from database.seed.defaults import seed_defaults
                 with db.transaction() as session:

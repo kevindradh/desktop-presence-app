@@ -1,7 +1,7 @@
 # Seeder simulasi sekolah SMP
 
 Seeder ini mengisi database aplikasi dengan data sekolah fiktif untuk mencoba halaman Anggota, Grup, Shift, Perangkat, Dashboard, Kehadiran, dan Laporan.
-Nama siswa dan guru memakai kata Simulasi, bukan identitas orang nyata. Kode anggota diawali `SIM-SMP-`.
+Nama siswa, guru, dan staf disusun sebagai data fiktif, misalnya Budi Pamungkas, Citra Pamungkas, Sri Lestari, dan Eko Nugroho. Nama tidak diambil dari daftar siswa atau pegawai sekolah nyata. Kode anggota tetap diawali `SIM-SMP-` dan grup tetap memakai SIM SMP agar data uji mudah dikenali.
 Seeder menulis catatan kehadiran langsung untuk pengujian tampilan dan aturan laporan. Catatan ini bukan hasil pengenalan wajah atau bukti akurasi AI.
 
 ## Menjalankan setelah migrasi
@@ -15,7 +15,23 @@ Dari folder proyek pada macOS:
 
 Perintah kedua memakai tanggal hari ini dan riwayat 30 hari, mengikuti zona waktu aplikasi.
 Pengaturan bawaan dibuat jika belum ada. Akun dan password yang sudah dibuat tetap dapat digunakan.
-Jika belum ada akun, buka aplikasi dan buat Super Admin seperti biasa. Seeder tidak membuat akun atau password demo.
+Seeder membuat empat akun uji. Jika belum ada akun sebelumnya, Anda dapat langsung login dengan Super Admin uji berikut.
+
+## Kredensial akun uji
+
+| Peran | Nama fiktif | Username | Password awal |
+|---|---|---|---|
+| Super Admin | Rudi Hartono | `smp.superadmin` | `SmpSuperadmin2026!` |
+| Admin | Indah Maharani | `smp.admin` | `SmpAdmin2026!` |
+| Operator | Ratna Wulandari | `smp.operator` | `SmpOperator2026!` |
+| Viewer | Arif Firmansyah | `smp.viewer` | `SmpViewer2026!` |
+
+Kredensial ini khusus untuk simulasi lokal. Password awal ditampilkan di terminal saat akun baru dibuat dan tersimpan di database sebagai hash, bukan teks biasa.
+Masing-masing akun mengikuti hak akses perannya yang sudah berlaku pada aplikasi. Tidak ada kewajiban mengganti password saat login pertama; password dapat diganti melalui menu akun.
+Seeder tidak mengubah password, peran, atau status akun yang sudah ada. Jika salah satu username uji telah dipakai sebelum seeder dipasang, pengisian dibatalkan seluruhnya dengan pesan username yang bertabrakan.
+Saat seeder diulang, akun uji yang sudah dibuat tidak direset; password yang sudah Anda ganti tetap berlaku.
+
+## Syarat data dan pilihan tanggal
 
 Database harus sudah dimigrasi dan belum berisi anggota, grup, shift, perangkat, penugasan, kalender, izin, atau absensi.
 Jika tabel-tabel tersebut sudah terisi, seeder berhenti sebelum menambahkan data.
@@ -48,6 +64,7 @@ Perintah ini tersedia dari sumber proyek; installer Windows sebelumnya belum dib
 | Perangkat simulasi | 3 |
 | Penugasan shift | 74 |
 | Catatan izin dan sakit | 12 |
+| Akun uji, satu untuk setiap peran | 4 |
 
 Enam siswa nonaktif masih mempunyai riwayat lama. Jumlah penugasan mencakup penugasan historis yang telah berakhir.
 Jumlah catatan absensi bergantung pada tanggal, panjang riwayat, kalender, dan jam menjalankan seeder; ringkasan jumlah dicetak setelah selesai.
@@ -111,9 +128,10 @@ Hasil saat seeder dijalankan pada jam lain bisa berbeda. Jam aplikasi tidak diub
 ## Mengulang dan mengubah data
 
 Menjalankan ulang dengan tanggal, panjang riwayat, versi seeder, dan zona yang sama menghasilkan `already_seeded: true`, tanpa menambah duplikat atau menimpa perubahan penguji.
+Jika sudah menjalankan versi lama `smp-v1`, jalankan perintah seeder yang sama dengan tanggal dan panjang riwayat semula. Seeder memperbarui nama bawaan menjadi nama fiktif dan membuat empat akun uji tanpa menghapus absensi atau penugasan. Nama anggota yang sudah Anda ubah sendiri tetap dipertahankan. Hasil menampilkan `upgraded: true` sekali, kemudian pengulangan berikutnya tidak mengubah data lagi.
 Seeder menyimpan penanda pada audit `simulation.school_seeded`; ringkasan saat pengulangan menjelaskan hasil pemasangan awal, bukan hitungan terbaru setelah data diedit.
 Jika tanggal default sudah berganti hari, gunakan `--date` dengan tanggal semula untuk menjalankan ulang tanpa perubahan.
-Parameter lain ditolak bila simulasi sudah ada. Untuk dataset baru, lakukan fresh secara terpisah lalu jalankan seeder kembali. Jangan menghapus penanda audit untuk memaksa pengisian ulang.
+Tanggal, panjang riwayat, atau zona lain ditolak bila simulasi sudah ada. Untuk dataset baru, lakukan fresh secara terpisah lalu jalankan seeder kembali. Jangan menghapus penanda audit untuk memaksa pengisian ulang.
 Seluruh pengisian memakai satu transaksi: jika gagal, penambahan dibatalkan bersama-sama. Dua pemanggilan bersamaan tidak menggandakan data.
 
 ## Wajah dan kamera
@@ -125,5 +143,6 @@ Atur perangkat nyata melalui halaman Perangkat sebelum menjalankan kamera. Catat
 ## Verifikasi pengembangan
 
 Pengujian menggunakan schema sementara milik test di database test, bukan mengisi database kerja.
-Pemeriksaan mencakup jumlah data, toleransi keterlambatan, waktu absensi, piket lintas hari, Dashboard, Laporan, pengulangan, pemanggilan bersamaan, rollback, penolakan database berisi data, dan pemeliharaan akun login.
-Gabungan pengujian seeder dan regresi perintah fresh: 27 lulus, tanpa kegagalan atau error. Hasil tersimpan pada `docs/testing/evidence/school-seed.xml`.
+Pemeriksaan mencakup jumlah data, nama fiktif, toleransi keterlambatan, waktu absensi, piket lintas hari, Dashboard, Laporan, pengulangan, pemanggilan bersamaan, rollback, penolakan database berisi data, dan pemeliharaan akun login.
+Pengujian juga mencakup login keempat peran, hash password, password yang sudah diganti, tabrakan username, dan pembaruan dataset versi lama. Hasil tersimpan pada `docs/testing/evidence/school-seed.xml`.
+Gabungan pengujian seeder dan regresi perintah fresh: 30 lulus, tanpa kegagalan atau error.
