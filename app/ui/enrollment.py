@@ -6,7 +6,7 @@ import json
 from PyQt6.QtCore import QTimer,pyqtSignal
 from PyQt6.QtWidgets import QDialog,QHBoxLayout,QLabel,QPushButton,QVBoxLayout
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QImage,QPixmap
+from PyQt6.QtGui import QImage,QPixmap,QTransform
 from ai.enrollment import GUIDES
 from ai.enrollment_process import EnrollmentTarget
 from app.ui.ai_lab import AiLab
@@ -22,6 +22,8 @@ class CaptureLab(AiLab):
         self.complete=False
         self.completed_photo=None
         self.preview_active=False
+        self.guides=dict(GUIDES,LEFT='Putar perlahan hingga hidung ke kiri gambar',
+                         RIGHT='Putar perlahan hingga hidung ke kanan gambar')
         effective=config if verification else replace(config,liveness_enabled=True,liveness_threshold=.85)
         super().__init__(effective,capture_target=capture_target,inference_target=target,consent_required=False)
         self.setWindowTitle('StarGate')
@@ -43,7 +45,7 @@ class CaptureLab(AiLab):
                 label.hide()
             if label.objectName()=='pageTitle':
                 label.hide()
-        self.guide=QLabel(GUIDES['FRONT'] if verification else '1/5 • '+GUIDES['FRONT'])
+        self.guide=QLabel(self.guides['FRONT'] if verification else '1/5 • '+self.guides['FRONT'])
         self.guide.setWordWrap(True)
         self.centralWidget().layout().insertWidget(1,self.guide)
         self.controls()
@@ -77,7 +79,7 @@ class CaptureLab(AiLab):
             expected=response.get('expected')
             count=response.get('captured',0)
             if hasattr(self,'guide'):
-                self.guide.setText(GUIDES['FRONT'] if self.verification else (f'{count+1}/5 • '+GUIDES[expected] if expected else 'Lima sudut lengkap. Periksa data, lalu pilih Simpan.'))
+                self.guide.setText(self.guides['FRONT'] if self.verification else (f'{count+1}/5 • '+self.guides[expected] if expected else 'Lima sudut lengkap. Periksa data, lalu pilih Simpan.'))
             super().analyzed(response)
             if response.get('capture_message'):
                 self.detail.setText(response['capture_message'])
@@ -101,6 +103,7 @@ class CaptureLab(AiLab):
             if self.completed_photo is not None and not self.completed_photo.isNull():
                 self.preview.setPixmap(QPixmap.fromImage(self.completed_photo).scaled(self.preview.size(),
                     Qt.AspectRatioMode.KeepAspectRatio,Qt.TransformationMode.SmoothTransformation))
+                self._mirror_preview()
             else:
                 self.preview.setText('Probe diterima; kamera sudah dihentikan.' if self.verification else 'Lima sudut lengkap; kamera sudah dihentikan.')
             return
@@ -110,6 +113,14 @@ class CaptureLab(AiLab):
         super().frame(device,image)
         if image.isNull():
             self.preview.clear()
+        else:
+            self._mirror_preview()
+
+    def _mirror_preview(self):
+        # Only the displayed pixmap follows the user's motion; inference keeps the source frame.
+        pixmap=self.preview.pixmap()
+        if pixmap is not None and not pixmap.isNull():
+            self.preview.setPixmap(pixmap.transformed(QTransform().scale(-1,1)))
 
     def start(self):
         super().start()
@@ -134,7 +145,7 @@ class CaptureLab(AiLab):
         self.preview.clear()
         self.state_label.hide()
         if hasattr(self,'guide'):
-            self.guide.setText(GUIDES['FRONT'] if self.verification else '1/5 • '+GUIDES['FRONT'])
+            self.guide.setText(self.guides['FRONT'] if self.verification else '1/5 • '+self.guides['FRONT'])
         self.discarded.emit()
 
 

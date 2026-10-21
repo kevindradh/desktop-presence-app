@@ -1,4 +1,4 @@
-"""Registration preview preserves camera orientation and stays blank after Stop."""
+"""Preview follows the user's motion while inference and saved photos retain source orientation."""
 from PyQt6.QtGui import QColor,QImage
 
 from app.settings.config import load_config
@@ -6,7 +6,7 @@ from app.ui.enrollment import CaptureLab
 from app.ui.theme import apply_theme
 
 
-def test_registration_preview_does_not_mirror_and_stop_discards_frame(qt_app,tmp_path):
+def test_registration_preview_follows_motion_without_flipping_inference_or_photo(qt_app,tmp_path):
     apply_theme(qt_app)
     lab=CaptureLab(load_config(tmp_path,environ={}),target=None)
     lab.resize(1120,820)
@@ -27,9 +27,23 @@ def test_registration_preview_does_not_mirror_and_stop_discards_frame(qt_app,tmp
         lab.preview_active=True
         lab.frame(1,frame)
         shown=lab.preview.pixmap().toImage()
-        assert shown.pixelColor(5,shown.height()//2).red()>200
-        assert shown.pixelColor(shown.width()-6,shown.height()//2).blue()>200
+        assert shown.pixelColor(5,shown.height()//2).blue()>200
+        assert shown.pixelColor(shown.width()-6,shown.height()//2).red()>200
         assert lab.latest[20,5].tolist()==[0,0,255]
+        assert lab.latest[20,75].tolist()==[255,0,0]
+        response=dict(event='result',expected='LEFT',captured=1,status='ready',face_count=1,
+                      elapsed_ms=1,has_reference=False,live_score=.99,similarity=None)
+        lab.analyzed(response)
+        assert 'ke kiri gambar' in lab.guide.text()
+        lab.analyzed(dict(response,expected='RIGHT',captured=2))
+        assert 'ke kanan gambar' in lab.guide.text()
+        lab.completed_photo=frame.copy()
+        lab.complete=True
+        lab.frame(1,frame)
+        shown=lab.preview.pixmap().toImage()
+        assert shown.pixelColor(5,shown.height()//2).blue()>200
+        assert shown.pixelColor(shown.width()-6,shown.height()//2).red()>200
+        assert lab.completed_photo.pixelColor(5,20).red()>200
         lab.stop()
         assert lab.preview.text()=='' and lab.preview.pixmap().isNull()
         assert lab.latest is None

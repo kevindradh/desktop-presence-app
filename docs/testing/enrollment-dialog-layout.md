@@ -6,7 +6,7 @@ Revisi mengikuti permintaan pengguna: fokus pada kamera, panduan sudut aktif, da
 - Judul isi dan paragraf panjang tentang lima sudut disembunyikan; identitas anggota dan panduan sudut aktif tetap ada.
 - Preview tidak lagi dibatasi maksimum 400 px. Ukuran minimum frame 640×360, ukuran awal dialog 1120×820 dan minimum 900×720.
 - Latar frame memakai hijau gelap StarGate agar area kosong dan tepi gambar mudah dikenali, tanpa teks pengganti saat berhenti.
-- Preview memakai orientasi frame kamera langsung tanpa pembalikan horizontal. Uji gambar kiri merah/kanan biru memeriksa preview serta frame yang dikirim ke inferensi.
+- Sesuai klarifikasi pengguna, preview mengikuti gerakan seperti cermin: tangan kanan tampil di sisi kanan layar. Hanya pixmap tampilan yang dibalik horizontal; frame inferensi dan foto dalam hasil capture tetap memakai orientasi sumber. Panduan hidung ke kiri/kanan gambar diselaraskan dengan preview ini. Foto selesai capture juga ditampilkan dengan orientasi preview yang sama.
 - Label tindakan: Mulai, Hentikan & hapus, Capture, Batal, Simpan. Dua tombol bawah sama lebar, Batal di kiri dan Simpan di kanan; Simpan memakai warna utama tema.
 - Log rutin model/kualitas/similarity dan ringkasan konfigurasi disembunyikan. Pesan kegagalan penting tetap ditampilkan; hasil tes wajah tetap menyebut cocok atau tidak cocok tanpa skor teknis.
 - Hentikan & hapus mengosongkan frame dan membuang packet, foto serta referensi sementara. Hasil kamera/inferensi yang datang setelah penghentian tidak menghidupkan ulang hasil capture. Sesudah lima sampel lengkap, tindakan ini tetap dapat digunakan sebelum Simpan, lalu Mulai mengulang dari sudut pertama.
@@ -15,7 +15,7 @@ Revisi mengikuti permintaan pengguna: fokus pada kamera, panduan sudut aktif, da
 ## Verifikasi dan Delivery Gate
 
 Delapan uji dialog dengan database terisolasi dan kamera/wajah sintetis lulus: registrasi/registrasi ulang tanpa penyimpanan parsial, penghentian sesudah capture lengkap dan pengulangan, batal, logout, ganti password, tutup, timeout, serta tes wajah setelah restart. Beberapa kondisi merupakan parameter pada satu skenario tes.
-Tiga uji tambahan lulus: preview tidak mirror dan kosong setelah Stop, serta dua regresi Alat Uji AI yang tetap membutuhkan checkbox.
+Tiga uji tambahan lulus: preview mengikuti gerakan, frame inferensi/foto tidak berubah, panduan kiri/kanan sesuai, dan frame kosong setelah Stop, serta dua regresi Alat Uji AI yang tetap membutuhkan checkbox.
 Ukuran dialog 900×720 dan 1120×820 diperiksa; frame, Batal, dan Simpan berada dalam batas dialog. Tombol bawah sama lebar. Gambar hasil sintetis ditinjau pada `evidence/enrollment-dialog-compact.png`.
 Hasil pengujian: `evidence/enrollment-dialog-ui.xml` (8 lulus) dan `evidence/enrollment-preview.xml` (3 lulus). Pengujian offscreen ini tidak menyatakan bahwa perangkat kamera fisik telah diuji ulang.
 
