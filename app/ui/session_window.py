@@ -156,7 +156,7 @@ class SessionWindow(QMainWindow):
         self.logger.info("Login window opened")
         QTimer.singleShot(0, self._restore)
 
-    def _panel(self, title, description):
+    def _panel(self, title, description=""):
         container = QWidget()
         outer = QVBoxLayout(container)
         outer.addStretch()
@@ -168,7 +168,8 @@ class SessionWindow(QMainWindow):
         form.setSpacing(18)
         form.addWidget(text_label("StarGate", "pageTitle"))
         form.addWidget(text_label(title, "pageTitle"))
-        form.addWidget(text_label(description))
+        if description:
+            form.addWidget(text_label(description))
         center.addWidget(card, 1)
         center.addStretch()
         outer.addLayout(center)
@@ -177,8 +178,7 @@ class SessionWindow(QMainWindow):
         return container, form
 
     def _build_login(self):
-        self.login_panel, body = self._panel("Masuk ke ruang kerja",
-            "Gunakan akun StarGate Anda. Akun awal dibuat satu kali oleh pengelola.")
+        self.login_panel, body = self._panel("Masuk")
         form = QFormLayout()
         form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
         self.username, self.password = QLineEdit(), secret_field()
@@ -188,7 +188,7 @@ class SessionWindow(QMainWindow):
         form.addRow("Username", self.username)
         form.addRow("Password", self.password)
         body.addLayout(form)
-        self.remember = QCheckBox("Ingat saya di komputer ini selama 30 hari")
+        self.remember = QCheckBox("Ingat saya")
         body.addWidget(self.remember)
         self.signin_button = QPushButton("Masuk")
         self.signin_button.setProperty("variant", "primary")
