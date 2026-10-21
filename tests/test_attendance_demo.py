@@ -60,8 +60,7 @@ def test_demo_window_runs_scenario_and_interactive_in_out(store, tmp_path, qt_ap
         window.tabs.setCurrentIndex(1)
         page = window.page
         wait_until(lambda: bool(page.rows) and not page.pending and not window.session.jobs.tasks.busy, timeout=8000)
-        page.consent.setChecked(True)
-        page.device_table.selectRow(0)
+        page.device.setCurrentIndex(1)
         page.start_button.click()
         # Match the controller's 30s model-start allowance plus the first commit.
         try:wait_until(lambda: page.history.rowCount() == 1, timeout=35000)

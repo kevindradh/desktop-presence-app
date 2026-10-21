@@ -89,7 +89,7 @@ class AttendanceDemo(QMainWindow):
         controls.addWidget(self.advance)
         controls.addWidget(self.end_shift)
         live.addLayout(controls)
-        guide = QLabel('Data anggota, lima embedding, shift dan dua kamera sudah siap. Pilih kamera, centang persetujuan, lalu Mulai absensi.\nUntuk scan berikutnya: pilih Tidak ada wajah selama >1 detik, klik +61 detik, lalu pilih peserta lagi. Setelah OUT, tutup/buka demo untuk sesi baru.')
+        guide = QLabel('Data anggota, lima embedding, shift dan dua kamera sudah siap. Pilih kamera, lalu Mulai.\nUntuk scan berikutnya: pilih Tidak ada wajah selama >1 detik, klik +61 detik, lalu pilih peserta lagi. Setelah OUT, tutup/buka demo untuk sesi baru.')
         guide.setWordWrap(True)
         live.addWidget(guide)
         self.session = SessionWindow(config, logger, reporter, data.auth, NoCredentials())

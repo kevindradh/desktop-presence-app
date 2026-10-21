@@ -39,8 +39,7 @@ def ready(attendance, views, wait_until, store, *, status='ready',delay=0):
     page=open_page(view,'attendance',wait_until)
     page.target_factory=lambda key,binding:SyntheticAttendanceTarget(key,binding,status,delay)
     page.sound=Sound(store)
-    page.consent.setChecked(True)
-    page.device_table.selectRow(next(i for i,row in enumerate(page.rows) if row.id==data.device))
+    page.device.setCurrentIndex(page.device.findData(data.device))
     assert page.start_button.isEnabled()
     return view,page
 
@@ -52,6 +51,20 @@ def test_camera_inference_commit_feedback_sound_history_and_latch(attendance, st
     wait_until(lambda:page.history.rowCount()==1,timeout=6000)
     assert 'berhasil tersimpan' in page.message.text()
     assert rows(store)[0].attendance_type.value=='IN'
+    selected=page.device.currentData()
+    device=next(row for row in page.rows if row.id==selected)
+    assert page.device.currentText()==f'{device.name} · {device.location_name}'
+    assert not page.device.isEnabled() and not page.mode.isEnabled()
+    for width,height in ((1000,740),(1180,820),(1440,900)):
+        view.resize(width,height)
+        QTest.qWait(50)
+        node=next(iter(page.nodes.values()))
+        assert node.preview.height()>=360 and node.preview.width()>=480
+        assert page.rect().contains(page.device.geometry())
+        assert page.rect().contains(page.start_button.geometry())
+        assert view.shell.pages.currentWidget().horizontalScrollBar().maximum()==0
+    view.resize(1180,820)
+    QTest.qWait(50)
     destination=os.environ.get('STARGATE_ATTENDANCE_EVIDENCE')
     if destination:
         Path(destination).mkdir(parents=True,exist_ok=True)
@@ -61,6 +74,7 @@ def test_camera_inference_commit_feedback_sound_history_and_latch(attendance, st
     assert len(rows(store))==1 and page.sound.plays==1
     page.stop_button.click()
     wait_until(lambda:not page.busy and not view.cameras.busy,timeout=8000)
+    assert page.empty_preview.isVisible() and page.device.currentData()==selected
     page.start_button.click()
     wait_until(lambda:page.sound.plays==2,timeout=12000)
     assert rows(store)[1].attendance_type.value=='OUT'
@@ -117,12 +131,9 @@ def test_setting_change_during_inference_requires_restart_and_no_commit(attendan
 
 
 def test_two_camera_pipeline_stores_one_event_and_does_not_auto_out_while_present(attendance, store, views, wait_until):
-    from PyQt6.QtCore import QItemSelectionModel
     view,page=ready(attendance,views,wait_until,store)
-    index=next(i for i,row in enumerate(page.rows) if row.id==attendance.second)
-    page.device_table.selectionModel().select(page.device_table.model().index(index,0),
-        QItemSelectionModel.SelectionFlag.Select | QItemSelectionModel.SelectionFlag.Rows)
-    assert len(page.device_table.selectionModel().selectedRows())==2
+    page.device.setCurrentIndex(page.device.findData('ALL'))
+    assert set(page.selected_devices())=={attendance.device,attendance.second}
     page.start_button.click()
     wait_until(lambda:len(page.nodes)==2 and page.sound.plays==1,timeout=15000)
     QTest.qWait(500)

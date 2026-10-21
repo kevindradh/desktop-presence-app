@@ -25,7 +25,7 @@ Salin dokumen ini untuk setiap putaran tes. Isi hasil dengan **LULUS / GAGAL / B
 - [ ] Anggota belum mempunyai IN/OUT untuk shift dan tanggal kerja ini, serta tidak mempunyai sesi lama yang belum ditutup.
 - [ ] Pengaturan awal: similarity **0,60**, anti-spoof **aktif**, ambang **0,85**, timeout **3 detik**, jeda **60 detik**, awal check-in **Shift**, checkout otomatis **nonaktif**.
 - [ ] Catat pengaturan semula bila berbeda: …
-- [ ] Pilih kamera yang benar dan centang persetujuan di Kehadiran.
+- [ ] Pilih kamera yang benar melalui dropdown nama perangkat/lokasi di Kehadiran, lalu klik **Mulai**.
 
 Satu wajah cukup didaftarkan pada satu anggota. Jangan menggandakan wajah yang sama ke beberapa anggota untuk mempercepat tes. Nomor kamera mengikuti perangkat yang terdeteksi; pastikan pratinjau benar.
 

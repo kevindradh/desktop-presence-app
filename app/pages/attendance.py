@@ -7,11 +7,11 @@ from PyQt6 import sip
 from PyQt6.QtCore import QTimer, Qt, QUrl
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtMultimedia import QSoundEffect
-from PyQt6.QtWidgets import (QCheckBox, QComboBox, QGridLayout, QHBoxLayout, QLabel,
+from PyQt6.QtWidgets import (QComboBox, QGridLayout, QHBoxLayout, QLabel,
     QPushButton, QVBoxLayout, QWidget)
 from ai.attendance_process import AttendanceTarget
 from app.pages.administration import fill_table, table
-from app.services.cameras import STATE_TEXT, FINAL
+from app.services.cameras import FINAL
 from app.services.inference import InferenceController
 from app.services.settings import configured
 from app.ui.ai_lab import STATUS
@@ -45,37 +45,39 @@ class AttendancePage(QWidget):
         self.target_factory = AttendanceTarget
         self.body = QVBoxLayout(self)
         self.body.setSpacing(12)
-        self.body.addWidget(text_label('Pilih kamera dan mode, lalu mulai absensi. Foto dan probe scan tidak disimpan. Sukses ditampilkan setelah riwayat tersimpan.'))
-        self.device_table = table(['Perangkat', 'Jenis', 'Lokasi'])
-        self.device_table.setMinimumHeight(100)
-        self.device_table.setSelectionMode(self.device_table.SelectionMode.ExtendedSelection)
-        self.device_table.itemSelectionChanged.connect(self.controls)
-        self.body.addWidget(self.device_table)
         row = QHBoxLayout()
+        self.device = QComboBox()
+        self.device.setAccessibleName('Kamera dan lokasi')
+        self.device.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        self.device.setMinimumContentsLength(12)
+        self.device.currentIndexChanged.connect(self.controls)
+        row.addWidget(self.device, 2)
         self.mode = QComboBox()
-        for title, value in (('Otomatis (masuk / keluar)', 'AUTO'), ('Masuk', 'IN'), ('Keluar', 'OUT'),
+        self.mode.setAccessibleName('Mode absensi')
+        self.mode.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        self.mode.setMinimumContentsLength(10)
+        for title, value in (('Otomatis', 'AUTO'), ('Masuk', 'IN'), ('Keluar', 'OUT'),
                              ('Mulai istirahat', 'BREAK_OUT'), ('Selesai istirahat', 'BREAK_IN')):
             self.mode.addItem(title, value)
-        row.addWidget(self.mode)
+        row.addWidget(self.mode, 1)
         self.start_button, self.stop_button, self.reload_button = (QPushButton(title) for title in
-            ('Mulai absensi', 'Hentikan absensi', 'Muat ulang'))
+            ('Mulai', 'Hentikan', 'Muat ulang'))
         self.start_button.setProperty('variant', 'primary')
-        for button in (self.start_button, self.stop_button, self.reload_button):
+        for button in (self.reload_button, self.stop_button, self.start_button):
             row.addWidget(button)
         self.body.addLayout(row)
-        self.consent = QCheckBox('Peserta telah menyetujui pemrosesan wajah untuk pencatatan absensi')
-        self.consent.toggled.connect(self.consent_changed)
-        self.body.addWidget(self.consent)
-        self.policy = text_label('Konfigurasi belum dimuat.')
-        self.body.addWidget(self.policy)
-        self.body.addWidget(text_label('AUTO: scan pertama masuk, scan berikutnya keluar setelah jeda; saat istirahat, scan berikutnya menyelesaikan istirahat. Setelah sukses, tinggalkan area kamera setidaknya satu detik sebelum scan lagi.'))
         self.message = text_label('')
         self.body.addWidget(self.message)
         self.grid = QGridLayout()
-        self.body.addLayout(self.grid)
+        self.grid.setContentsMargins(0, 0, 0, 0)
+        self.empty_preview = self.camera_preview()
+        self.grid.addWidget(self.empty_preview, 0, 0)
+        self.body.addLayout(self.grid, 1)
+        self.body.addWidget(text_label('Kehadiran terbaru'))
         self.history = table(['Nama', 'ID', 'Event', 'Waktu', 'Tanggal kerja', 'Status', 'Shift', 'Perangkat', 'Pulang awal', 'Sumber'])
+        self.history.setMinimumHeight(180)
+        self.history.setMaximumHeight(220)
         self.body.addWidget(self.history)
-        self.body.addStretch()
         self.sound = QSoundEffect(self)
         source = controller.config.resource_root/'resources/sounds/success.wav'
         if source.is_file():
@@ -102,18 +104,27 @@ class AttendancePage(QWidget):
 
     def controls(self):
         running = bool(self.nodes)
-        self.device_table.setEnabled(not self.pending and not running)
+        self.device.setEnabled(not self.pending and not running)
         self.mode.setEnabled(not self.pending and not running)
         self.start_button.setEnabled(not self.pending and not running and not self.manager.busy
-            and self.consent.isChecked() and bool(self.device_table.selectedItems()))
+            and bool(self.selected_devices()))
         self.stop_button.setEnabled(running)
         # Frame submissions must not change the refresh button's appearance/focus.
         self.reload_button.setEnabled(not self.reloading and not self.reload_requested)
 
-    def consent_changed(self, checked):
-        if not checked:
-            self.stop()
-        self.controls()
+    def selected_devices(self):
+        selected = self.device.currentData()
+        if selected == 'ALL':
+            return [row.id for row in self.rows]
+        return [row.id for row in self.rows if row.id == selected]
+
+    @staticmethod
+    def camera_preview():
+        preview = QLabel()
+        preview.setMinimumSize(480, 360)
+        preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        preview.setStyleSheet('background: #142d25; border: 1px solid #d3ded4; border-radius: 6px;')
+        return preview
 
     def run(self, operation, callback):
         if self.pending or not self.controller.login or self.controller._closing:
@@ -171,20 +182,21 @@ class AttendancePage(QWidget):
         self.reloading = True
         def loaded(result):
             self.reloading = False
-            devices, values, history = result
+            devices, _, history = result
             if not self.nodes:
                 self.rows = devices
-                fill_table(self.device_table, [(d.name, d.kind.value, d.location_name) for d in devices])
-                self.policy.setText(self.policy_text(values))
+                selected = self.device.currentData()
+                self.device.blockSignals(True)
+                self.device.clear()
+                self.device.addItem('Pilih kamera' if devices else 'Belum ada kamera', None)
+                for device in devices:
+                    self.device.addItem(f'{device.name} · {device.location_name or "Tanpa lokasi"}', device.id)
+                if len(devices) > 1:
+                    self.device.addItem('Semua kamera', 'ALL')
+                self.device.setCurrentIndex(max(0, self.device.findData(selected)))
+                self.device.blockSignals(False)
             self.show_recent(history)
         self.run(self.controller.attendance_service.setup, loaded)
-
-    @staticmethod
-    def policy_text(values):
-        return (f"Similarity {values['similarity_threshold']:.2f} • anti-spoof "+
-            ('AKTIF' if values['anti_spoof_enabled'] else 'NONAKTIF — keaslian wajah tidak diperiksa')+
-            f" • ambang {values['anti_spoof_threshold']:.2f} • timeout {values['recognition_timeout']:g} detik"
-            f" • jeda {values['duplicate_window']} detik • checkout otomatis "+('aktif' if values['auto_checkout'] else 'nonaktif'))
 
     def show_recent(self, rows):
         zone = ZoneInfo(self.controller.config.timezone)
@@ -193,30 +205,30 @@ class AttendancePage(QWidget):
             'Otomatis' if r.automatic else 'Scan') for r in rows])
 
     def start(self):
-        if self.nodes or self.manager.busy or not self.consent.isChecked():
+        if self.nodes or self.manager.busy:
             return
-        ids = [self.rows[index.row()].id for index in self.device_table.selectionModel().selectedRows()]
+        ids = self.selected_devices()
         if not ids:
             return
         generation = self.generation
         mode = self.mode.currentData()
         def started(entries):
-            if generation != self.generation or not self.isVisible() or not self.consent.isChecked():
+            if generation != self.generation or not self.isVisible():
                 for entry in entries:
                     self.controller.attendance_service.cancel(entry.binding)
                 return
             try:
                 self.manager.start_many([entry.spec for entry in entries])
+                self.empty_preview.hide()
                 for i, entry in enumerate(entries):
                     panel = QWidget(); body = QVBoxLayout(panel)
+                    body.setContentsMargins(0, 0, 0, 0)
                     body.addWidget(text_label(entry.spec.name))
-                    preview = QLabel('Menyiapkan kamera dan model…')
-                    preview.setMinimumSize(300, 180)
-                    preview.setMaximumHeight(300)
-                    preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                    preview = self.camera_preview()
+                    preview.setText('Menyiapkan kamera…')
                     status = text_label('Menyiapkan model…')
-                    body.addWidget(preview); body.addWidget(status)
-                    self.grid.addWidget(panel, i//2, i%2)
+                    body.addWidget(preview, 1); body.addWidget(status)
+                    self.grid.addWidget(panel, i, 0)
                     config = configured(self.controller.config, entry.binding['settings'])
                     worker = InferenceController(config, self,
                         target=self.target_factory(self.controller.attendance_service.key, entry.binding))
@@ -225,7 +237,6 @@ class AttendancePage(QWidget):
                     worker.result.connect(lambda response, device=entry.spec.device_id: self.analyzed(device, response))
                     worker.changed.connect(lambda state, device=entry.spec.device_id: self.engine_changed(device, state))
                     worker.start()
-                self.policy.setText(self.policy_text(entries[0].binding['settings']))
                 self.message.setText('Absensi aktif. Arahkan wajah ke kamera.')
             except Exception:
                 for entry in entries:
@@ -239,7 +250,7 @@ class AttendancePage(QWidget):
         node = self.nodes.get(device)
         if node is None:
             return
-        if image.isNull() or node.closing or not self.consent.isChecked():
+        if image.isNull() or node.closing:
             if node.latest is not None:
                 node.latest.fill(0)
             node.latest = None
@@ -286,6 +297,8 @@ class AttendancePage(QWidget):
                     panel = node.preview.parentWidget()
                     self.grid.removeWidget(panel); panel.deleteLater()
                     self.nodes.pop(device)
+                    if not self.nodes:
+                        self.empty_preview.show()
                 continue
             if self.pending or self.controller.jobs.tasks.busy:
                 continue
@@ -328,6 +341,8 @@ class AttendancePage(QWidget):
             self.controller.attendance_service.cancel(node.entry.binding)
             self.manager.stop(device)
             node.inference.stop()
+        if not self.nodes:
+            self.empty_preview.show()
         self.controls()
 
     def on_leave(self):

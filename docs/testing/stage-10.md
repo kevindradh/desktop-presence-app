@@ -6,7 +6,7 @@ Pengguna menyetujui review Tahap 9 dan mengizinkan lanjut. Pengguna secara ekspl
 
 ## Perilaku yang tersedia
 
-Menu **Kehadiran** untuk Super Admin/Admin/Operator memakai perangkat yang sudah disimpan. Operator dapat menjalankan perangkat yang tersedia, tanpa memperoleh hak mengelola perangkat atau menampilkan kredensial RTSP. Viewer tetap hanya Reports. Kamera baru dibuka setelah persetujuan peserta, pemilihan perangkat/mode, dan **Mulai absensi**. Maksimum stream mengikuti konfigurasi kamera (default dua).
+Menu **Kehadiran** untuk Super Admin/Admin/Operator memakai perangkat yang sudah disimpan. Operator dapat menjalankan perangkat yang tersedia, tanpa memperoleh hak mengelola perangkat atau menampilkan kredensial RTSP. Viewer tetap hanya Reports. Kamera baru dibuka setelah pemilihan perangkat/mode dan **Mulai**. Persetujuan peserta mengikuti alur awal, tanpa checkbox tambahan di halaman ini. Maksimum stream mengikuti konfigurasi kamera (default dua).
 
 Pipeline kamera → RetinaFace → liveness bila aktif → ArcFace → pgvector → validasi → transaksi attendance/audit berjalan di luar thread GUI. Satu target terbesar dipilih deterministik per kamera sesuai Tahap 7. Foto/video/probe dari scan tidak disimpan sebagai aset atau embedding baru. Probe sementara bertanda tangan memuat versi model, skor liveness, binding sesi/perangkat/pengaturan, sequence dan freshness. Bukan bukti attestation terhadap host yang sudah dikuasai.
 
@@ -45,7 +45,7 @@ Untuk pengujian lebih cepat, gunakan [template checklist dan hasil tes mandiri](
 1. Tutup aplikasi lama. Jalankan PostgreSQL lokal dan `main.py`; login Super Admin/Admin. Operator dapat menjalankan absensi setelah Admin menyiapkan perangkat/shift.
 2. Gunakan anggota uji yang sudah diregistrasi lima sudut, masih aktif dan memiliki penugasan shift hari ini. Pastikan jam shift sesuai jam lokal. Jangan mengubah jam sistem untuk menguji.
 3. Pada Pengaturan, untuk awal gunakan similarity 0,60, anti-spoof aktif/0,85, jeda 60 detik dan checkout otomatis nonaktif. Simpan, lalu buka Kehadiran.
-4. Pilih satu kamera yang benar, mode **Masuk** atau **Otomatis**, centang persetujuan peserta, lalu Mulai absensi. Tunggu model/kamera siap. Wajah terdaftar yang lolos harus menghasilkan pesan sukses, suara, dan satu baris IN. Periksa juga Anggota → riwayat setelah meninggalkan halaman.
+4. Pilih kamera melalui dropdown nama perangkat/lokasi, mode **Masuk** atau **Otomatis**, lalu **Mulai**. Tunggu model/kamera siap. Wajah terdaftar yang lolos harus menghasilkan pesan sukses, suara, dan satu baris IN. Periksa juga Anggota → riwayat setelah meninggalkan halaman. Untuk beberapa kamera, pilih **Semua kamera**; batas stream tetap mengikuti konfigurasi.
 5. Tetap berada di depan kamera melewati 60 detik: tidak boleh otomatis tercatat OUT. Setelah itu tinggalkan area kamera minimal satu detik, kembali setelah jeda cukup: AUTO menghasilkan OUT. Jika kembali sebelum 60 detik, scan ditolak. Tepat batas 60 diuji otomatis dengan jam terkontrol; manual lebih mudah tunggu 61 detik.
 6. Untuk mode IN, hentikan lalu mulai kembali dengan mode yang sama; IN kedua pada shift yang sama ditolak walau jeda sudah lewat. Setelah OUT, scan ketiga pada shift sama ditolak.
 7. Uji istirahat pada sesi shift baru/anggota uji lain: IN → (jeda) BREAK_OUT → (jeda) BREAK_IN → (jeda) OUT. Hentikan dan ubah mode sebelum mulai lagi. Mode tidak sah tidak boleh menambah baris.

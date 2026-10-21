@@ -27,7 +27,7 @@ Sembilan skenario: alur IN → BREAK_OUT → BREAK_IN → OUT serta wajah terus 
 
 Tab **Coba halaman Kehadiran** memuat halaman aplikasi yang sama dengan data yang sudah siap. Jam absensi dimulai pukul 08:00 WIB pada tanggal saat demo dibuka dan hanya maju melalui tombol simulasi. Jam komputer dan jam sesi login tidak diubah. Jam pada header aplikasi tetap jam nyata; rujuk label **WIB** di kontrol demo untuk waktu absensi.
 
-1. Pilih **Kamera sintetis 1**, mode **Otomatis**, centang persetujuan, lalu **Mulai absensi**. Hasil IN ditampilkan setelah commit.
+1. Pilih **Kamera sintetis 1** beserta lokasinya pada dropdown, mode **Otomatis**, lalu **Mulai**. Hasil IN ditampilkan setelah commit. Pilih **Semua kamera** untuk memakai kedua kamera sintetis.
 2. Pilihan **Peserta terdaftar** mensimulasikan satu identitas yang tersedia. Pratinjau berupa bidang warna hijau, bukan video webcam. **Wajah tidak dikenal** dan **Spoof sintetis** dapat dicoba melalui pilihan di atas halaman.
 3. Untuk scan berikutnya, pilih **Tidak ada wajah**, tunggu lebih dari satu detik agar penahan identitas dilepas. Klik **+61 detik simulasi**, lalu pilih peserta lagi. Dalam AUTO, hasil berikutnya adalah OUT. Jika muncul pesan proses masih berjalan, ulangi klik setelah proses selesai.
 4. Untuk mencoba istirahat, setelah IN hentikan kamera lalu ubah mode ke Mulai istirahat; majukan waktu 61 detik dan mulai lagi. Ulangi untuk Selesai istirahat dan Keluar. Penggantian mode tetap mengikuti kontrol aplikasi asli.
