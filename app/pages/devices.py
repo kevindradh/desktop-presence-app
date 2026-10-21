@@ -2,10 +2,10 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (QCheckBox, QComboBox, QFrame, QGridLayout, QHBoxLayout,
-    QLabel, QLineEdit, QSpinBox, QVBoxLayout)
+    QLabel, QLineEdit, QSpinBox, QVBoxLayout, QWidget)
 
 from app.models.entities import DeviceType
-from app.pages.administration import AdminPage, fill_table, form_widget, line, set_options, table
+from app.pages.administration import AdminPage, fill_table, line, set_options, table
 from app.services.cameras import FINAL, STATE_TEXT
 from app.services.database import DataValidationError
 from app.services.devices import RESOLUTIONS
@@ -14,7 +14,7 @@ from app.widgets.cards import text_label
 
 class DevicesPage(AdminPage):
     def __init__(self, controller):
-        super().__init__(controller, "devices", "Tambahkan webcam atau IP camera, lalu jalankan pratinjau. Kamera baru dibuka saat Anda memilih Uji koneksi atau Mulai pratinjau.")
+        super().__init__(controller, "devices", "")
         self.service_name = "devices_service"
         self.manager = controller.cameras
         self.cards = {}
@@ -22,7 +22,13 @@ class DevicesPage(AdminPage):
         self.table.setSelectionMode(self.table.SelectionMode.ExtendedSelection)
         self.table.itemSelectionChanged.connect(self.select)
         self.body.addWidget(self.table)
-        self.form_widget, form = form_widget()
+        self.form_widget = QWidget()
+        form = QGridLayout(self.form_widget)
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setHorizontalSpacing(20)
+        form.setVerticalSpacing(12)
+        form.setColumnStretch(1, 1)
+        form.setColumnStretch(3, 1)
         self.name = line(160)
         self.kind, self.resolution, self.location = QComboBox(), QComboBox(), QComboBox()
         for kind, title in ((DeviceType.INTERNAL, "Webcam bawaan"), (DeviceType.USB, "Webcam USB"), (DeviceType.RTSP, "IP camera (RTSP)")):
@@ -37,31 +43,35 @@ class DevicesPage(AdminPage):
         self.rtsp = line(4096)
         self.rtsp.setEchoMode(QLineEdit.EchoMode.Password)
         self.rtsp.setAccessibleName("Sumber RTSP")
-        self.show_source = QCheckBox("Tampilkan sumber yang sedang diketik")
+        self.show_source = QCheckBox("Tampilkan sumber")
         self.show_source.toggled.connect(lambda checked: self.rtsp.setEchoMode(
             QLineEdit.EchoMode.Normal if checked else QLineEdit.EchoMode.Password))
-        form.addRow("Nama perangkat *", self.name)
-        form.addRow("Jenis *", self.kind)
-        form.addRow("Nomor kamera lokal", self.camera_index)
-        form.addRow("Sumber RTSP", self.rtsp)
-        form.addRow(self.show_source)
-        form.addRow("Resolusi", self.resolution)
-        form.addRow("FPS", self.fps)
-        form.addRow("Lokasi *", self.location)
-        form.addRow(text_label("Nomor webcam dapat berubah saat perangkat disambungkan ulang. Sumber RTSP tersimpan tetap dirahasiakan; isi kembali hanya untuk menggantinya."))
+        fields = (("Nama perangkat *", self.name), ("Jenis *", self.kind),
+                  ("Resolusi", self.resolution), ("FPS", self.fps),
+                  ("Nomor kamera lokal", self.camera_index), ("Sumber RTSP", self.rtsp),
+                  ("Lokasi *", self.location))
+        for index, (title, field) in enumerate(fields):
+            label = text_label(title, wrap=False)
+            label.setBuddy(field)
+            column = (index % 2)*2
+            form.addWidget(label, index//2, column)
+            form.addWidget(field, index//2, column+1)
+        form.addWidget(self.show_source, 3, 3)
+        tab_fields = [field for _, field in fields]+[self.show_source]
+        for previous, current in zip(tab_fields, tab_fields[1:]):
+            QWidget.setTabOrder(previous, current)
         self.body.addWidget(self.form_widget)
         row = QHBoxLayout()
-        self.new_button = self.button("Form perangkat baru", self.clear_form, row)
-        self.save_button = self.button("Simpan perangkat", self.save, row)
-        self.delete_button = self.button("Hapus perangkat", self.delete, row)
+        self.new_button = self.button("Tambah", self.clear_form, row)
+        self.save_button = self.button("Simpan", self.save, row)
+        self.delete_button = self.button("Hapus", self.delete, row)
         self.refresh_button = self.button("Refresh", self.refresh, row)
         self.body.addLayout(row)
         row = QHBoxLayout()
-        self.test_button = self.button("Uji koneksi", lambda: self.start_preview(test=True), row)
-        self.preview_button = self.button("Mulai pratinjau terpilih", self.start_preview, row)
-        self.stop_button = self.button("Hentikan semua", self.stop_previews, row)
+        self.test_button = self.button("Tes koneksi", lambda: self.start_preview(test=True), row)
+        self.preview_button = self.button("Pratinjau", self.start_preview, row)
+        self.stop_button = self.button("Hentikan", self.stop_previews, row)
         self.body.addLayout(row)
-        self.body.addWidget(text_label(f"Maksimal {controller.config.camera_max_streams} kamera bersamaan. Untuk memilih beberapa perangkat, gunakan Cmd/Ctrl sambil memilih baris. Pratinjau berhenti saat berpindah halaman atau keluar akun."))
         self.preview_grid = QGridLayout()
         self.body.addLayout(self.preview_grid)
         self.body.addStretch()
