@@ -140,7 +140,7 @@ class ReportsPage(QWidget):
         c=self.controller
         if not c.login or c.login.token!=token or generation!=self.generation or c._closing:return
         if result.error:
-            self.message.setText(result.error);c._handle_denial(result.error)
+            c._handle_denial(result.error)
         else:callback(result.value)
 
     def reload(self):

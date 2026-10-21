@@ -113,7 +113,6 @@ class SettingsPage(QWidget):
             if not controller.login or controller.login.token != token or controller._closing:
                 return
             if result.error:
-                self.message.setText(result.error)
                 controller._handle_denial(result.error)
             else:
                 self.display(result.value)

@@ -53,7 +53,7 @@ class AuditPage(QWidget):
         def done(result):
             self.pending=False; self.load_button.setEnabled(True)
             if not c.login or c.login.token!=token or generation!=self.generation:return
-            if result.error:self.message.setText(result.error); c._handle_denial(result.error); return
+            if result.error:c._handle_denial(result.error); return
             rows,more=result.value; self.offset=offset; self.more=more
             fill_table(self.table,[(rid,stamp.astimezone(self.zone).strftime('%d/%m/%Y %H:%M:%S'),actor,action,entity,eid or '-',json.dumps(details,ensure_ascii=False)) for rid,stamp,actor,action,entity,eid,details in rows])
             self.message.setText(f'{len(rows)} aktivitas ditampilkan; urutan terbaru. Mulai baris {offset+1}.')

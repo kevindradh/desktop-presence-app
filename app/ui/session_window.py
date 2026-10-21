@@ -32,6 +32,7 @@ from app.services.database import DataConflict, DataValidationError, DatabaseUna
 from app.services.tasks import TaskController
 from app.ui.main_window import MainWindow
 from app.widgets.cards import text_label
+from app.widgets.toast import Toast
 
 
 EXPECTED = (AuthError, DataConflict, DataValidationError, DatabaseUnavailable, CredentialStoreError)
@@ -144,9 +145,9 @@ class SessionWindow(QMainWindow):
         self._build_setup()
         self._build_startup()
         self.stack.setCurrentWidget(self.startup_panel)
-        self.error_banner = self.statusBar()
-        self.error_message = text_label("")
-        self.statusBar().addWidget(self.error_message, 1)
+        self.toast = Toast(self)
+        self.error_banner = self.toast
+        self.error_message = self.toast.message
         reporter.occurred.connect(self._error)
         QApplication.instance().installEventFilter(self)
         self.timer = QTimer(self)
@@ -200,8 +201,6 @@ class SessionWindow(QMainWindow):
         self.signin_button = QPushButton("Masuk")
         self.signin_button.setProperty("variant", "primary")
         body.addWidget(self.signin_button)
-        self.login_message = text_label("")
-        body.addWidget(self.login_message)
         self.signin_button.clicked.connect(self.sign_in)
         self.password.returnPressed.connect(self.sign_in)
 
@@ -229,10 +228,8 @@ class SessionWindow(QMainWindow):
         self.setup_submit = QPushButton("Buat akun")
         self.setup_submit.setProperty("variant", "primary")
         self.setup_close = QPushButton("Tutup aplikasi")
-        self.setup_message = text_label("")
         body.addWidget(self.setup_submit)
         body.addWidget(self.setup_close)
-        body.addWidget(self.setup_message)
         self.setup_submit.clicked.connect(self.bootstrap)
         self.setup_confirm.returnPressed.connect(self.bootstrap)
         self.setup_close.clicked.connect(self.close)
@@ -249,8 +246,6 @@ class SessionWindow(QMainWindow):
         self.change_button, self.cancel_change = QPushButton("Simpan password"), QPushButton("Kembali")
         body.addWidget(self.change_button)
         body.addWidget(self.cancel_change)
-        self.password_message = text_label("")
-        body.addWidget(self.password_message)
         self.change_button.clicked.connect(self.change_password)
         self.cancel_change.clicked.connect(self._cancel_password)
 
@@ -267,14 +262,12 @@ class SessionWindow(QMainWindow):
             self.shell.password_button.setEnabled(not busy)
 
     def _error(self, incident):
-        self.error_message.setText(f"{incident.message} Referensi: {incident.reference}")
+        self._message(f"{incident.message} Referensi: {incident.reference}")
 
     def _message(self, text):
-        self.error_message.setText(text)
-        self.login_message.setText(text)
-        self.password_message.setText(text)
-        if self.shell and self.shell.users_page:
-            self.shell.users_page.message.setText(text)
+        dialog=self.enrollment_dialog
+        target=dialog.toast if dialog is not None and dialog.isVisible() else self.toast
+        target.show_message(text)
 
     def _initialize(self):
         if self.login or self._closing or self.jobs.tasks.busy:
@@ -287,7 +280,8 @@ class SessionWindow(QMainWindow):
             if self._closing:
                 return
             if result.error:
-                self.startup_message.setText(result.error)
+                self.startup_message.clear()
+                self._message(result.error)
                 self.startup_retry.show()
             elif result.value:
                 self._entry_state = "setup"
@@ -402,7 +396,7 @@ class SessionWindow(QMainWindow):
             ("groups", GroupsPage), ("shifts", ShiftsPage), ("members", MembersPage), ("devices", DevicesPage), ("settings", SettingsPage), ("attendance", AttendancePage), ("dashboard", DashboardPage), ("reports", ReportsPage), ("audit", AuditPage), ("backup", BackupsPage))
             if route in PERMISSIONS[self.login.principal.role]}
         self.shell = MainWindow(self.config, self.logger, self.reporter, self.login.principal,
-                                self.navigate, users_page=users, administrative_pages=administrative_pages)
+                                self.navigate, users_page=users, administrative_pages=administrative_pages, toast=self.toast)
         self.shell.setWindowFlags(Qt.WindowType.Widget)
         self.shell.password_button.clicked.connect(self.open_password)
         self.shell.logout_button.clicked.connect(self.logout)
@@ -458,7 +452,7 @@ class SessionWindow(QMainWindow):
         self.old_password.clear()
         self.new_password.clear()
         self.confirm_password.clear()
-        self.password_message.setText("")
+        self.toast.dismiss()
         self.stack.setCurrentWidget(self.password_panel)
 
     def _cancel_password(self):
@@ -469,7 +463,7 @@ class SessionWindow(QMainWindow):
             return
         old, new = self.old_password.text(), self.new_password.text()
         if new != self.confirm_password.text():
-            self.password_message.setText("Pengulangan password baru tidak sesuai.")
+            self._message("Pengulangan password baru tidak sesuai.")
             return
         for field in (self.old_password, self.new_password, self.confirm_password):
             field.clear()
@@ -491,11 +485,11 @@ class SessionWindow(QMainWindow):
         name, full = self.setup_username.text(), self.setup_fullname.text()
         value = self.setup_password.text()
         if value != self.setup_confirm.text():
-            self.setup_message.setText("Pengulangan password tidak sesuai.")
+            self._message("Pengulangan password tidak sesuai.")
             return
         self.setup_password.clear()
         self.setup_confirm.clear()
-        self.setup_message.setText("")
+        self.toast.dismiss()
         def operation():
             try:
                 self.service.bootstrap(name, full, value)
@@ -509,7 +503,7 @@ class SessionWindow(QMainWindow):
             if self._closing:
                 return
             if result.error:
-                self.setup_message.setText(result.error)
+                self._message(result.error)
             else:
                 self.setup_username.clear()
                 self.setup_fullname.clear()

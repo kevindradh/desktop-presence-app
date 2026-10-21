@@ -94,7 +94,7 @@ def test_login_remember_restart_voluntary_password_change_logout_and_error_recov
     view = views(service)
     screenshot(view, "stage-04-login.png")
     sign_in(view, "root", "wrong", wait_until)
-    assert view.login is None and "tidak sesuai" in view.login_message.text()
+    assert view.login is None and "tidak sesuai" in view.error_message.text()
     sign_in(view, "root", OLD, wait_until, remember=True)
     assert view.stack.currentWidget() is view.shell
     assert view.shell is not None and view.credentials.get() and not view.password.text()
@@ -103,7 +103,7 @@ def test_login_remember_restart_voluntary_password_change_logout_and_error_recov
     view.new_password.setText(NEW)
     view.confirm_password.setText("mismatch")
     view.change_password()
-    assert "tidak sesuai" in view.password_message.text()
+    assert "tidak sesuai" in view.error_message.text()
     change(view, OLD, NEW, wait_until)
     assert view.shell is not None and view.credentials.get()
     assert not view.new_password.text() and not view.old_password.text()
@@ -220,7 +220,7 @@ def test_idle_background_does_not_extend_session_and_database_failure_locks_ui(a
     restarted._check_session()
     idle(restarted, wait_until)
     assert restarted.login is None and restarted.shell is None
-    assert "Database" in restarted.login_message.text()
+    assert "Database" in restarted.error_message.text()
 
 
 def test_keychain_unavailable_keeps_password_login_usable(auth, views, wait_until):
@@ -233,7 +233,7 @@ def test_keychain_unavailable_keeps_password_login_usable(auth, views, wait_unti
         def clear(self):
             pass
     view = views(service, Unavailable())
-    assert "Ingat saya" in view.login_message.text()
+    assert "Ingat saya" in view.error_message.text()
     sign_in(view, "root", NEW, wait_until, remember=True)
     assert view.shell is not None
     assert "Sesi ini tetap" in view.error_message.text()
@@ -277,13 +277,13 @@ def test_first_run_setup_before_login_and_voluntary_password_change(store, views
         view.setup_submit.click()
         idle(view, wait_until)
     submit("mismatch")
-    assert "tidak sesuai" in view.setup_message.text()
+    assert "tidak sesuai" in view.error_message.text()
     assert view.stack.currentWidget() is view.setup_panel
     submit("short", "short")
-    assert "12" in view.setup_message.text() and service.bootstrap_required()
+    assert "12" in view.error_message.text() and service.bootstrap_required()
     submit(OLD)
     assert view.stack.currentWidget() is view.login_panel
-    assert "dibuat" in view.login_message.text() and view.username.text() == "first"
+    assert "dibuat" in view.error_message.text() and view.username.text() == "first"
     assert not view.setup_password.text() and not view.setup_confirm.text()
     assert not service.bootstrap_required()
     view.bootstrap()
@@ -312,7 +312,7 @@ def test_startup_database_failure_blocks_setup_and_login_until_retry(store, view
     monkeypatch.setattr(service, "bootstrap_required", unavailable)
     view = views(service)
     assert view.stack.currentWidget() is view.startup_panel
-    assert view.startup_retry.isVisible() and "Database" in view.startup_message.text()
+    assert view.startup_retry.isVisible() and "Database" in view.error_message.text()
     view.bootstrap()
     sign_in(view, "existing", OLD, wait_until)
     assert view.login is None and view.stack.currentWidget() is view.startup_panel
@@ -336,7 +336,7 @@ def test_first_run_setup_handles_admin_created_by_another_instance(store, views,
     view.setup_submit.click()
     idle(view, wait_until)
     assert view.stack.currentWidget() is view.login_panel and view.login is None
-    assert "sudah tersedia" in view.login_message.text()
+    assert "sudah tersedia" in view.error_message.text()
     with store.db.transaction() as session:
         assert session.scalar(select(func.count()).select_from(User)) == 1
         assert session.scalar(select(User.username)) == "other"

@@ -196,7 +196,7 @@ class DevicesPage(AdminPage):
             try:
                 self.manager.start_many(specs,test=test)
             except DataValidationError as error:
-                self.message.setText(str(error))
+                self.controller._message(str(error))
             self.controls()
         self.run(lambda service,token: service.sources(token,device_ids),start,loading=True)
 

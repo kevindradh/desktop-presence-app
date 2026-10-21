@@ -11,6 +11,7 @@ from app.pages.overview import OverviewPage, PlaceholderPage
 from app.services.diagnostics import run_diagnostic
 from app.services.tasks import TaskController
 from app.widgets.cards import text_label
+from app.widgets.toast import Toast
 
 
 ROUTES = (
@@ -30,7 +31,7 @@ ROUTES = (
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, config, logger, reporter, principal, navigation_guard, *, users_page=None, administrative_pages=None):
+    def __init__(self, config, logger, reporter, principal, navigation_guard, *, users_page=None, administrative_pages=None, toast=None):
         super().__init__()
         from app.services.auth import PERMISSIONS
         self.principal = principal
@@ -39,6 +40,7 @@ class MainWindow(QMainWindow):
         self.users_page = users_page
         self.administrative_pages = administrative_pages or {}
         self.config, self.logger, self.reporter = config, logger, reporter
+        self.toast = toast if toast is not None else Toast(self)
         self.setWindowTitle("StarGate")
         self.resize(1180, 820)
         self.setMinimumSize(1000, 740)
@@ -60,8 +62,6 @@ class MainWindow(QMainWindow):
         self._tick()
         self.timer.start()
         self.show_route(self.routes[0][0])
-        if not config.env_loaded:
-            self.statusBar().showMessage("Konfigurasi dasar aktif. File .env belum tersedia.")
         self.logger.info("Application shell opened")
 
     def _build_ui(self):
@@ -115,17 +115,8 @@ class MainWindow(QMainWindow):
             "18 Oct 2026  20:00") + 18)
         header.addWidget(self.clock)
         body.addLayout(header)
-        self.error_banner = QFrame()
-        self.error_banner.setObjectName("errorBanner")
-        error_row = QHBoxLayout(self.error_banner)
-        error_row.setContentsMargins(16, 12, 16, 12)
-        self.error_message = text_label("")
-        error_row.addWidget(self.error_message, 1)
-        dismiss = QPushButton("Tutup pesan")
-        dismiss.clicked.connect(self.error_banner.hide)
-        error_row.addWidget(dismiss)
-        self.error_banner.hide()
-        body.addWidget(self.error_banner)
+        self.error_banner = self.toast
+        self.error_message = self.toast.message
         self.pages = QStackedWidget()
         self.pages.setObjectName("pages")
         self.diagnostics = DiagnosticsPage()
@@ -181,15 +172,13 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(bool)
     def _run_diagnostic(self, fail=False):
-        self.error_banner.hide()
+        self.toast.dismiss()
         self.tasks.start(partial(run_diagnostic, fail=fail))
 
     @pyqtSlot(object)
     def _on_error(self, incident):
         text = f"{incident.message} Referensi: {incident.reference}"
-        self.error_message.setText(text)
-        self.error_banner.show()
-        self.diagnostics.result.setText(text)
+        self.toast.show_message(text)
 
     @pyqtSlot()
     def _on_settled(self):
@@ -200,7 +189,7 @@ class MainWindow(QMainWindow):
         if self.tasks.busy:
             self._closing = True
             self.tasks.cancel()
-            self.statusBar().showMessage("Menunggu proses berhenti sebelum menutup aplikasi…")
+            self.toast.show_message("Menunggu proses berhenti sebelum menutup aplikasi…")
             self.setEnabled(False)
             event.ignore()
             return

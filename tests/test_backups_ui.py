@@ -44,7 +44,7 @@ def test_backup_inspect_and_restore_with_login_and_reenroll(backup,store,views,w
     monkeypatch.setattr(QFileDialog,'getSaveFileName',lambda *a:(str(path),''))
     monkeypatch.setattr(QFileDialog,'getOpenFileName',lambda *a:(str(path),''))
     page.password.setText(PASSWORD);page.repeat.setText('different');page.backup_button.click()
-    assert not path.exists() and 'sama' in page.message.text()
+    assert not path.exists() and 'sama' in view.error_message.text()
     page.repeat.setText(PASSWORD);page.backup_button.click();wait_until(lambda:not page.busy,timeout=15000)
     assert path.exists() and not page.password.text()
     page.password.setText(PASSWORD);page.choose_button.click();wait_until(lambda:not page.busy,timeout=15000)
@@ -67,7 +67,7 @@ def test_backup_inspect_and_restore_with_login_and_reenroll(backup,store,views,w
         assert page.preparing and view._maintenance
     finally:release.set()
     wait_until(lambda:not page.busy and view.login is None,timeout=20000)
-    assert 'registrasi wajah ulang' in view.login_message.text() and not view._maintenance
+    assert 'registrasi wajah ulang' in view.error_message.text() and not view._maintenance
     with store.db.transaction() as session:assert session.scalar(select(Member)).full_name!='Changed UI'
     sign_in(view,'root',NEW,wait_until);assert view.login is not None
 

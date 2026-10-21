@@ -70,7 +70,7 @@ def test_groups_form_required_create_edit_cancel_delete_and_referenced(auth, dat
     page.delete()
     answer(page, QMessageBox.StandardButton.Yes, wait_until)
     settled(view, wait_until)
-    assert "digunakan" in page.message.text()
+    assert "digunakan" in view.error_message.text()
     snapshot(view, "stage-05-groups.png")
     page.refresh_button.click()
     settled(view, wait_until)
@@ -106,7 +106,7 @@ def test_shift_form_night_grace_validation_edit_and_delete(auth, data, views, wa
     page.start.setTime(QTime(21, 0))
     page.save()
     settled(view, wait_until)
-    assert "direferensikan" in page.message.text()
+    assert "direferensikan" in view.error_message.text()
 
 
 def test_member_pagination_search_filter_details_edit_photo_and_registration_gate(auth, data, photo, views, wait_until, monkeypatch):

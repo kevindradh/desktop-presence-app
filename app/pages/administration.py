@@ -120,7 +120,6 @@ class AdminPage(QWidget):
             self.table.setEnabled(True)
             self.form_widget.setEnabled(True)
             if result.error:
-                self.message.setText(result.error)
                 self.controller._handle_denial(result.error)
             else:
                 self.message.setText("")

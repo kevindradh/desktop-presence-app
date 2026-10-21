@@ -159,7 +159,7 @@ def test_setting_change_during_inference_requires_restart_and_no_commit(attendan
     before=settings.load(view.login.token)
     settings.save(view.login.token,dict(before,similarity_threshold=.65),before)
     wait_until(lambda:not page.busy,timeout=10000)
-    assert not rows(store) and page.sound.plays==0 and 'Pengaturan berubah' in page.message.text()
+    assert not rows(store) and page.sound.plays==0 and 'Pengaturan berubah' in view.error_message.text()
 
 
 def test_two_camera_pipeline_stores_one_event_and_does_not_auto_out_while_present(attendance, store, views, wait_until):

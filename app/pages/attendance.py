@@ -165,8 +165,7 @@ class AttendancePage(QWidget):
         return [row.id for row in self.rows if row.id == selected]
 
     def show_message(self, text):
-        self.message.setText(text)
-        self.message.setVisible(bool(text))
+        self.controller._message(text)
 
     @staticmethod
     def camera_preview():
@@ -206,7 +205,6 @@ class AttendancePage(QWidget):
                 return
             if result.error:
                 self.reloading = False
-                self.show_message(result.error)
                 self.stop()
                 self.controller._handle_denial(result.error)
             else:

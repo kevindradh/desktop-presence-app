@@ -66,7 +66,7 @@ class BackupsPage(QWidget):
         self.tasks.start(work);self.controls()
 
     def completed(self,result):
-        if result.error:self.message.setText(result.error)
+        if result.error:self.controller._message(result.error)
         else:self.callback(result.value)
 
     def settled(self):
@@ -77,11 +77,11 @@ class BackupsPage(QWidget):
                 for field in (c.shell.navigation,c.shell.password_button,c.shell.logout_button):field.setEnabled(True)
         self.controls()
 
-    def failed(self,*args):self.message.setText('Proses gagal. Periksa catatan aplikasi dan coba kembali.')
+    def failed(self,*args):self.controller._message('Proses gagal. Periksa catatan aplikasi dan coba kembali.')
     def cancelled(self):self.message.setText('Proses dibatalkan; perubahan data tidak diterapkan.')
 
     def backup(self):
-        if self.password.text()!=self.repeat.text():self.message.setText('Kedua kata sandi cadangan harus sama.');return
+        if self.password.text()!=self.repeat.text():self.controller._message('Kedua kata sandi cadangan harus sama.');return
         path,_=QFileDialog.getSaveFileName(self,'Simpan cadangan baru','stargate.sgbackup','Cadangan StarGate (*.sgbackup)')
         if not path:return
         password=self.password.text()

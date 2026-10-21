@@ -81,7 +81,7 @@ def test_settings_stale_error_preserves_edit_until_explicit_reload(auth, views, 
     view.settings_service.save(view.login.token, dict(initial, similarity_threshold=.70), initial)
     page.fields['similarity_threshold'].setValue(.65)
     page.save_button.click(); settled(view, wait_until)
-    assert 'sesi lain' in page.message.text() and page.fields['similarity_threshold'].value() == .65
+    assert 'sesi lain' in view.error_message.text() and page.fields['similarity_threshold'].value() == .65
     page.reload_button.click(); settled(view, wait_until)
     assert page.fields['similarity_threshold'].value() == .70
 

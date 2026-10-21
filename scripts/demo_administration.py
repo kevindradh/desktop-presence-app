@@ -47,9 +47,7 @@ def main():
             window = SessionWindow(config, logger, reporter, auth, NoCredentials())
             window._accepted(login)
             window.setWindowTitle("StarGate — MODE UJI SINTETIS")
-            label = text_label("MODE UJI • Data sintetis sementara • Tutup dan buka demo kembali untuk mengulang")
-            label.setStyleSheet("background:#fff0d9; color:#684719; padding:8px;")
-            window.statusBar().addPermanentWidget(label, 1)
+            window._message("MODE UJI • Data sintetis sementara • Tutup dan buka demo kembali untuk mengulang")
             previous = sys.excepthook
             sys.excepthook = lambda kind, error, tb: reporter.report(error.with_traceback(tb))
             try:

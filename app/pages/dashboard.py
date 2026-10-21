@@ -183,14 +183,16 @@ class DashboardPage(QWidget):
         if not c.login or c.login.token != token or self.generation != generation or not self.isVisible() or c._closing:
             return
         if result.error:
-            self.status.setText('Data belum diperbarui. '+result.error)
-            self.status.show()
+            self.status.clear()
+            self.status.hide()
             if self.snapshot is None:
                 for chart in self.charts.values():
                     chart.set_rows((), empty_text='Data kehadiran belum tersedia.')
             if result.denied:
                 self.clear()
                 c._handle_denial(result.error)
+            else:
+                c._message('Data belum diperbarui. '+result.error)
             return
         data = result.data
         old = self.snapshot

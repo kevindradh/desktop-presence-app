@@ -10,6 +10,7 @@ from PyQt6.QtGui import QImage,QPixmap,QTransform
 from ai.enrollment import GUIDES
 from ai.enrollment_process import EnrollmentTarget
 from app.ui.ai_lab import AiLab
+from app.widgets.toast import Toast
 
 
 class CaptureLab(AiLab):
@@ -219,6 +220,7 @@ class EnrollmentDialog(QDialog):
         self.lab.discarded.connect(self.discard)
         self.lab.inference.changed.connect(self.state_changed)
         self.lab.cameras.changed.connect(lambda unused:self.state_changed('camera'))
+        self.toast=Toast(self)
 
     @property
     def busy(self):
@@ -257,7 +259,7 @@ class EnrollmentDialog(QDialog):
             self.saving=False
             self.cancel_button.setEnabled(True)
             if result.error:
-                self.message.setText(result.error)
+                self.message.clear()
                 self.save_button.setEnabled(not self.closing)
                 self.controller._handle_denial(result.error)
             else:
