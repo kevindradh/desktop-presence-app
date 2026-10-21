@@ -1,4 +1,4 @@
-param([switch]$IncludeResearchModels)
+param([switch]$IncludeResearchModels, [string]$PostgresRuntime)
 $ErrorActionPreference = 'Stop'
 Set-Location (Join-Path $PSScriptRoot '..\..')
 $Python = Join-Path (Get-Location) '.venv-win\Scripts\python.exe'
@@ -7,6 +7,7 @@ if (!(Test-Path $Python)) { throw 'Buat .venv-win menggunakan Python 3.11 x64 te
 if ($LASTEXITCODE -ne 0) { throw 'Dependensi tidak konsisten.' }
 $BuildArgs = @('scripts/build_package.py','--target','windows')
 if ($IncludeResearchModels) { $BuildArgs += '--include-research-models' }
+if ($PostgresRuntime) { $BuildArgs += @('--postgres-runtime', $PostgresRuntime) }
 & $Python @BuildArgs
 if ($LASTEXITCODE -ne 0) { throw 'Build gagal.' }
 $ProbeArgs = @('package-check','--data-dir',"$env:TEMP\StarGate-package-probe")

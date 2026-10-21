@@ -276,6 +276,8 @@ Dependensi: Tahap13. Status21 Oktober2026: installer x64 aktual456.709.976byte d
 - [x] Adaptor jaringan diputus: probe worker AI dan PostgreSQL lokal PASS, jaringan dikembalikan Up.
 - [ ] Uji mandiri Windows: registrasi wajah/IN-OUT, cabut USB fisik, audio, Excel/reader dan alur lengkap tanpa internet.
 - [ ] Gerbang: pengguna memasang/menjalankan berdasarkan panduan dan menyetujui review hasil Windows; Tahap15 belum dimulai.
+- [x] Siapkan kode installer opsional dengan PostgreSQL17/pgvector bawaan, provisioning/config/password otomatis, migrasi/data dasar, pemeriksaan runtime dan start cluster saat aplikasi dibuka. Pengaman serta SQL/lifecycle cluster terpisah diuji di Mac; lihat `docs/windows-auto-setup.md`.
+- [ ] Build dan UAT installer otomatis terbaru di Windows bersih/AMD, termasuk dependensi native, port, restart, repair/upgrade dan uninstall/reinstall. VM belum bisa dinyalakan karena ruang disk; pengguna memilih kode dahulu dan uji Windows nanti. Installer lama belum memuat mode otomatis.
 
 ### Tahap 15 - Validasi performa, keamanan, regresi, dan UAT
 

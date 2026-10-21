@@ -21,7 +21,8 @@ def selected_files(root,include_models=False):
         'resources/samples/profile-test.png','resources/sounds/success.wav',
         'third_party/minifasnet/__init__.py','third_party/minifasnet/MiniFASNet.py',
         'third_party/minifasnet/LICENSE','third_party/minifasnet/README.md',
-        'docs/testing/stage-14.md','docs/testing/stage-14-manual.md','docs/windows-install.md'))
+        'docs/testing/stage-14.md','docs/testing/stage-14-manual.md','docs/windows-install.md',
+        'docs/windows-auto-setup.md','docs/windows11-amd-setup.md'))
     if include_models:
         from ai.models import verified_assets
         verified_assets(root,root/'resources/models')

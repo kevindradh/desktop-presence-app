@@ -33,9 +33,10 @@ from app.services.tasks import TaskController
 from app.ui.main_window import MainWindow
 from app.widgets.cards import text_label
 from app.widgets.toast import Toast
+from app.settings.config import ConfigError
 
 
-EXPECTED = (AuthError, DataConflict, DataValidationError, DatabaseUnavailable, CredentialStoreError)
+EXPECTED = (AuthError, DataConflict, DataValidationError, DatabaseUnavailable, CredentialStoreError, ConfigError)
 
 
 @dataclass(repr=False)
@@ -291,7 +292,11 @@ class SessionWindow(QMainWindow):
                 self._entry_state = "login"
                 self.stack.setCurrentWidget(self.login_panel)
                 self._restore()
-        self.jobs.run(self.service.bootstrap_required, done)
+        def initialize():
+            from app.services.local_database import ensure_local_database
+            ensure_local_database(self.config)
+            return self.service.bootstrap_required()
+        self.jobs.run(initialize, done)
 
     def _restore(self):
         if self.login or self._closing or self._entry_state != "login":

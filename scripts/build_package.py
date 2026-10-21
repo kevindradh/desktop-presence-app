@@ -52,15 +52,23 @@ def main(argv=None):
     parser.add_argument('--target',choices=['windows','macos'],required=True)
     parser.add_argument('--include-research-models',action='store_true',help='Private non-commercial research only; not production clearance')
     parser.add_argument('--check-only',action='store_true')
+    parser.add_argument('--postgres-runtime',type=Path,help='Prepared Windows PostgreSQL 17 x64/pgvector runtime for automatic local setup')
     args=parser.parse_args(argv)
     try:
         validate_build(args.target,args.include_research_models)
+        if args.postgres_runtime:
+            if args.target!='windows':raise ValueError('Runtime database lokal hanya untuk paket Windows.')
+            from app.services.local_database import verify_runtime
+            if args.postgres_runtime.name!='postgresql':raise ValueError('Folder runtime harus bernama postgresql.')
+            verify_runtime(args.postgres_runtime.parent)
         if args.check_only:print('Prasyarat build PASS; executable belum dibuat.');return 0
         import os
         env=dict(os.environ);env['STARGATE_BUILD_RESEARCH_MODELS']='1' if args.include_research_models else '0'
         result=subprocess.run([sys.executable,'-m','PyInstaller','--noconfirm','--clean',str(ROOT/'packaging/StarGate.spec')],cwd=ROOT,env=env)
         if result.returncode:return result.returncode
         output=ROOT/'dist/StarGate'
+        if args.postgres_runtime:
+            shutil.copytree(args.postgres_runtime,output/'_internal/postgresql')
         finalize_output(output,args.include_research_models)
         print('Paket dibuat; lakukan package-check dan UAT pada OS target sebelum distribusi.')
         return 0

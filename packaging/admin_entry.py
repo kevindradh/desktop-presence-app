@@ -12,6 +12,9 @@ if not getattr(sys,'frozen',False):
 def main(argv=None):
     import sys
     argv=list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] in {'setup-local','stop-local-db','setup-check'}:
+        from scripts.setup_local_windows import main as setup
+        return setup(argv)
     if argv and argv[0]=='package-check':
         from app.bootstrap import main as application
         return application(['--package-check',*argv[1:]])

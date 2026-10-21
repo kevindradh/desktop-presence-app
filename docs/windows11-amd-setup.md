@@ -4,6 +4,8 @@ Panduan 21 Oktober 2026. Gunakan paket Windows **x64** untuk komputer AMD dengan
 
 **Status paket:** installer yang tersedia saat panduan ini dibuat masih versi sebelum revisi terbaru. Bangun ulang dan uji paket dari sumber terbaru sebelum dikirim. Panduan ini mengacu pada CLI dan alur akun versi terbaru, bukan installer lama. Build aplikasi mengikuti [panduan pembuat paket](windows-install.md).
 
+Pembaruan: [kode installer dengan setup otomatis](windows-auto-setup.md) sudah disiapkan agar customer tidak menjalankan langkah database manual di bawah. Build/UAT Windows untuk mode otomatis masih menunggu; panduan ini tetap menjadi jalur manual sampai paket otomatis dinyatakan lulus.
+
 ## 1. Berkas yang diberikan kepada customer
 
 Siapkan satu folder `Downloads\StarGate-setup` berisi:

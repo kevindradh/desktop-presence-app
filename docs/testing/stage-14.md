@@ -4,6 +4,8 @@ Pembaruan **21 Oktober 2026**. Pengguna meminta kelanjutan setelah ruang disk te
 
 **Status: installer siap untuk uji mandiri; gerbang review pengguna belum lulus. Tahap15 belum dimulai.** Uji wajah/alur lengkap secara manual, suara, reader Windows dan offline alur lengkap belum dianggap lulus dari tes otomatis. Windows fisik x64 dan RTSP nyata belum diuji.
 
+Pembaruan setup otomatis: pengguna meminta pemasangan customer lebih sederhana. [Kode installer dengan database bawaan](../windows-auto-setup.md) telah disiapkan, tetapi installer di bawah belum memuat perubahan ini maupun revisi UI terbaru. VM kembali gagal dinyalakan karena Parallels meminta tambahan ruang disk 2.146 MB; pengguna memilih menyiapkan kode dahulu dan menguji Windows nanti. Status pengujian installer lama tidak berlaku sebagai hasil uji mode otomatis.
+
 - [Panduan uji mandiri](stage-14-manual.md)
 - [Instalasi/build dan pemulihan](../windows-install.md)
 - Installer: `dist/windows/StarGate-Research-Windows-x64.exe`, **456.709.976 byte**.
