@@ -339,7 +339,7 @@ class MembersPage(AdminPage):
         form.setColumnStretch(3, 1)
         self.code, self.name, self.email, self.phone, self.position = line(64), line(200), line(254), line(40), line(160)
         self.group = QComboBox()
-        self.photo = text_label("Foto wajib tersedia untuk registrasi.")
+        self.photo = text_label("")
         self.preview = QLabel()
         self.preview.setFixedSize(100, 100)
         self.preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -378,7 +378,6 @@ class MembersPage(AdminPage):
         self.capture_button = self.button("Capture lima sudut", self.capture, buttons)
         self.verify_button = self.button('Uji wajah tersimpan',self.verify_face,buttons)
         self.body.addLayout(buttons)
-        self.body.addWidget(text_label("Registrasi baru disimpan melalui capture lima sudut. Registrasi ulang mengganti sampel lama setelah seluruh set baru berhasil disimpan."))
         self._build_assignments()
         self.history = table(["Waktu", "Event", "Status", "Tanggal kerja", "Grup", "Shift", "Pulang awal", "Sumber"])
         self.history_label = text_label("Pilih anggota untuk melihat riwayat yang sudah tersimpan.")
@@ -451,7 +450,8 @@ class MembersPage(AdminPage):
         for field in (self.code, self.name, self.email, self.phone, self.position):
             field.clear()
         self.group.setCurrentIndex(0)
-        self.photo.setText("Foto profil otomatis dari capture depan; belum disimpan.")
+        self.photo.clear()
+        self.photo.hide()
         self.preview.clear()
         fill_table(self.assignment_table, [])
         fill_table(self.history, [])
@@ -502,6 +502,7 @@ class MembersPage(AdminPage):
             field.setText(value)
         self.group.setCurrentIndex(max(0, self.group.findData(row.group_id)))
         self.photo.setText(Path(row.photo).name)
+        self.photo.show()
         self.preview.clear()
         base = self.controller.config.resource_root if row.photo.startswith('resources/samples/') else self.controller.config.root
         path = (Path(base) / row.photo).resolve()
@@ -524,6 +525,7 @@ class MembersPage(AdminPage):
         if path:
             self.photo_source = path
             self.photo.setText(Path(path).name)
+            self.photo.show()
 
     def save(self):
         selected = self.selected
