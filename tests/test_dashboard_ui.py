@@ -121,9 +121,12 @@ def test_dashboard_empty_date_keyboard_filter_and_desktop_sizes(attendance, view
     for width,height in ((1000,740),(1180,820),(1440,900)):
         view.resize(width,height)
         QTest.qWait(50)
-        summary=page.counters['present'].parentWidget()
+        cards=[value.parentWidget() for value in page.counters.values()]
         for value in page.counters.values():
-            assert summary.rect().contains(value.geometry())
+            assert value.parentWidget().rect().contains(value.geometry())
+        for index,card in enumerate(cards):
+            assert page.rect().contains(card.geometry())
+            assert all(not card.geometry().intersects(other.geometry()) for other in cards[index+1:])
         assert page.date.geometry().right()<page.today.geometry().left()
         scroll=view.shell.pages.currentWidget()
         assert scroll.horizontalScrollBar().maximum()==0

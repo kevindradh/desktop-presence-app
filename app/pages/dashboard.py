@@ -50,37 +50,32 @@ class DashboardPage(QWidget):
         row.addWidget(self.today)
         row.addStretch()
         layout.addLayout(row)
-        summary = QFrame()
-        summary.setObjectName('dashboardSummary')
-        summary_body = QVBoxLayout(summary)
-        summary_body.setContentsMargins(22, 20, 22, 20)
-        summary_body.setSpacing(18)
-        attendance = QVBoxLayout()
-        attendance.addWidget(text_label('Hadir', 'sectionTitle'))
-        present = text_label('...', 'dashboardTotal')
-        present.setAccessibleName('Jumlah anggota hadir')
-        attendance.addWidget(present)
-        summary_body.addLayout(attendance)
         grid = QGridLayout()
         grid.setHorizontalSpacing(16)
-        self.counters = {'present': present}
+        grid.setVerticalSpacing(16)
+        self.counters = {}
         for i, (key, title, description) in enumerate((
+                ('present', 'Hadir', 'Jumlah anggota yang sudah check-in, termasuk yang terlambat.'),
                 ('late', 'Terlambat', 'Bagian dari jumlah Hadir.'),
                 ('pending', 'Belum masuk', 'Anggota terjadwal yang belum check-in sebelum shift berakhir.'),
                 ('absent', 'Tidak hadir', 'Anggota terjadwal yang belum check-in setelah shift berakhir (Absent).'),
                 ('on_leave', 'Izin', 'Anggota terjadwal yang belum check-in dan memiliki catatan izin.'),
                 ('registered', 'Anggota aktif', 'Jumlah anggota yang aktif saat ini, terlepas dari tanggal yang dipilih.'))):
+            card = QFrame()
+            card.setObjectName('featureCard')
+            content = QVBoxLayout(card)
+            content.setContentsMargins(18, 16, 18, 16)
             title_label = text_label(title, 'muted')
             title_label.setToolTip(description)
             value = text_label('...', 'cardTitle')
             value.setAccessibleName('Jumlah '+title.lower())
             value.setToolTip(description)
             self.counters[key] = value
-            grid.addWidget(title_label, 0, i)
-            grid.addWidget(value, 1, i)
-            grid.setColumnStretch(i, 1)
-        summary_body.addLayout(grid)
-        layout.addWidget(summary)
+            content.addWidget(title_label)
+            content.addWidget(value)
+            grid.addWidget(card, i//3, i%3)
+            grid.setColumnStretch(i%3, 1)
+        layout.addLayout(grid)
         self.status = text_label('Memuat ringkasan kehadiran...', 'muted')
         layout.addWidget(self.status)
         self.warning = text_label('')

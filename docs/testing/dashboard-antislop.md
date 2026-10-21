@@ -115,3 +115,10 @@ Delivery Gate di atas tetap PASS untuk lingkup revisi ini: warna, font, arah des
 R-03/R-32/R-35 PASS: dua tes UI terarah lulus, meliputi tiga ukuran desktop, kalender, keyboard, filter tanggal, serta tombol simulasi check-in dan akhir shift. Bukti: `evidence/dashboard-summary-trimmed.xml`.
 R-02/R-16/R-31 PASS: tidak menambah teks baru; penghapusan memberi ruang untuk angka yang dibutuhkan pengelola.
 Pratinjau dengan data sintetis diperiksa pada `evidence/dashboard-summary-trimmed.png`.
+
+## Revisi kartu sesuai pilihan pengguna
+
+Pengguna meminta enam hitungan kembali menjadi kartu terpisah seperti sebelum antislop. Urutan sekarang: Hadir, Terlambat, Belum masuk, Tidak hadir, Izin, Anggota aktif; susunan tiga kolom dan dua baris. Teks penjelas yang telah dihapus tidak dikembalikan.
+R-14/R-31 PASS: ukuran dan tipografi kartu dibuat setara untuk membandingkan enam hitungan, sesuai pilihan pengguna. Pilihan ini menggantikan fokus angka Hadir yang lebih besar pada versi sebelumnya; identitas hijau dan tema tetap sama.
+R-03/R-32/R-35 PASS: dua tes UI terarah lulus; ketiga ukuran desktop tidak menunjukkan kartu bertabrakan atau gulir horizontal pada Dashboard. Kalender, keyboard, filter tanggal, dan dua kontrol demo tetap berfungsi. Bukti: `evidence/dashboard-cards.xml`; pratinjau sintetis diperiksa pada `evidence/dashboard-cards.png`.
+Delivery Gate sebelumnya tetap berlaku untuk item yang tidak berubah. Perubahan susunan dan hierarki mengikuti pilihan eksplisit pengguna di atas.
