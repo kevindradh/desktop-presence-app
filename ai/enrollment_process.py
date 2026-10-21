@@ -3,7 +3,7 @@ from dataclasses import dataclass,field,replace
 import os
 import hashlib,hmac,json,time
 import numpy as np
-from ai.enrollment import CaptureDraft,CaptureError,CapturePacket
+from ai.enrollment import AutoCapture,CaptureDraft,CaptureError,CapturePacket
 from ai.contracts import InferenceTimeout
 
 
@@ -16,18 +16,20 @@ class EnrollmentTarget:
         null=os.open(os.devnull,os.O_WRONLY)
         os.dup2(null,1);os.dup2(null,2);os.close(null)
         draft=None
+        automatic=None
         try:
             from ai.engine import FaceEngine
             if self.binding.get('purpose')!='verification':
                 options=replace(options,liveness_enabled=True,liveness_threshold=.85)
             engine=FaceEngine(root,model_dir,options)
             draft=CaptureDraft(binding=self.binding,key=self.key,model_version=engine.model_version,identity_threshold=options.similarity_threshold)
+            automatic=AutoCapture(draft)
             connection.send({'event':'ready','version':engine.model_version})
             while True:
                 command=connection.recv()
                 if command=='stop':
                     break
-                if command not in ('analyze','capture'):
+                if command not in ('analyze','capture','auto_capture'):
                     raise ValueError
                 with lock:
                     height,width=map(int,shape[:])
@@ -40,9 +42,13 @@ class EnrollmentTarget:
                     analysis=engine.analyze(frame)
                     message=''
                     verification=self.binding.get('purpose')=='verification'
-                    if command=='capture' and not verification:
+                    if command in ('capture','auto_capture') and not verification:
                         try:
-                            draft.add(analysis,frame)
+                            if command=='auto_capture':
+                                automatic.consider(analysis,frame)
+                            else:
+                                automatic.reset()
+                                draft.add(analysis,frame)
                         except CaptureError as error:
                             message=str(error)
                     response=dict(event='result',status=analysis.status,face_count=analysis.face_count,
@@ -74,6 +80,8 @@ class EnrollmentTarget:
             except (OSError,BrokenPipeError):
                 pass
         finally:
+            if automatic is not None:
+                automatic.reset()
             if draft is not None:
                 draft.clear()
             np.frombuffer(pixels,dtype=np.uint8).fill(0)

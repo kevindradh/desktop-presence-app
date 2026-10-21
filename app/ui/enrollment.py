@@ -22,6 +22,7 @@ class CaptureLab(AiLab):
         self.complete=False
         self.completed_photo=None
         self.preview_active=False
+        self.submitted_at=0.
         self.guides=dict(GUIDES,LEFT='Putar perlahan hingga hidung ke kiri gambar',
                          RIGHT='Putar perlahan hingga hidung ke kanan gambar')
         effective=config if verification else replace(config,liveness_enabled=True,liveness_threshold=.85)
@@ -85,8 +86,10 @@ class CaptureLab(AiLab):
     def pump(self):
         if self.complete or self.closing or not self.processing_allowed or self.inference.state!='ready':
             return
-        if self.latest is not None and time.monotonic()-self.latest_at<1:
-            if self.inference.submit(self.latest,capture=self.capture_requested):
+        if (self.latest is not None and time.monotonic()-self.latest_at<1
+                and (self.capture_requested or self.latest_at!=self.submitted_at)):
+            if self.inference.submit(self.latest,capture=self.capture_requested,auto_capture=not self.verification):
+                self.submitted_at=self.latest_at
                 self.capture_requested=False
 
     def analyzed(self,response):
@@ -159,6 +162,7 @@ class CaptureLab(AiLab):
 
     def stop(self):
         self.preview_active=False
+        self.submitted_at=0.
         self.capture_requested=False
         if hasattr(self,'complete'):
             self.complete=False

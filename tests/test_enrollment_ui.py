@@ -124,6 +124,26 @@ def test_stop_discards_complete_capture_and_restart_can_capture_again(auth,store
         assert session.scalar(select(func.count()).select_from(Member))==0
 
 
+def test_auto_capture_completes_without_capture_click_and_still_requires_save(auth,store,views,wait_until,monkeypatch):
+    view,page=ready(auth,views,wait_until)
+    install(view,monkeypatch)
+    page.capture_button.click()
+    settled(view,wait_until)
+    dialog=view.enrollment_dialog
+    dialog.lab.start_button.click()
+    wait_until(lambda:dialog.packet is not None,timeout=20000)
+    wait_until(lambda:not dialog.busy,timeout=8000)
+    assert dialog.lab.complete and dialog.save_button.isEnabled()
+    with store.db.transaction() as session:
+        assert session.scalar(select(func.count()).select_from(Member))==0
+        assert session.scalar(select(func.count()).select_from(FaceEmbedding))==0
+    dialog.save_button.click()
+    wait_until(lambda:view.enrollment_dialog is None,timeout=10000)
+    with store.db.transaction() as session:
+        assert session.scalar(select(func.count()).select_from(Member))==1
+        assert session.scalar(select(func.count()).select_from(FaceEmbedding))==5
+
+
 @pytest.mark.parametrize('action',['cancel','logout','password','close','timeout'])
 def test_capture_cancel_and_session_end_leave_no_member(auth,store,views,wait_until,monkeypatch,action):
     view,page=ready(auth,views,wait_until)

@@ -1,5 +1,7 @@
 """Preview follows the user's motion while inference and saved photos retain source orientation."""
 from PyQt6.QtGui import QColor,QImage
+import time
+import numpy as np
 
 from app.settings.config import load_config
 from app.ui.enrollment import CaptureLab
@@ -53,6 +55,27 @@ def test_registration_preview_follows_motion_without_flipping_inference_or_photo
         assert not lab.guide.isVisible()
         lab.frame(1,frame)
         assert lab.preview.text()=='' and lab.preview.pixmap().isNull()
+    finally:
+        lab.close()
+        qt_app.processEvents()
+
+
+def test_auto_capture_submits_distinct_frames_and_retains_manual_fallback(qt_app,tmp_path,monkeypatch):
+    lab=CaptureLab(load_config(tmp_path,environ={}),target=None)
+    calls=[]
+    monkeypatch.setattr(lab.inference,'state','ready')
+    monkeypatch.setattr(lab.inference,'submit',lambda frame,**options:calls.append(options) or True)
+    try:
+        lab.latest=np.zeros((40,80,3),np.uint8)
+        lab.latest_at=time.monotonic()
+        lab.pump()
+        lab.pump()
+        assert calls==[{'capture':False,'auto_capture':True}]
+        lab.latest_at+=.001
+        lab.pump()
+        assert len(calls)==2
+        lab.request_capture()
+        assert calls[-1]=={'capture':True,'auto_capture':True} and len(calls)==3
     finally:
         lab.close()
         qt_app.processEvents()

@@ -120,3 +120,58 @@ class CaptureDraft:
         self.samples.clear()
         self.photo=None
         self.front_pose=None
+
+
+class AutoCapture:
+    """Require consecutive valid, consistent observations before accepting a pose."""
+    def __init__(self,draft,*,clock=time.monotonic,hold_seconds=.6,min_observations=3,max_gap=2.):
+        self.draft=draft
+        self.clock=clock
+        self.hold_seconds=hold_seconds
+        self.min_observations=min_observations
+        self.max_gap=max_gap
+        self.reset()
+
+    def reset(self):
+        if getattr(self,'embedding',None) is not None:
+            self.embedding.fill(0)
+        self.embedding=None
+        self.pose=None
+        self.box=None
+        self.angle=None
+        self.began=self.last=None
+        self.observations=0
+
+    def consider(self,analysis,frame):
+        now=self.clock()
+        try:
+            pose=self.draft.status(analysis)
+        except CaptureError:
+            self.reset()
+            return False
+        box=analysis.box
+        if box is None or len(box)!=4 or not all(math.isfinite(v) for v in box) or box[2]<=box[0] or box[3]<=box[1]:
+            self.reset()
+            return False
+        same=(self.angle==self.draft.expected and self.pose is not None and self.last is not None
+              and 0<=now-self.last<=self.max_gap
+              and abs(pose[0]-self.pose[0])<=.04 and abs(pose[1]-self.pose[1])<=.05
+              and abs(pose[2]-self.pose[2])<=5
+              and all(abs(box[i]-self.box[i])<=.1*(self.box[2+i%2]-self.box[i%2]) for i in range(4))
+              and cosine_similarity(self.embedding,analysis.embedding)>=self.draft.identity_threshold)
+        if not same:
+            self.reset()
+            self.pose=pose
+            self.box=tuple(box)
+            self.angle=self.draft.expected
+            self.embedding=analysis.embedding.copy()
+            self.began=now
+        self.last=now
+        self.observations+=1
+        if self.observations<self.min_observations or now-self.began<self.hold_seconds:
+            return False
+        try:
+            self.draft.add(analysis,frame)
+            return True
+        finally:
+            self.reset()

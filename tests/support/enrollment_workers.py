@@ -2,7 +2,7 @@
 from dataclasses import dataclass,field
 import numpy as np
 import time,json,hmac,hashlib
-from ai.enrollment import CaptureDraft,ANGLES,CapturePacket
+from ai.enrollment import AutoCapture,CaptureDraft,ANGLES,CapturePacket
 from tests.test_enrollment_capture import analysis
 
 
@@ -13,6 +13,7 @@ class SyntheticEnrollmentTarget:
 
     def __call__(self,root,model_dir,options,pixels,shape,lock,connection):
         draft=CaptureDraft(binding=self.binding,key=self.key,model_version='synthetic-v1')
+        automatic=AutoCapture(draft)
         connection.send({'event':'ready'})
         while True:
             command=connection.recv()
@@ -24,9 +25,13 @@ class SyntheticEnrollmentTarget:
                 shape[:]=(0,0)
             expected=draft.expected
             verification=self.binding.get('purpose')=='verification'
-            if command=='capture' and not verification:
+            if command in ('capture','auto_capture') and not verification:
                 # Synthetic pose coordinates use 240x320 space; synthetic profile is independent.
-                draft.add(analysis(expected),np.full((240,320,3),(20,100,60),np.uint8))
+                profile=np.full((240,320,3),(20,100,60),np.uint8)
+                if command=='auto_capture':automatic.consider(analysis(expected),profile)
+                else:
+                    automatic.reset()
+                    draft.add(analysis(expected),profile)
             response=dict(event='result',status='ready',face_count=1,box=(10,10,80,80),points=(),
                 live_score=.99,live_class=1,elapsed_ms=10.,has_reference=False,similarity=None,matched=False,
                 captured=len(draft.samples),expected=draft.expected,capture_message='')
@@ -38,4 +43,5 @@ class SyntheticEnrollmentTarget:
             connection.send(response)
             image.fill(0)
         draft.clear()
+        automatic.reset()
         connection.close()

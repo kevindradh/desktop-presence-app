@@ -58,7 +58,7 @@ class InferenceController(QObject):
         self._state("loading")
         return True
 
-    def submit(self,frame,*,reference=False,capture=False):
+    def submit(self,frame,*,reference=False,capture=False,auto_capture=False):
         if self.state!="ready":
             return False
         frame=image_bgr(frame)
@@ -73,7 +73,7 @@ class InferenceController(QObject):
         finally:
             self.lock.release()
         try:
-            self.connection.send("capture" if capture else ("reference" if reference else "analyze"))
+            self.connection.send("capture" if capture else ("auto_capture" if auto_capture else ("reference" if reference else "analyze")))
         except (OSError,EOFError):
             self.stop(final_state="failed")
             return False
