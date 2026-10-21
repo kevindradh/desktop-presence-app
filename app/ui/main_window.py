@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
         row.setSpacing(0)
         sidebar = QFrame()
         sidebar.setObjectName("sidebar")
-        sidebar.setFixedWidth(224)
+        sidebar.setFixedWidth(272)
         rail = QVBoxLayout(sidebar)
         rail.setContentsMargins(18, 30, 18, 20)
         rail.setSpacing(12)
