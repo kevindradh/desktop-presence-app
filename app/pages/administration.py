@@ -73,7 +73,8 @@ class AdminPage(QWidget):
         self.buttons = []
         self.body = QVBoxLayout(self)
         self.body.setSpacing(14)
-        self.body.addWidget(text_label(description))
+        if description:
+            self.body.addWidget(text_label(description))
         self.message = text_label("")
         self.body.addWidget(self.message)
 
@@ -298,7 +299,7 @@ class ShiftsPage(AdminPage):
 
 class MembersPage(AdminPage):
     def __init__(self, controller):
-        super().__init__(controller, "members", "Kelola anggota dan registrasi wajah lima sudut. Foto profil dan embedding dihapus ketika anggota dinonaktifkan; riwayat absensi tetap disimpan.")
+        super().__init__(controller, "members", "")
         filters = QHBoxLayout()
         self.search = line(200)
         self.search.setPlaceholderText("Cari nama atau ID anggota")
