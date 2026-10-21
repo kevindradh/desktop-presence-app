@@ -9,7 +9,7 @@ from app.services.attendance import EVENTS
 from app.services.auth import AuthError
 from app.services.database import DatabaseUnavailable, DataValidationError
 from app.services.tasks import TaskController
-from app.widgets.attendance_chart import AttendanceChart
+from app.widgets.attendance_chart import AttendanceChart, attendance_legend
 from app.widgets.cards import text_label
 
 
@@ -89,7 +89,6 @@ class DashboardPage(QWidget):
         self.feed.setMinimumHeight(220)
         layout.addWidget(self.feed)
         layout.addWidget(text_label('Pola kehadiran', 'sectionTitle'))
-        layout.addWidget(text_label('Hijau menunjukkan Hadir. Jingga menunjukkan Terlambat, yang termasuk dalam Hadir.', 'muted'))
         charts = QGridLayout()
         self.charts = {}
         for i, (key, title, description) in enumerate((
@@ -103,6 +102,7 @@ class DashboardPage(QWidget):
             body.setContentsMargins(18, 16, 18, 16)
             body.addWidget(text_label(title, 'sectionTitle'))
             body.addWidget(text_label(description, 'muted'))
+            body.addWidget(attendance_legend())
             chart = AttendanceChart(trend=key in ('daily', 'monthly'))
             chart.set_rows((), empty_text='Menunggu data kehadiran...')
             self.charts[key] = chart

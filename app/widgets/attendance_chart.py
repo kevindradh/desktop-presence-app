@@ -1,7 +1,32 @@
 """Small Qt-native aggregate charts with an accessible text equivalent."""
 from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import QColor, QPainter, QPainterPath, QPen
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QFrame, QHBoxLayout, QWidget
+
+from app.widgets.cards import text_label
+
+
+PRESENT_COLOR = '#2d6240'
+LATE_COLOR = '#b36b19'
+
+
+def attendance_legend():
+    legend = QWidget()
+    legend.setAccessibleName('Legenda kehadiran')
+    row = QHBoxLayout(legend)
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(18)
+    for title, color in (('Hadir', PRESENT_COLOR), ('Terlambat', LATE_COLOR)):
+        item = QHBoxLayout()
+        item.setSpacing(6)
+        swatch = QFrame()
+        swatch.setFixedSize(12, 12)
+        swatch.setStyleSheet(f'background-color: {color}; border: none; border-radius: 2px;')
+        item.addWidget(swatch)
+        item.addWidget(text_label(title, wrap=False))
+        row.addLayout(item)
+    row.addStretch()
+    return legend
 
 
 class AttendanceChart(QWidget):
@@ -39,7 +64,7 @@ class AttendanceChart(QWidget):
             painter.drawLine(area.bottomLeft(), area.bottomRight())
             painter.setPen(QColor('#60736b'))
             painter.drawText(QRectF(0, 0, 32, 30), Qt.AlignmentFlag.AlignCenter, str(maximum))
-            for attribute, color in (('present', '#2d6240'), ('late', '#b36b19')):
+            for attribute, color in (('present', PRESENT_COLOR), ('late', LATE_COLOR)):
                 path = QPainterPath()
                 for i, row in enumerate(self.rows):
                     point = QPointF(area.left()+i*area.width()/max(1, len(self.rows)-1),
@@ -60,8 +85,8 @@ class AttendanceChart(QWidget):
                 painter.setPen(QColor('#243a33'))
                 label = painter.fontMetrics().elidedText(row.label, Qt.TextElideMode.ElideRight, int(label_width)-8)
                 painter.drawText(QRectF(0, y, label_width-8, 24), Qt.AlignmentFlag.AlignVCenter, label)
-                painter.fillRect(QRectF(label_width, y+3, width*row.present/maximum, 8), QColor('#2d6240'))
-                painter.fillRect(QRectF(label_width, y+14, width*row.late/maximum, 6), QColor('#b36b19'))
+                painter.fillRect(QRectF(label_width, y+3, width*row.present/maximum, 8), QColor(PRESENT_COLOR))
+                painter.fillRect(QRectF(label_width, y+14, width*row.late/maximum, 6), QColor(LATE_COLOR))
                 painter.drawText(QRectF(label_width+width+6, y, 65, 24), Qt.AlignmentFlag.AlignVCenter,
                                  f'{row.present} / {row.late}')
         painter.end()

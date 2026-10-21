@@ -136,3 +136,10 @@ Judul kini 20 aktivitas terbaru; kalimat batas 20 catatan dan status sukses beri
 R-15/R-17/R-31 PASS: judul menyebut batas query sebenarnya tanpa kalimat pendamping berulang; penghapusan status sukses memberi ruang untuk aktivitas.
 R-03/R-27/R-32/R-35 PASS: empat tes UI terarah lulus, meliputi error awal, error setelah data tersedia dan pemulihan, tiga ukuran desktop, filter/keyboard, dan kontrol demo. Bukti: `evidence/dashboard-activity-title.xml`; tangkapan layar sintetis diperiksa pada `evidence/dashboard-activity-title.png`.
 Delivery Gate lainnya tetap berlaku untuk komponen dan perhitungan yang tidak diubah.
+
+## Legenda pada setiap grafik
+
+Kalimat tentang hijau dan jingga di bawah judul Pola kehadiran dihapus. Keempat kartu grafik kini memiliki legenda Hadir dan Terlambat sendiri sesuai permintaan pengguna.
+R-04/R-23/R-25/R-31 PASS: kotak warna berfungsi sebagai penanda seri yang diminta pengguna, bukan dekorasi; label memakai teks gelap pada latar putih. Legenda dan grafik menggunakan konstanta warna yang sama agar maknanya selalu sesuai.
+R-03/R-32/R-35 PASS: dua tes UI terarah lulus pada tiga ukuran desktop dan kontrol filter/demo tetap berfungsi. Tampilan lengkap empat legenda diperiksa pada `evidence/dashboard-chart-legends.png`; hasil uji pada `evidence/dashboard-chart-legends.xml`.
+Delivery Gate lainnya tetap berlaku untuk sumber data, susunan kartu, dan kontrol yang tidak diubah.
