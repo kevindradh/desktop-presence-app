@@ -1,6 +1,6 @@
 """User management view; callbacks invoke the service authorization boundary."""
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (QCheckBox, QComboBox, QFormLayout, QHBoxLayout, QLineEdit,
+from PyQt6.QtWidgets import (QCheckBox, QComboBox, QGridLayout, QHBoxLayout, QLineEdit,
     QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 from app.models.entities import Role
 from app.widgets.cards import text_label
@@ -14,8 +14,6 @@ class UsersPage(QWidget):
         self.selected_id = None
         body = QVBoxLayout(self)
         body.setSpacing(14)
-        body.addWidget(text_label("Pengguna", "pageTitle"))
-        body.addWidget(text_label("Buat akun, ubah peran, atau nonaktifkan akses. Riwayat akun tetap disimpan."))
         self.table = QTableWidget(0, 4)
         self.table.setHorizontalHeaderLabels(["Username", "Nama lengkap", "Peran", "Status"])
         self.table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -23,27 +21,36 @@ class UsersPage(QWidget):
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.itemSelectionChanged.connect(self._select)
         body.addWidget(self.table)
-        form = QFormLayout()
-        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        self.form_widget = QWidget()
+        form = QGridLayout(self.form_widget)
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setHorizontalSpacing(20)
+        form.setVerticalSpacing(12)
+        form.setColumnStretch(1, 1)
+        form.setColumnStretch(3, 1)
         self.username, self.fullname, self.password = QLineEdit(), QLineEdit(), QLineEdit()
         self.username.setMaxLength(80)
         self.fullname.setMaxLength(200)
         self.password.setEchoMode(QLineEdit.EchoMode.Password)
-        self.password.setPlaceholderText("12–72 byte UTF-8; hanya untuk akun baru")
         self.role = QComboBox()
         for role in Role:
             self.role.addItem(role.value.replace("_", " ").title(), role.value)
         self.active = QCheckBox("Akun aktif")
         self.active.setChecked(True)
-        form.addRow("Username", self.username)
-        form.addRow("Nama lengkap", self.fullname)
-        form.addRow("Peran", self.role)
-        form.addRow("Password awal", self.password)
-        form.addRow("Status", self.active)
-        body.addLayout(form)
+        fields = (("Username", self.username), ("Nama lengkap", self.fullname),
+                  ("Peran", self.role), ("Password", self.password), ("Status", self.active))
+        for index, (title, field) in enumerate(fields):
+            label = text_label(title, wrap=False)
+            label.setBuddy(field)
+            column = (index % 2)*2
+            form.addWidget(label, index//2, column)
+            form.addWidget(field, index//2, column+1)
+        for previous, current in zip(fields, fields[1:]):
+            QWidget.setTabOrder(previous[1], current[1])
+        body.addWidget(self.form_widget)
         buttons = QHBoxLayout()
-        self.new_button = QPushButton("Form akun baru")
-        self.save_button = QPushButton("Simpan pengguna")
+        self.new_button = QPushButton("Tambah")
+        self.save_button = QPushButton("Simpan")
         self.refresh_button = QPushButton("Refresh")
         self.reset_button = QPushButton("Reset password")
         for button in (self.new_button, self.save_button, self.refresh_button, self.reset_button):
@@ -69,7 +76,7 @@ class UsersPage(QWidget):
         self.active.setEnabled(False)
         self.role.setCurrentIndex(self.role.findData(Role.VIEWER.value))
         self.reset_button.setEnabled(False)
-        self.message.setText("Pengguna dapat mengganti password sendiri melalui menu Ganti password.")
+        self.message.clear()
 
     def _select(self):
         index = self.table.currentRow()
@@ -85,7 +92,7 @@ class UsersPage(QWidget):
         self.password.clear()
         self.password.setEnabled(False)
         self.reset_button.setEnabled(user.id != self.controller.login.principal.id)
-        self.message.setText("Hapus akses dengan menonaktifkan akun, kemudian simpan.")
+        self.message.clear()
 
     def display(self, rows):
         self.rows = rows
