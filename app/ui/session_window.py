@@ -238,8 +238,7 @@ class SessionWindow(QMainWindow):
         self.setup_close.clicked.connect(self.close)
 
     def _build_password(self):
-        self.password_panel, body = self._panel("Ganti password",
-            "Password baru harus 12–72 byte UTF-8 dan berbeda dari password saat ini.")
+        self.password_panel, body = self._panel("Ganti password")
         form = QFormLayout()
         form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
         self.old_password, self.new_password, self.confirm_password = (secret_field() for _ in range(3))

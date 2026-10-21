@@ -15,3 +15,7 @@ Arah tetap memakai tema hijau StarGate dan font sistem, ENERGY 1 / RHYTHM 2 / MO
 - PASS, Copywriting: teks baru menyebut tindakan secara singkat sesuai arahan pengguna, tanpa jargon atau klaim baru.
 
 Bukti: `evidence/users-layout.xml` (3 tes lulus) dan `evidence/users-layout.png` (form terpisah tanpa data nyata).
+
+## Keterangan Ganti password
+
+Review pengguna berikutnya meminta penghapusan kalimat persyaratan panjang byte UTF-8 dan perbedaan password pada halaman Ganti password. Kalimat tersebut dihapus beserta ruang label melalui parameter deskripsi kosong. Validasi layanan tetap berlaku. Delivery Gate revisi teks PASS: tidak menambah kontrol, aset atau klaim; susunan isian, tema dan fungsi tetap sama. Diff diperiksa; tes fungsional tidak diulang untuk penghapusan satu keterangan saja.
