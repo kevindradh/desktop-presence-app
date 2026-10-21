@@ -86,7 +86,7 @@ Sebelum build, CLI sumber:
 .\.venv-win\Scripts\python.exe scripts/manage_database.py check --data-dir "$env:LOCALAPPDATA\StarGate"
 ```
 
-Setelah terpasang, padanannya `StarGateAdmin.exe upgrade`, `seed`, `bootstrap-admin`, `check`; default data-dir diambil otomatis dari LOCALAPPDATA. Bootstrap hanya pada instance yang belum memiliki Super Admin aktif, meminta password interaktif dan wajib ganti awal. Migrasi tidak berjalan otomatis saat GUI dibuka.
+Setelah terpasang, padanannya `StarGateAdmin.exe upgrade`, `seed`, `bootstrap-admin`, `check`; default data-dir diambil otomatis dari LOCALAPPDATA. Bootstrap hanya pada instance yang belum memiliki Super Admin aktif, meminta password interaktif. Pada versi sumber terbaru penggantian password bersifat opsional. Migrasi tidak berjalan otomatis saat GUI dibuka.
 
 ## 5. Build, probe dan installer
 

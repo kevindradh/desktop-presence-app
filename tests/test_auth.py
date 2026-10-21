@@ -37,17 +37,16 @@ def add_role(service, admin, role, username=None):
     return user, service.change_password(login.token, OLD, NEW)
 
 
-def test_first_password_gate_and_hash_only_persistence(store):
+def test_first_login_and_voluntary_password_change_preserve_hash_security(store):
     with store.db.transaction() as session:
         seed_defaults(session)
     service = AuthService(store.db)
     service.bootstrap("root", "Pengelola", OLD)
     login = service.login("root", OLD)
-    assert login.principal.must_change_password
-    with pytest.raises(AuthError, match="Ganti password"):
-        service.authorize(login.token, "users")
-    with pytest.raises(AuthError):
-        service.remember(login.token)
+    assert not login.principal.must_change_password
+    assert service.authorize(login.token, "users")
+    grant = service.remember(login.token)
+    assert service.resume(grant.token)
     with pytest.raises(AuthError, match="saat ini"):
         service.change_password(login.token, "wrong", NEW)
     with pytest.raises(DataValidationError):
@@ -193,9 +192,8 @@ def test_user_crud_case_unique_reset_and_revocation(auth, store):
     with pytest.raises(AuthError):
         service.login("petugas", NEW)
     reset_login = service.login("petugas", temporary.value)
-    assert reset_login.principal.must_change_password
-    with pytest.raises(AuthError):
-        service.authorize(reset_login.token, "reports")
+    assert not reset_login.principal.must_change_password
+    assert service.authorize(reset_login.token, "reports")
     final = service.change_password(reset_login.token, temporary.value, "Final-password-2026!")
     assert service.authorize(final.token, "reports")
     service.update_user(admin.token, user.id, "petugas", "Petugas Baru", Role.VIEWER, False)
@@ -239,3 +237,25 @@ def test_invalid_tokens_unknown_users_and_inactive_are_denied(auth):
     service.update_user(admin.token, user.id, "inactive", "Inactive", Role.VIEWER, False)
     with pytest.raises(AuthError, match="Username atau password"):
         service.login("inactive", OLD)
+
+
+def test_optional_password_migration_preserves_accounts_and_sessions(auth, store):
+    from alembic import command
+    from database.runtime import alembic_config, upgrade, schema_status
+    from sqlalchemy import inspect
+    service, login, _ = auth
+    with store.db.transaction() as session:
+        original_hash = session.get(User, login.principal.id).password_hash
+        original_sessions = session.scalar(select(func.count()).select_from(AuthSession))
+    with store.migration.begin() as connection:
+        command.downgrade(alembic_config(connection, application_role=store.config.user), '0004_devices')
+        connection.execute(User.__table__.update().values(must_change_password=True))
+        upgrade(connection, application_role=store.config.user)
+        assert schema_status(connection)['at_head']
+        column = next(c for c in inspect(connection).get_columns('users') if c['name']=='must_change_password')
+        assert 'false' in column['default'].lower()
+    with store.db.transaction() as session:
+        user = session.get(User, login.principal.id)
+        assert not user.must_change_password and user.password_hash == original_hash
+        assert session.scalar(select(func.count()).select_from(AuthSession)) == original_sessions
+    assert service.authorize(login.token, 'users')

@@ -3,6 +3,8 @@
 Tanggal dibuat: 18 Oktober 2026; pembaruan tahap aktif: 20 Oktober 2026  
 Status: Tahap 0–13 telah direview/disetujui pengguna pada cakupan tersedia; RTSP positif tetap tertunda. Tahap14: installer Windows x64 sudah dibangun dan dipasang di Windows11 ARM64 Parallels; uji akun standar, model, database, kedua kamera, backup/restore sintetis, probe offline dan repair/uninstall/reinstall lulus. Review/uji mandiri Windows masih terbuka; Tahap15 belum dimulai. Rincian jumlah uji wajah nyata tidak disimpulkan dari persetujuan review.
 
+Revisi pengguna 21 Oktober 2026: penyiapan Super Admin otomatis sebelum login dan penggantian password opsional untuk seluruh akun, termasuk hasil reset. Migrasi0005 mempertahankan akun, password dan riwayat; Tahap15 tetap belum dimulai.
+
 ## 1. Acuan dan tujuan
 
 Membangun aplikasi desktop absensi wajah StarGate secara bertahap sesuai:

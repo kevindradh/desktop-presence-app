@@ -119,9 +119,9 @@ Dari folder proyek:
 1. Jika belum ada Super Admin aktif, halaman **Buat Super Admin** muncul otomatis sebelum login. Isi username, nama
    dan password awal 12–72 byte UTF-8, lalu ulangi password. Tidak ada akun atau
    password bawaan. Jika sudah membuat akun melalui CLI, gunakan akun tersebut.
-2. Masuk dengan akun tadi. Ganti password awal sebelum membuka ruang kerja.
-3. Buka **Pengguna** untuk membuat akun Admin, Operator atau Viewer. Akun baru
-   wajib mengganti password awal saat pertama masuk. Hanya Super Admin yang
+2. Masuk dengan akun tadi untuk langsung membuka ruang kerja. Ganti password tersedia kapan saja melalui menu akun.
+3. Buka **Pengguna** untuk membuat akun Admin, Operator atau Viewer. Penggantian
+   password bersifat opsional untuk akun baru maupun hasil reset. Hanya Super Admin yang
    dapat membuat, mengubah, menonaktifkan atau mereset akun.
 4. Coba **Ganti password**, **Keluar akun**, password salah, dan navigasi tiap
    role. Viewer hanya memperoleh Laporan; halaman laporan masih pratinjau.

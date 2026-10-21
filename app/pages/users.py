@@ -69,7 +69,7 @@ class UsersPage(QWidget):
         self.active.setEnabled(False)
         self.role.setCurrentIndex(self.role.findData(Role.VIEWER.value))
         self.reset_button.setEnabled(False)
-        self.message.setText("Akun baru wajib mengganti password saat pertama masuk.")
+        self.message.setText("Pengguna dapat mengganti password sendiri melalui menu Ganti password.")
 
     def _select(self):
         index = self.table.currentRow()

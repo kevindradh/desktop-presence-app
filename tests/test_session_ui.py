@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtTest import QTest
-from PyQt6.QtWidgets import QApplication, QDialog, QDialogButtonBox, QLineEdit
+from PyQt6.QtWidgets import QApplication, QDialog, QDialogButtonBox, QLabel, QLineEdit
 
 from app.models.entities import Role
 from app.services.auth import AuthService
@@ -85,7 +85,7 @@ def screenshot(window, name):
         assert window.grab().save(str(path / name))
 
 
-def test_login_forced_change_remember_restart_logout_and_error_recovery(store, views, wait_until):
+def test_login_remember_restart_voluntary_password_change_logout_and_error_recovery(store, views, wait_until):
     from database.seed.defaults import seed_defaults
     with store.db.transaction() as session:
         seed_defaults(session)
@@ -96,8 +96,10 @@ def test_login_forced_change_remember_restart_logout_and_error_recovery(store, v
     sign_in(view, "root", "wrong", wait_until)
     assert view.login is None and "tidak sesuai" in view.login_message.text()
     sign_in(view, "root", OLD, wait_until, remember=True)
+    assert view.stack.currentWidget() is view.shell
+    assert view.shell is not None and view.credentials.get() and not view.password.text()
+    view.open_password()
     assert view.stack.currentWidget() is view.password_panel
-    assert view.shell is None and not view.password.text()
     view.new_password.setText(NEW)
     view.confirm_password.setText("mismatch")
     view.change_password()
@@ -180,6 +182,8 @@ def test_users_form_create_edit_reset_and_deactivate(auth, views, wait_until):
         if modal is None:
             QTimer.singleShot(20, close_secret)
             return
+        assert modal.windowTitle() == "Password hasil reset — tampil sekali"
+        assert not any('wajib' in label.text().lower() for label in modal.findChildren(QLabel))
         temporary.append(modal.findChild(QLineEdit).text())
         modal.reject()
     QTimer.singleShot(20, close_secret)
@@ -187,7 +191,7 @@ def test_users_form_create_edit_reset_and_deactivate(auth, views, wait_until):
     idle(view, wait_until)
     wait_until(lambda: len(temporary) == 1, timeout=5000)
     assert len(temporary) == 1 and len(temporary[0]) >= 12
-    assert service.login("viewer-ui", temporary[0]).principal.must_change_password
+    assert not service.login("viewer-ui", temporary[0]).principal.must_change_password
     assert not page.findChildren(QLineEdit)[-1].text()
     temporary.clear()
     screenshot(view, "stage-04-users.png")
@@ -253,7 +257,7 @@ def test_close_waits_for_login_and_diagnostic_workers(auth, views, wait_until):
     assert not another.shell.tasks.busy
 
 
-def test_first_run_setup_before_login_and_forced_logout(store, views, wait_until):
+def test_first_run_setup_before_login_and_voluntary_password_change(store, views, wait_until):
     from database.seed.defaults import seed_defaults
     from PyQt6.QtWidgets import QPushButton
     with store.db.transaction() as session:
@@ -285,8 +289,12 @@ def test_first_run_setup_before_login_and_forced_logout(store, views, wait_until
     view.bootstrap()
     assert view.stack.currentWidget() is view.login_panel
     sign_in(view, "first", OLD, wait_until)
+    assert view.stack.currentWidget() is view.shell and view.shell is not None
+    view.open_password()
     assert view.stack.currentWidget() is view.password_panel
     view._cancel_password()
+    assert view.stack.currentWidget() is view.shell
+    view.logout()
     idle(view, wait_until)
     assert view.login is None and view.stack.currentWidget() is view.login_panel
     restarted = views(service)
@@ -334,17 +342,17 @@ def test_first_run_setup_handles_admin_created_by_another_instance(store, views,
         assert session.scalar(select(User.username)) == "other"
 
 
-@pytest.mark.parametrize("forced", [True, False])
+@pytest.mark.parametrize("new_account", [True, False])
 def test_password_inputs_keep_focus_and_accept_typing_during_session_checks(
-        auth, views, wait_until, monkeypatch, forced):
+        auth, views, wait_until, monkeypatch, new_account):
     from threading import Event
     service, admin, _ = auth
-    if forced:
+    if new_account:
         service.create_user(admin.token, "first-login", "Akun Pertama", Role.VIEWER, OLD)
     view = views(service)
-    sign_in(view, "first-login" if forced else "root", OLD if forced else NEW, wait_until)
-    if not forced:
-        view.open_password()
+    sign_in(view, "first-login" if new_account else "root", OLD if new_account else NEW, wait_until)
+    assert view.stack.currentWidget() is view.shell
+    view.open_password()
     assert view.stack.currentWidget() is view.password_panel
     view.timer.stop()
     original = service.inspect
@@ -413,3 +421,25 @@ def test_user_save_waits_for_poll_and_is_discarded_if_session_fails(
     else:
         assert view.login is None and view.jobs.queued is None
         assert next(row for row in service.users(admin.token) if row.id == user.id).fullname != "Queued edit"
+
+
+@pytest.mark.parametrize('account_state', ['new', 'reset', 'legacy_flag'])
+def test_managed_accounts_can_login_remember_and_choose_password_change(auth, store, views, wait_until, account_state):
+    from app.models.entities import User
+    service, admin, _ = auth
+    user = service.create_user(admin.token, 'optional-change', 'Pengguna Uji', Role.VIEWER, OLD)
+    password = OLD
+    if account_state == 'reset':
+        password = service.reset_password(admin.token, user.id).value
+    elif account_state == 'legacy_flag':
+        with store.db.transaction() as session:
+            session.get(User, user.id).must_change_password = True
+    view = views(service)
+    sign_in(view, 'optional-change', password, wait_until, remember=True)
+    assert view.shell is not None and view.stack.currentWidget() is view.shell
+    assert view.credentials.get() and view.shell.routes[0][0] == 'reports'
+    view.open_password()
+    assert view.stack.currentWidget() is view.password_panel
+    assert view.cancel_change.text() == 'Kembali'
+    view._cancel_password()
+    assert view.stack.currentWidget() is view.shell and view.login is not None

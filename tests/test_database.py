@@ -249,7 +249,7 @@ def test_bootstrap_is_hashed_unique_and_no_password_in_audit(store):
     with store.db.transaction() as session:
         user = bootstrap_super_admin(session,"test_admin","Admin Uji","synthetic-password-only")
         assert bcrypt.checkpw(b"synthetic-password-only",user.password_hash.encode())
-        assert user.must_change_password
+        assert not user.must_change_password
         assert UserRepository(session).by_username("TEST_ADMIN").id == user.id
         assert "synthetic-password-only" not in str([e.details for e in AuditRepository(session).recent()])
     with pytest.raises(DataValidationError):

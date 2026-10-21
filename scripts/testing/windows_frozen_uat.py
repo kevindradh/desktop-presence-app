@@ -68,7 +68,7 @@ def run():
             assert session.scalar(select(func.count()).select_from(User))==0, 'Refusing to reuse a populated test database'
             bootstrap_super_admin(session,'frozen_uat_admin','Penguji Sintetis Windows',initial)
         login=auth.login('frozen_uat_admin',initial)
-        assert login.principal.must_change_password
+        assert not login.principal.must_change_password
         login=auth.change_password(login.token,initial,changed)
         assert not login.principal.must_change_password
         image=QImage(12,12,QImage.Format.Format_RGB32);image.fill(QColor('#17602f'))

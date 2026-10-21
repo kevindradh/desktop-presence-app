@@ -148,7 +148,7 @@ class AuthService:
             raise error
         return result
 
-    def _validate(self, session, token, *, remember=False, allow_change=False, touch=False):
+    def _validate(self, session, token, *, remember=False, touch=False):
         record = session.scalar(select(AuthSession).where(AuthSession.token_hash == digest(token or "")))
         now = self.clock()
         if record is None or record.revoked or record.is_remember != remember:
@@ -160,17 +160,15 @@ class AuthService:
             self._revoke(session, user.id)
             self._audit(session, "auth.session_expired", user, user)
             return None, AuthError("Sesi berakhir. Silakan masuk kembali.")
-        if user.must_change_password and not allow_change:
-            return None, AuthError("Ganti password awal atau sementara sebelum melanjutkan.")
         if touch:
             record.last_activity = now
         return user, None
 
-    def _protected(self, token, permission, operation, *, allow_change=False, touch=False):
+    def _protected(self, token, permission, operation, *, touch=False):
         result = None
         with self.database.transaction() as session:
             self._lock(session)
-            user, error = self._validate(session, token, allow_change=allow_change, touch=touch)
+            user, error = self._validate(session, token, touch=touch)
             if not error and permission and permission not in PERMISSIONS[user.role]:
                 error = AuthError("Akun Anda tidak memiliki izin untuk tindakan ini.")
                 self._audit(session, "auth.access_denied", user, user)
@@ -184,13 +182,13 @@ class AuthService:
         return self._protected(token, permission, lambda s, u: principal(u), touch=touch)
 
     def inspect(self, token, *, touch=False):
-        return self._protected(token, None, lambda s, u: principal(u), allow_change=True, touch=touch)
+        return self._protected(token, None, lambda s, u: principal(u), touch=touch)
 
     def logout(self, token):
         def operation(session, user):
             self._revoke(session, user.id)
             self._audit(session, "auth.logout", user, user)
-        return self._protected(token, None, operation, allow_change=True)
+        return self._protected(token, None, operation)
 
     def close_session(self, token):
         # A clean close ends this interactive session but leaves remember credentials.
@@ -236,7 +234,7 @@ class AuthService:
             self._revoke(session, user.id)
             self._audit(session, "user.password_changed", user, user)
             return self._issue(session, user)
-        return self._protected(token, None, operation, allow_change=True)
+        return self._protected(token, None, operation)
 
     def users(self, token):
         return self._protected(token, "users", lambda s, u: [principal(row) for row in
@@ -285,7 +283,7 @@ class AuthService:
                 raise DataValidationError("Gunakan Ganti password untuk akun sendiri.")
             temporary = secrets.token_urlsafe(18)
             user.password_hash = password_hash(temporary)
-            user.must_change_password, user.failed_attempts, user.locked_until = True, 0, None
+            user.must_change_password, user.failed_attempts, user.locked_until = False, 0, None
             self._revoke(session, user.id)
             self._audit(session, "user.password_reset", user, actor)
             return TemporaryPassword(temporary)

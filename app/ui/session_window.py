@@ -350,9 +350,7 @@ class SessionWindow(QMainWindow):
         self.login = login
         self._touched = False
         self._message("")
-        if login.principal.must_change_password:
-            self.open_password()
-        elif self._remember_requested:
+        if self._remember_requested:
             self._save_remember()
         else:
             self._open_shell()
@@ -447,7 +445,7 @@ class SessionWindow(QMainWindow):
         self.jobs.run(lambda: self.service.authorize(self.login.token, route), done)
 
     def _handle_denial(self, error):
-        if "Sesi berakhir" in error or "Ganti password awal" in error or error.startswith("Database "):
+        if "Sesi berakhir" in error or error.startswith("Database "):
             self._return_login(error)
         else:
             self._message(error)
@@ -462,14 +460,10 @@ class SessionWindow(QMainWindow):
         self.new_password.clear()
         self.confirm_password.clear()
         self.password_message.setText("")
-        self.cancel_change.setText("Keluar akun" if self.login.principal.must_change_password else "Kembali")
         self.stack.setCurrentWidget(self.password_panel)
 
     def _cancel_password(self):
-        if self.login.principal.must_change_password:
-            self.logout()
-        else:
-            self.stack.setCurrentWidget(self.shell)
+        self.stack.setCurrentWidget(self.shell)
 
     def change_password(self):
         if (self.jobs.tasks.busy and self.jobs.blocks_ui) or not self.login:
@@ -524,7 +518,7 @@ class SessionWindow(QMainWindow):
                 self.stack.setCurrentWidget(self.login_panel)
                 if result.value:
                     self.username.setText(name)
-                self._message("Super Admin dibuat. Silakan masuk dan ganti password awal." if result.value
+                self._message("Super Admin dibuat. Silakan masuk." if result.value
                     else "Super Admin sudah tersedia. Silakan masuk dengan akun yang sudah dibuat.")
         self.jobs.run(operation, done)
 
@@ -562,12 +556,12 @@ class SessionWindow(QMainWindow):
                 self._handle_denial(result.error)
                 return
             dialog = QDialog(self)
-            dialog.setWindowTitle("Password sementara — tampil sekali")
+            dialog.setWindowTitle("Password hasil reset — tampil sekali")
             form = QFormLayout(dialog)
-            form.addRow(text_label("Sampaikan password ini kepada pemilik akun. Wajib diganti saat masuk."))
+            form.addRow(text_label("Sampaikan password ini kepada pemilik akun. Pengguna dapat menggantinya melalui menu Ganti password."))
             value = QLineEdit(result.value.value)
             value.setReadOnly(True)
-            form.addRow("Password sementara", value)
+            form.addRow("Password baru", value)
             buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
             buttons.rejected.connect(dialog.reject)
             form.addRow(buttons)

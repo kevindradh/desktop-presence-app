@@ -185,7 +185,8 @@ class User(Identified, Created, Base):
     role: Mapped[Role] = mapped_column(enum_column(Role, "user_role"))
     last_login: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
-    must_change_password: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    # Retained for existing backup/schema compatibility; password changes are voluntary.
+    must_change_password: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     failed_attempts: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     __table_args__ = (Index("uq_users_username_ci", func.lower(username), unique=True),
