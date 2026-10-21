@@ -62,8 +62,6 @@ class MainWindow(QMainWindow):
         self.show_route(self.routes[0][0])
         if not config.env_loaded:
             self.statusBar().showMessage("Konfigurasi dasar aktif. File .env belum tersedia.")
-        else:
-            self.statusBar().showMessage("Absensi wajah tersedia • Jalankan kamera dari halaman Kehadiran")
         self.logger.info("Application shell opened")
 
     def _build_ui(self):
