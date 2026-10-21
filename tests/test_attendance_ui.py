@@ -91,6 +91,25 @@ def test_camera_inference_commit_feedback_sound_history_and_latch(attendance, st
     assert member_page.detail.history_total==2
 
 
+def test_already_recorded_notice_only_once_while_face_remains(attendance,store,views,wait_until):
+    view,page=ready(attendance,views,wait_until,store)
+    page.mode.setCurrentIndex(page.mode.findData('IN'))
+    page.start_button.click()
+    wait_until(lambda:page.sound.plays==1,timeout=12000)
+    page.stop_button.click()
+    wait_until(lambda:not page.busy and not view.cameras.busy,timeout=8000)
+    page.start_button.click()
+    wait_until(lambda:bool(page.nodes) and next(iter(page.nodes.values())).preview.notice.isVisible(),timeout=12000)
+    preview=next(iter(page.nodes.values())).preview
+    assert preview.notice.text()=='Sudah absen.'
+    attendance.now[0]+=timedelta(seconds=61)
+    wait_until(lambda:not preview.notice.isVisible(),timeout=4500)
+    QTest.qWait(500)
+    assert not preview.notice.isVisible() and len(rows(store))==1 and page.sound.plays==1
+    page.stop_button.click()
+    wait_until(lambda:not page.busy and not view.cameras.busy,timeout=8000)
+
+
 @pytest.mark.parametrize('action',['stop','navigation','password','logout','close','timeout'])
 def test_attendance_lifecycle_releases_workers_and_camera(attendance, store, views, wait_until, auth, action):
     view,page=ready(attendance,views,wait_until,store,status='spoof')

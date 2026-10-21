@@ -26,6 +26,10 @@ EVENTS = {'IN': 'Masuk', 'OUT': 'Keluar', 'BREAK_OUT': 'Mulai istirahat', 'BREAK
 UTC = timezone.utc
 
 
+class AlreadyRecorded(DataValidationError):
+    pass
+
+
 @dataclass(frozen=True, repr=False)
 class AttendanceCapture:
     spec: object = field(repr=False)
@@ -41,6 +45,7 @@ class AttendanceFeedback:
     event: str = ''
     similarity: float | None = None
     restart: bool = False
+    reason: str = ''
 
 
 @dataclass(frozen=True)
@@ -75,6 +80,8 @@ def next_event(previous, mode):
     allowed = {None: {'IN'}, 'IN': {'OUT', 'BREAK_OUT'},
                'BREAK_OUT': {'BREAK_IN'}, 'BREAK_IN': {'BREAK_OUT', 'OUT'}, 'OUT': set()}
     if mode not in allowed.get(previous, set()):
+        if previous == 'OUT' or (mode == 'IN' and previous is not None):
+            raise AlreadyRecorded('Urutan absensi tidak sah atau sesi shift sudah selesai.')
         raise DataValidationError('Urutan absensi tidak sah atau sesi shift sudah selesai.')
     return AttendanceType(mode)
 
@@ -196,7 +203,7 @@ class AttendanceService:
                 return AttendanceFeedback(False, 'Perangkat atau lokasi berubah. Muat ulang dan mulai kembali.', restart=True)
             if data['kind'] == 'absence':
                 flow['latched'] = None
-                return AttendanceFeedback(False, 'Siap untuk scan berikutnya.')
+                return AttendanceFeedback(False, 'Siap untuk scan berikutnya.', reason='absence')
             match = identify(session, data['vector'], model_version=data['model_version'], threshold=values['similarity_threshold'])
             if match.member_id is None:
                 return AttendanceFeedback(False, 'Face Not Recognized — wajah tidak dikenali.', similarity=match.similarity)
@@ -208,7 +215,7 @@ class AttendanceService:
                 for other in list(self.flows.values()))
             if present_in_group:
                 flow['latched'] = member.id
-                return AttendanceFeedback(False, 'Scan sudah tersimpan. Tinggalkan area kamera sebentar sebelum scan lagi.', member_id=member.id)
+                return AttendanceFeedback(False, 'Scan sudah tersimpan. Tinggalkan area kamera sebentar sebelum scan lagi.', member_id=member.id, reason='already_recorded')
             now = self._now()
             if values['auto_checkout']:
                 self._close_due(session, actor, now, member_id=member.id)
@@ -216,7 +223,7 @@ class AttendanceService:
                 .order_by(Attendance.attendance_time.desc(), Attendance.id.desc()).limit(1))
             if latest and now < latest.attendance_time + timedelta(seconds=values['duplicate_window']):
                 flow['latched'] = member.id
-                return AttendanceFeedback(False, 'Absensi berulang ditolak; tunggu sampai jeda selesai.', member_id=member.id)
+                return AttendanceFeedback(False, 'Absensi berulang ditolak; tunggu sampai jeda selesai.', member_id=member.id, reason='already_recorded')
             try:
                 shift, work_date, start, end, previous, status = self._session(session, member, location, now)
                 event = next_event(previous, binding['mode'])
@@ -225,7 +232,8 @@ class AttendanceService:
                 if event == AttendanceType.IN:
                     status = AttendanceStatus.PRESENT if now <= start+timedelta(minutes=shift.grace_minutes) else AttendanceStatus.LATE
             except DataValidationError as error:
-                return AttendanceFeedback(False, str(error), member_id=member.id)
+                return AttendanceFeedback(False, str(error), member_id=member.id,
+                    reason='already_recorded' if isinstance(error, AlreadyRecorded) else '')
             self._fresh(data, binding)
             row = self._record(session, actor, member, device.id, shift.id, work_date, event,
                 now, status, early=(event == AttendanceType.OUT and now < end))
@@ -275,7 +283,7 @@ class AttendanceService:
                     Attendance.shift_id == shift.id, Attendance.work_date == work_date)
                     .order_by(Attendance.attendance_time.desc(), Attendance.id.desc()).limit(1))
                 if previous:
-                    raise DataValidationError('Sesi shift ini sudah selesai; check-in kedua ditolak.')
+                    raise AlreadyRecorded('Sesi shift ini sudah selesai; check-in kedua ditolak.')
                 calendar = session.scalar(select(CalendarDay).where(CalendarDay.location_id == location.id,
                     CalendarDay.calendar_date == work_date))
                 on_leave = session.scalar(select(MemberLeave.id).where(MemberLeave.member_id == member.id,

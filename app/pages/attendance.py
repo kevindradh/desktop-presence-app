@@ -49,6 +49,9 @@ class AttendancePreview(QLabel):
         if event_id is None or event_id == self.last_event_id:
             return
         self.last_event_id = event_id
+        self.show_notice(message)
+
+    def show_notice(self, message):
         self.notice.setText(message.replace(' — ', ': '))
         self.position_notice()
         self.notice.show()
@@ -70,6 +73,7 @@ class ScanNode:
     latest_at: float = 0
     packet: object = field(default=None, repr=False)
     closing: bool = False
+    notified_member: int | None = None
 
 
 class AttendancePage(QWidget):
@@ -327,6 +331,17 @@ class AttendancePage(QWidget):
             return
         node.packet = response.get('packet')
 
+    def notify_result(self, node, result):
+        if result.reason == 'absence':
+            node.notified_member = None
+        elif result.member_id is not None:
+            already_notified = any(n.notified_member == result.member_id for n in self.nodes.values())
+            node.notified_member = result.member_id
+            if result.reason == 'already_recorded' and not already_notified:
+                node.preview.show_notice('Sudah absen.')
+        if result.saved:
+            node.preview.show_success(result.event_id, result.message)
+
     def pump(self):
         for device, node in list(self.nodes.items()):
             if node.closing:
@@ -348,8 +363,8 @@ class AttendancePage(QWidget):
                 def accepted(result, current=node, original_generation=generation):
                     if original_generation != self.generation or not self.isVisible():
                         return
+                    self.notify_result(current, result)
                     if result.saved:
-                        current.preview.show_success(result.event_id, result.message)
                         self.sound.play()
                         if self.sound.status() == QSoundEffect.Status.Error:
                             self.show_message('Suara tidak tersedia; periksa keluaran audio.')

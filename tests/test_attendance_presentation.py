@@ -5,6 +5,7 @@ from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6.QtGui import QColor, QImage
 
 from app.pages.attendance import AttendancePage, AttendancePreview, ScanNode
+from app.services.attendance import AttendanceFeedback
 from app.settings.config import load_config
 from app.ui.theme import apply_theme
 
@@ -62,3 +63,39 @@ def test_attendance_mirrors_display_only(qt_app, tmp_path):
         page.deleteLater()
         preview.close()
         qt_app.processEvents()
+
+
+def test_already_notice_rearms_after_absence_without_cross_camera_repeats(qt_app):
+    first=ScanNode(None,None,AttendancePreview())
+    second=ScanNode(None,None,AttendancePreview())
+    page=SimpleNamespace(nodes={1:first,2:second})
+    duplicate=AttendanceFeedback(False,'',member_id=7,reason='already_recorded')
+    absence=AttendanceFeedback(False,'',reason='absence')
+    notify=lambda node,result:AttendancePage.notify_result(page,node,result)
+    try:
+        notify(first,duplicate)
+        assert first.preview.notice_timer.isActive()
+        first.preview.clear_notice()
+        notify(first,duplicate)
+        notify(second,duplicate)
+        assert not first.preview.notice_timer.isActive()
+        assert not second.preview.notice_timer.isActive()
+        notify(first,absence)
+        notify(first,duplicate)
+        assert not first.preview.notice_timer.isActive()
+        notify(first,absence)
+        notify(second,absence)
+        notify(first,duplicate)
+        assert first.preview.notice_timer.isActive()
+        first.preview.clear_notice()
+        notify(first,AttendanceFeedback(False,'',member_id=8,reason='already_recorded'))
+        assert first.preview.notice_timer.isActive()
+        first.preview.clear_notice()
+        notify(first,AttendanceFeedback(True,'Tersimpan',event_id=10,member_id=9))
+        first.preview.clear_notice()
+        notify(first,AttendanceFeedback(False,'',member_id=9,reason='already_recorded'))
+        assert not first.preview.notice_timer.isActive()
+    finally:
+        for node in (first,second):
+            node.preview.clear_notice()
+            node.preview.close()
