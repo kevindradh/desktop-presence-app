@@ -262,7 +262,7 @@ class ShiftsPage(AdminPage):
         self.delete_button = self.button("Hapus", self.delete, buttons)
         self.refresh_button = self.button("Muat ulang", self.refresh, buttons)
         self.body.addLayout(buttons)
-        self.body.addWidget(text_label("Penugasan: Anggota > Penugasan shift. Untuk mengubah jam atau toleransi yang sudah digunakan, buat shift baru."))
+        self.body.addWidget(text_label("Untuk mengubah jam atau toleransi yang sudah digunakan, buat shift baru."))
         self.body.addStretch()
         self.name.textChanged.connect(self.controls)
         self.start.timeChanged.connect(self.controls)

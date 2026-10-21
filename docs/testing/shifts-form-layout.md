@@ -15,3 +15,7 @@ Tombol menjadi Tambah, Simpan, Hapus, dan Muat ulang, konsisten dengan Grup. Pet
 - PASS, Copywriting: teks baru memakai istilah yang sudah ada, menyebut tindakan/lokasi secara langsung, tanpa klaim, jargon, atau tanda pisah panjang.
 
 Bukti: `evidence/shifts-simple.xml` dan `evidence/shifts-simple.png` (halaman terpisah tanpa data nyata).
+
+## Revisi petunjuk penugasan
+
+Sesuai review pengguna, petunjuk lokasi Anggota > Penugasan shift dihapus. Keterangan membuat shift baru untuk mengganti jam/toleransi yang sudah digunakan tetap ditampilkan. PASS untuk copywriting dan Purpose-Gate: hanya menghapus kalimat lokasi yang tidak diperlukan; label tindakan, layout, dan perilaku tidak berubah. Bukti gambar di atas merupakan tampilan sebelum penghapusan kalimat ini.
