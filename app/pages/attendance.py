@@ -14,7 +14,6 @@ from app.pages.administration import fill_table, table
 from app.services.cameras import FINAL
 from app.services.inference import InferenceController
 from app.services.settings import configured
-from app.ui.ai_lab import STATUS
 from app.widgets.cards import text_label
 
 
@@ -23,7 +22,6 @@ class ScanNode:
     entry: object = field(repr=False)
     inference: object = field(repr=False)
     preview: object
-    status: object
     latest: object = field(default=None, repr=False)
     latest_at: float = 0
     packet: object = field(default=None, repr=False)
@@ -67,6 +65,7 @@ class AttendancePage(QWidget):
             row.addWidget(button)
         self.body.addLayout(row)
         self.message = text_label('')
+        self.message.hide()
         self.body.addWidget(self.message)
         self.grid = QGridLayout()
         self.grid.setContentsMargins(0, 0, 0, 0)
@@ -118,6 +117,10 @@ class AttendancePage(QWidget):
             return [row.id for row in self.rows]
         return [row.id for row in self.rows if row.id == selected]
 
+    def show_message(self, text):
+        self.message.setText(text)
+        self.message.setVisible(bool(text))
+
     @staticmethod
     def camera_preview():
         preview = QLabel()
@@ -160,7 +163,7 @@ class AttendancePage(QWidget):
                 return
             if result.error:
                 self.reloading = False
-                self.message.setText(result.error)
+                self.show_message(result.error)
                 self.stop()
                 self.controller._handle_denial(result.error)
             else:
@@ -226,23 +229,22 @@ class AttendancePage(QWidget):
                     body.addWidget(text_label(entry.spec.name))
                     preview = self.camera_preview()
                     preview.setText('Menyiapkan kamera…')
-                    status = text_label('Menyiapkan model…')
-                    body.addWidget(preview, 1); body.addWidget(status)
+                    body.addWidget(preview, 1)
                     self.grid.addWidget(panel, i, 0)
                     config = configured(self.controller.config, entry.binding['settings'])
                     worker = InferenceController(config, self,
                         target=self.target_factory(self.controller.attendance_service.key, entry.binding))
-                    node = ScanNode(entry, worker, preview, status)
+                    node = ScanNode(entry, worker, preview)
                     self.nodes[entry.spec.device_id] = node
                     worker.result.connect(lambda response, device=entry.spec.device_id: self.analyzed(device, response))
                     worker.changed.connect(lambda state, device=entry.spec.device_id: self.engine_changed(device, state))
                     worker.start()
-                self.message.setText('Absensi aktif. Arahkan wajah ke kamera.')
+                self.show_message('')
             except Exception:
                 for entry in entries:
                     self.controller.attendance_service.cancel(entry.binding)
                 self.stop()
-                self.message.setText('Kamera atau model tidak dapat dimulai. Periksa perangkat dan coba kembali.')
+                self.show_message('Kamera atau model tidak dapat dimulai. Periksa perangkat dan coba kembali.')
             self.controls()
         self.run(lambda token: self.controller.attendance_service.begin(token, ids, mode), started)
 
@@ -268,13 +270,13 @@ class AttendancePage(QWidget):
         if node is None:
             return
         if state in ('failed', 'timeout'):
-            self.message.setText('Model gagal atau batas waktu terlampaui. Mulai absensi kembali.')
+            self.show_message('Model gagal atau batas waktu terlampaui. Mulai absensi kembali.')
             self.stop()
 
     def camera_changed(self, device):
         node = self.nodes.get(device)
         if node and self.manager.nodes[device].state == 'failed':
-            self.message.setText('Kamera terputus. Periksa perangkat dan nomor kamera, lalu mulai manual.')
+            self.show_message('Kamera terputus. Periksa perangkat dan nomor kamera, lalu mulai manual.')
             self.stop()
         self.controls()
 
@@ -282,9 +284,6 @@ class AttendancePage(QWidget):
         node = self.nodes.get(device)
         if node is None or node.closing or response['event'] != 'result':
             return
-        node.status.setText(STATUS.get(response['status'], 'Memeriksa wajah…'))
-        if response['status'] == 'spoof':
-            node.status.setText('Spoof Detected — wajah ditolak oleh pemeriksaan keaslian.')
         node.packet = response.get('packet')
 
     def pump(self):
@@ -305,17 +304,16 @@ class AttendancePage(QWidget):
             if node.packet is not None:
                 packet, node.packet = node.packet, None
                 generation = self.generation
-                def accepted(result, current=node, original_generation=generation):
+                def accepted(result, original_generation=generation):
                     if original_generation != self.generation or not self.isVisible():
                         return
-                    self.message.setText(result.message)
-                    current.status.setText(result.message)
                     if result.saved:
                         self.sound.play()
                         if self.sound.status() == QSoundEffect.Status.Error:
-                            self.message.setText(result.message+' Suara tidak tersedia; periksa keluaran audio.')
+                            self.show_message('Suara tidak tersedia; periksa keluaran audio.')
                         self.reload()
                     elif result.restart:
+                        self.show_message(result.message)
                         self.stop()
                 self.run(lambda token, value=packet: self.controller.attendance_service.submit(token, value), accepted)
                 break

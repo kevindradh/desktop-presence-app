@@ -23,3 +23,9 @@ Penghapusan checkbox mengikuti persetujuan awal yang dinyatakan pengguna. Ini ti
 - PASS, Copywriting: label langsung menyebut tindakan/perangkat/lokasi; tanpa klaim, jargon baru, atau penjelasan AUTO berulang. Teks teknis hanya dihapus dari presentasi, aturan pemrosesan tetap digunakan.
 
 Pengujian memakai kamera/wajah sintetis; belum merupakan uji webcam atau akurasi wajah nyata untuk layout baru ini.
+
+## Revisi pesan scan
+
+Atas review pengguna, label status di bawah setiap frame dihapus sepenuhnya. Hasil pemeriksaan wajah dan pesan transaksi biasa (berhasil, scan berulang, check-in kedua ditolak, dan penolakan aturan absensi) tidak lagi ditampilkan di bawah dropdown. Pencatatan, suara sukses dan pembaruan daftar tetap berjalan. Label pesan atas disembunyikan saat kosong agar tidak menyisakan ruang. Pesan gangguan kamera/model/database, suara yang tidak tersedia, atau pengaturan berubah yang memerlukan mulai ulang tetap ditampilkan.
+
+Delivery Gate untuk revisi ini: PASS, penghapusan teks dan ruang sesuai arahan pengguna, tanpa aset/dekorasi/kontrol baru. Tema dan urutan keyboard tetap sama. Tes UI menguji hasil tersimpan tanpa pesan scan, penerimaan respons spoof tanpa penyimpanan, galat database, perubahan pengaturan, siklus sesi dan dua kamera. Bukti: `evidence/attendance-no-scan-messages.xml`. Gambar di atas merupakan tampilan sebelum penghapusan kedua area pesan scan.

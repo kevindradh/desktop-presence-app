@@ -49,7 +49,7 @@ def test_camera_inference_commit_feedback_sound_history_and_latch(attendance, st
     page.start_button.click()
     wait_until(lambda:page.sound.plays==1,timeout=12000)
     wait_until(lambda:page.history.rowCount()==1,timeout=6000)
-    assert 'berhasil tersimpan' in page.message.text()
+    assert not page.message.text() and not page.message.isVisible()
     assert rows(store)[0].attendance_type.value=='IN'
     selected=page.device.currentData()
     device=next(row for row in page.rows if row.id==selected)
@@ -105,8 +105,15 @@ def test_attendance_lifecycle_releases_workers_and_camera(attendance, store, vie
 
 def test_spoof_never_reaches_storage_and_error_never_plays_success(attendance, store, views, wait_until):
     view,page=ready(attendance,views,wait_until,store,status='spoof')
+    responses=[]
+    analyzed=page.analyzed
+    def observed(device,response):
+        responses.append(response)
+        analyzed(device,response)
+    page.analyzed=observed
     page.start_button.click()
-    wait_until(lambda:page.nodes and any('Spoof Detected' in n.status.text() for n in page.nodes.values()),timeout=10000)
+    wait_until(lambda:any(r.get('status')=='spoof' for r in responses),timeout=10000)
+    assert not page.message.isVisible()
     assert not rows(store) and page.sound.plays==0
     page.stop()
     wait_until(lambda:not page.busy,timeout=8000)
