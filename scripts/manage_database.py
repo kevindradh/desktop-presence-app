@@ -9,22 +9,50 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 
+def confirm_fresh(config, confirmation):
+    from app.services.database import DataValidationError
+    if config.host not in {"localhost", "127.0.0.1", "::1"} or config.name in {"postgres", "template0", "template1"}:
+        raise DataValidationError("Fresh hanya diizinkan untuk database aplikasi pada komputer lokal.")
+    if confirmation is None:
+        if not sys.stdin.isatty():
+            raise DataValidationError("Fresh menghapus data aplikasi. Gunakan --confirm-database dengan nama database tujuan.")
+        print(f"Target: {config.host}:{config.port}/{config.name}. Semua tabel dan data aplikasi akan dibuat ulang.")
+        confirmation = input("Ketik nama database untuk melanjutkan: ").strip()
+    if confirmation != config.name:
+        raise DataValidationError("Nama konfirmasi tidak cocok. Database tidak diubah.")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["upgrade", "status", "check", "seed", "bootstrap-admin"])
+    parser.add_argument("action", choices=["upgrade", "fresh", "status", "check", "seed", "bootstrap-admin"])
     parser.add_argument("--database", choices=["dev", "test"], default="dev")
     parser.add_argument('--data-dir', type=Path)
     parser.add_argument('--config', type=Path)
+    parser.add_argument('--confirm-database', help='Nama database untuk menyetujui penghapusan data pada fresh')
     args = parser.parse_args(argv)
+    if args.confirm_database is not None and args.action != "fresh":
+        parser.error('--confirm-database hanya dapat digunakan dengan fresh')
     from app.settings.paths import runtime_paths
     data_root = runtime_paths(data_dir=args.data_dir).data
     from app.services.database import Database, create_database_engine
-    from database.runtime import connection_config, schema_status, upgrade
+    from database.runtime import connection_config, schema_status, upgrade, fresh
     engine = None
     try:
-        migration = args.action in {"upgrade", "status"}
-        engine = create_database_engine(connection_config(args.database, migration=migration, root=data_root, env_file=args.config))
-        if args.action == "upgrade":
+        migration = args.action in {"upgrade", "fresh", "status"}
+        config = connection_config(args.database, migration=migration, root=data_root, env_file=args.config)
+        if args.action == "fresh":
+            confirm_fresh(config, args.confirm_database)
+        engine = create_database_engine(config)
+        if args.action == "fresh":
+            from sqlalchemy import text
+            with engine.begin() as connection:
+                if (connection.scalar(text('SELECT current_database()')) != config.name
+                        or connection.scalar(text('SELECT current_schema()')) != 'public'):
+                    raise DataValidationError("Fresh dibatalkan: database atau schema tujuan tidak sesuai konfigurasi.")
+                result = fresh(connection, application_role=connection_config(args.database, root=data_root, env_file=args.config).user)
+            print(json.dumps(result, indent=2))
+            print("Fresh selesai. Data aplikasi dihapus; pengaturan bawaan dibuat kembali. Buka ulang aplikasi untuk membuat Super Admin.")
+        elif args.action == "upgrade":
             with engine.begin() as connection:
                 upgrade(connection, application_role=connection_config(args.database, root=data_root, env_file=args.config).user)
             print("Migrasi selesai. Data yang sudah ada tidak dihapus.")

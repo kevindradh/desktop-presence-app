@@ -7,7 +7,8 @@ from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from dotenv import dotenv_values
-from sqlalchemy import inspect
+from sqlalchemy import inspect, text
+from sqlalchemy.orm import Session
 
 from app.models.entities import Base
 from app.services.database import create_database_engine
@@ -51,6 +52,32 @@ def alembic_config(connection, *, application_role=None):
 
 def upgrade(connection, *, application_role=None):
     command.upgrade(alembic_config(connection, application_role=application_role), "head")
+
+
+def fresh(connection, *, application_role=None):
+    """Reset StarGate's current schema inside the caller's transaction; keep extensions."""
+    from app.services.database import DataValidationError
+    from database.seed.defaults import seed_defaults
+    connection.execute(text("SELECT pg_advisory_xact_lock(734281003)"))
+    inspector = inspect(connection)
+    schema = inspector.default_schema_name
+    tables = set(inspector.get_table_names(schema=schema))
+    application_tables = set(Base.metadata.tables)
+    if tables - application_tables - {"alembic_version"}:
+        raise DataValidationError("Fresh dibatalkan: schema berisi tabel di luar StarGate.")
+    revision = MigrationContext.configure(connection, opts={"version_table_schema": schema}).get_current_revision()
+    if tables & application_tables and revision is None:
+        raise DataValidationError("Fresh dibatalkan: tabel aplikasi tidak memiliki riwayat migrasi yang valid.")
+    if revision is not None:
+        command.downgrade(alembic_config(connection, application_role=application_role), "base")
+    upgrade(connection, application_role=application_role)
+    with Session(bind=connection, join_transaction_mode="create_savepoint") as session:
+        seeded = seed_defaults(session)
+        session.commit()
+    status = schema_status(connection)
+    if not status["at_head"] or not status["schema_valid"]:
+        raise DataValidationError("Fresh dibatalkan: hasil migrasi belum sesuai struktur aplikasi.")
+    return {"schema": status, "seed": seeded}
 
 
 def schema_status(connection):

@@ -253,6 +253,16 @@ Seed aman diulang dan tidak menimpa setting yang sudah diubah. Migrasi tidak
 dijalankan otomatis ketika GUI dibuka. Jangan edit revision yang sudah diterapkan;
 buat revision berikutnya untuk perubahan schema.
 
+## Reset database untuk testing
+
+Tutup aplikasi, lalu jalankan perintah berikut dari folder proyek. **Seluruh data aplikasi pada database tujuan akan dihapus**, kemudian migrasi dan pengaturan bawaan dibuat kembali tanpa akun contoh.
+
+```sh
+.venv/bin/python scripts/manage_database.py fresh --confirm-database stargate_dev
+```
+
+Gunakan nama database sesuai konfigurasi. Tanpa `--confirm-database`, terminal meminta Anda mengetik nama database. Setelah selesai, buka kembali aplikasi untuk membuat Super Admin dari awal. [Panduan lengkap dan lingkup reset](docs/database-fresh.md).
+
 Bootstrap akun awal disiapkan melalui terminal interaktif:
 
 ```sh
