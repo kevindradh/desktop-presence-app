@@ -122,3 +122,10 @@ Pengguna meminta enam hitungan kembali menjadi kartu terpisah seperti sebelum an
 R-14/R-31 PASS: ukuran dan tipografi kartu dibuat setara untuk membandingkan enam hitungan, sesuai pilihan pengguna. Pilihan ini menggantikan fokus angka Hadir yang lebih besar pada versi sebelumnya; identitas hijau dan tema tetap sama.
 R-03/R-32/R-35 PASS: dua tes UI terarah lulus; ketiga ukuran desktop tidak menunjukkan kartu bertabrakan atau gulir horizontal pada Dashboard. Kalender, keyboard, filter tanggal, dan dua kontrol demo tetap berfungsi. Bukti: `evidence/dashboard-cards.xml`; pratinjau sintetis diperiksa pada `evidence/dashboard-cards.png`.
 Delivery Gate sebelumnya tetap berlaku untuk item yang tidak berubah. Perubahan susunan dan hierarki mengikuti pilihan eksplisit pengguna di atas.
+
+## Tombol Hari ini
+
+Checkbox Ikuti hari ini diganti tombol Hari ini atas permintaan pengguna. Label menyebut tindakan langsung: kembali ke tanggal saat ini menurut zona aplikasi. Sesudah ditekan, tanggal mengikuti pergantian hari hingga pengguna memilih tanggal lain.
+R-15/R-26/R-31 PASS: tombol menjalankan pengembalian tanggal, bukan toggle tersembunyi atau tombol tanpa tindakan; hasil pemuatan lama diabaikan saat tombol ditekan di tengah permintaan.
+R-03/R-32/R-35 PASS: 13 tes Dashboard UI lulus, termasuk klik tombol saat sibuk, Space melalui keyboard, pergantian hari, kalender, tiga ukuran jendela, dan fokus yang tetap selama polling. Bukti: `evidence/dashboard-today-button.xml`; tangkapan layar sintetis diperiksa pada `evidence/dashboard-today-button.png`.
+Delivery Gate lain tetap berlaku untuk susunan kartu, tema, warna, dan sumber data yang tidak diubah.

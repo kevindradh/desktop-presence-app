@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 
 from PyQt6.QtCore import QDate, QTimer
-from PyQt6.QtWidgets import QCheckBox, QDateEdit, QFrame, QGridLayout, QHBoxLayout, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QDateEdit, QFrame, QGridLayout, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
 from app.pages.administration import fill_table, table
 from app.services.attendance import EVENTS
@@ -28,6 +28,7 @@ class DashboardPage(QWidget):
         self.snapshot = None
         self.generation = 0
         self.again = False
+        self.follow_today = True
         self.tasks = TaskController(controller.reporter, self)
         self.tasks.succeeded.connect(self.loaded)
         self.tasks.settled.connect(self.settled)
@@ -45,8 +46,7 @@ class DashboardPage(QWidget):
         self.date.setDate(QDate.currentDate())
         self.date.setAccessibleName('Tanggal kerja dashboard')
         row.addWidget(self.date)
-        self.today = QCheckBox('Ikuti hari ini')
-        self.today.setChecked(True)
+        self.today = QPushButton('Hari ini')
         row.addWidget(self.today)
         row.addStretch()
         layout.addLayout(row)
@@ -111,7 +111,7 @@ class DashboardPage(QWidget):
             charts.addWidget(card, i//2, i%2)
         layout.addLayout(charts)
         self.date.dateChanged.connect(self.date_changed)
-        self.today.toggled.connect(self.follow_changed)
+        self.today.clicked.connect(self.go_today)
 
     @property
     def busy(self):
@@ -122,15 +122,23 @@ class DashboardPage(QWidget):
         return self.busy
 
     def date_changed(self):
-        self.today.blockSignals(True)
-        self.today.setChecked(False)
-        self.today.blockSignals(False)
+        self.follow_today = False
         self.generation += 1
         self.clear()
         self.reload()
 
-    def follow_changed(self):
+    def go_today(self):
+        service = self.controller.dashboard_service
+        day = service.clock().astimezone(service.zone).date()
+        wanted = QDate(day.year, day.month, day.day)
+        changed = self.date.date() != wanted
+        self.follow_today = True
+        self.date.blockSignals(True)
+        self.date.setDate(wanted)
+        self.date.blockSignals(False)
         self.generation += 1
+        if changed:
+            self.clear()
         self.reload()
 
     def reload(self):
@@ -143,7 +151,7 @@ class DashboardPage(QWidget):
         c = self.controller
         if not self.isVisible() or c._closing or not c.login or c.stack.currentWidget() is not c.shell:
             return
-        if self.today.isChecked():
+        if self.follow_today:
             day = c.dashboard_service.clock().astimezone(c.dashboard_service.zone).date()
             wanted = QDate(day.year, day.month, day.day)
             if self.date.date() != wanted:

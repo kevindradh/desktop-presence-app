@@ -12,7 +12,7 @@ Pengguna menyetujui definisi berikut pada 20 Oktober 2026: Hadir adalah semua an
 - Penugasan bertumpang tindih tanpa IN ditandai sebagai konflik dan dikeluarkan dari tiga kategori terakhir; data tidak dipaksakan menjadi angka absensi yang valid.
 - Total anggota aktif saat ini berbeda dari statistik historis. Angka Hadir historis dapat melebihi anggota aktif saat ini setelah anggota dinonaktifkan. Statistik izin/jadwal memakai data penugasan dan izin yang tersedia saat query, bukan rekonstruksi versi lama yang belum disimpan.
 
-Dashboard memakai **tanggal kerja**, bukan tanggal kalender setiap event. Shift malam 20:00–04:00 tetap milik tanggal saat mulai; pilih tanggal sebelumnya untuk meninjau shift malam yang masih berlangsung setelah tengah malam. Feed juga mengikuti tanggal kerja terpilih, sehingga OUT pukul 01:00 tetap muncul pada sesi malam tanggal sebelumnya. `Ikuti hari ini` secara otomatis mengganti tanggal pada pergantian hari di zona aplikasi; memilih tanggal sendiri mematikannya.
+Dashboard memakai **tanggal kerja**, bukan tanggal kalender setiap event. Shift malam 20:00–04:00 tetap milik tanggal saat mulai; pilih tanggal sebelumnya untuk meninjau shift malam yang masih berlangsung setelah tengah malam. Feed juga mengikuti tanggal kerja terpilih, sehingga OUT pukul 01:00 tetap muncul pada sesi malam tanggal sebelumnya. Tombol `Hari ini` mengembalikan tanggal ke hari ini di zona aplikasi dan mengaktifkan pergantian tanggal otomatis saat tengah malam; memilih tanggal sendiri menghentikan pengikutan tersebut.
 
 Deployment awal satu lokasi: tanggal/jam batas jadwal Dashboard menggunakan zona organisasi di konfigurasi dan kalender lokasi LOCAL. Penugasan belum memiliki relasi lokasi; jangan menganggap perhitungan Absent ini sudah mendukung penugasan lintas lokasi/zona. Scan tetap menyimpan tanggal kerja berdasarkan zona lokasi kameranya sesuai Tahap 10. Editor izin/kalender operasional belum tersedia; contoh uji disiapkan di demo dan fixture.
 
@@ -41,7 +41,7 @@ Demo masuk otomatis dan membuka Dashboard. Lima anggota, penugasan, izin dan dat
 1. Awal pukul 08:11 WIB simulasi: **Anggota aktif 5, Hadir 2, Terlambat 1, Absent 1, Izin 1, Belum masuk 1**. Terlambat termasuk dua orang Hadir.
 2. Klik **Simulasikan check-in terminal lain**. Layanan/penulis lain menyimpan IN melalui aturan absensi asli. Tanpa refresh manual, Hadir menjadi **3**, Terlambat **2**, Belum masuk **0**, dan feed bertambah satu event. Klik ulang tidak membuat IN kedua.
 3. Untuk melihat perubahan Absent tanpa check-in, tutup/buka demo baru lalu langsung klik **Majukan ke akhir shift**. Waktu absensi menjadi 17:00 WIB; setelah polling, Absent menjadi **2** dan Belum masuk **0**. Jam sistem tidak diubah. Jika IN sudah dilakukan terlebih dahulu, Absent tetap 1.
-4. Pilih tanggal kemarin: filter tidak kembali sendiri. Aktifkan lagi **Ikuti hari ini** untuk kembali ke tanggal demo. Coba fokus pada tanggal dan periksa bahwa pembaruan tidak menghilangkan fokus.
+4. Pilih tanggal kemarin: filter tidak kembali sendiri. Tekan **Hari ini** untuk kembali ke tanggal demo. Coba fokus pada tanggal dan periksa bahwa pembaruan tidak menghilangkan fokus.
 5. Gulir untuk melihat grafik harian/bulanan. Ubah ukuran jendela dan periksa nama/angka tetap terbaca; nilai penuh juga tersedia lewat tooltip.
 6. Tutup dan buka demo kembali untuk mengulang data awal. Pada demo, waktu absensi terkontrol berbeda dari jam nyata pada header aplikasi; lihat status kontrol demo.
 

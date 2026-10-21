@@ -54,7 +54,8 @@ def test_dashboard_updates_from_other_terminal_without_refresh_and_keeps_focus(a
         assert view.grab().save(str(Path(destination)/'stage-11-dashboard.png'))
 
 
-def test_date_filter_change_during_load_drops_old_result(attendance, views, wait_until, monkeypatch):
+@pytest.mark.parametrize('return_today',[False,True])
+def test_date_filter_change_during_load_drops_old_result(attendance, views, wait_until, monkeypatch,return_today):
     view,page=ready(attendance,views,wait_until)
     service=view.dashboard_service
     load=service.load
@@ -72,10 +73,14 @@ def test_date_filter_change_during_load_drops_old_result(attendance, views, wait
         wait_until(began.is_set)
         previous=DAY-timedelta(days=1)
         page.date.setDate(QDate(previous.year,previous.month,previous.day))
-        assert not page.today.isChecked() and page.snapshot is None
+        assert not page.follow_today and page.snapshot is None
+        if return_today:
+            QTest.mouseClick(page.today, Qt.MouseButton.LeftButton)
+            assert page.follow_today and page.date.date().toPyDate()==DAY
+        expected=DAY if return_today else previous
         release.set()
-        wait_until(lambda:page.snapshot is not None and page.snapshot.work_date==previous,timeout=8000)
-        assert page.snapshot.pending==0
+        wait_until(lambda:page.snapshot is not None and page.snapshot.work_date==expected,timeout=8000)
+        assert page.snapshot.pending==(1 if return_today else 0)
     finally:
         release.set()
 
@@ -84,15 +89,22 @@ def test_dashboard_rolls_date_only_when_follow_today_is_enabled(attendance, view
     view,page=ready(attendance,views,wait_until)
     attendance.now[0]+=timedelta(days=1)
     wait_until(lambda:page.snapshot is not None and page.snapshot.work_date==DAY+timedelta(days=1),timeout=8000)
-    page.today.setChecked(False)
+    selected=DAY
+    page.date.setDate(QDate(selected.year,selected.month,selected.day))
+    wait_until(lambda:page.snapshot is not None and page.snapshot.work_date==selected,timeout=8000)
     attendance.now[0]+=timedelta(days=1)
     QTest.qWait(250)
-    assert page.snapshot.work_date==DAY+timedelta(days=1)
+    assert page.snapshot.work_date==selected
+    QTest.mouseClick(page.today,Qt.MouseButton.LeftButton)
+    wait_until(lambda:page.snapshot is not None and page.snapshot.work_date==DAY+timedelta(days=2),timeout=8000)
 
 
 def test_dashboard_empty_date_keyboard_filter_and_desktop_sizes(attendance, views, wait_until):
     view,page=ready(attendance,views,wait_until)
     activate(view)
+    previous=DAY-timedelta(days=1)
+    page.date.setDate(QDate(previous.year,previous.month,previous.day))
+    wait_until(lambda:page.snapshot is not None and page.snapshot.work_date==previous,timeout=8000)
     QTest.mouseClick(page.date, Qt.MouseButton.LeftButton,
                      pos=QPoint(page.date.width()-8,page.date.height()//2))
     wait_until(lambda:page.date.calendarWidget().isVisible())
@@ -108,14 +120,12 @@ def test_dashboard_empty_date_keyboard_filter_and_desktop_sizes(attendance, view
             break
     assert page.today.hasFocus()
     QTest.keyClick(page.today, Qt.Key.Key_Space)
-    assert not page.today.isChecked()
-    QTest.keyClick(page.today, Qt.Key.Key_Space)
-    assert page.today.isChecked()
+    assert page.follow_today and page.date.date().toPyDate()==DAY
     wait_until(lambda:not page.busy)
     previous=DAY-timedelta(days=1)
     page.date.setDate(QDate(previous.year,previous.month,previous.day))
     wait_until(lambda:page.snapshot is not None and page.snapshot.work_date==previous,timeout=8000)
-    assert not page.today.isChecked()
+    assert not page.follow_today
     assert page.feed_empty.isVisible() and page.feed.rowCount()==0
     assert page.counters['present'].text()=='0'
     for width,height in ((1000,740),(1180,820),(1440,900)):
