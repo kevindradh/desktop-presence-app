@@ -122,6 +122,7 @@ def test_member_pagination_search_filter_details_edit_photo_and_registration_gat
             assert left.y()==right.y() and left.geometry().right()<right.x()
             assert page.form_widget.rect().contains(left.geometry())
             assert page.form_widget.rect().contains(right.geometry())
+        assert view.shell.pages.currentWidget().horizontalScrollBar().maximum()==0
     activate(view)
     page.code.setFocus()
     wait_until(page.code.hasFocus)
@@ -210,6 +211,10 @@ def test_member_shift_assignment_open_end_and_next_day(auth, data, views, wait_u
     page = open_page(view, "members", wait_until)
     page.table.selectRow(0)
     settled(view, wait_until)
+    tab_bar=page.member_tabs.tabBar()
+    QTest.mouseClick(tab_bar,Qt.MouseButton.LeftButton,pos=tab_bar.tabRect(1).center())
+    assert page.member_tabs.currentWidget() is page.shift_tab
+    assert page.assignment_widget.isVisible() and not page.form_widget.isVisible()
     assert not page.assign_button.isEnabled()
     page.shift.setCurrentIndex(page.shift.findData(data[3]))
     assert page.assign_button.isEnabled()
@@ -236,6 +241,9 @@ def test_member_shift_assignment_open_end_and_next_day(auth, data, views, wait_u
     page.assign_button.click()
     settled(view, wait_until)
     assert page.assignment_table.rowCount() == 2
+    assert page.member_tabs.currentWidget() is page.shift_tab
+    assert view.shell.pages.currentWidget().horizontalScrollBar().maximum()==0
+    snapshot(view,'members-shift-tab.png')
 
 
 def test_operator_can_edit_members_but_cannot_assign_shift(auth, data, views, wait_until):
@@ -247,11 +255,45 @@ def test_operator_can_edit_members_but_cannot_assign_shift(auth, data, views, wa
     page = open_page(view, "members", wait_until)
     page.table.selectRow(0)
     settled(view, wait_until)
+    page.member_tabs.setCurrentWidget(page.shift_tab)
     assert not page.assignment_widget.isVisible()
+    assert not page.assign_button.isEnabled()
+    page.member_tabs.setCurrentWidget(page.data_tab)
     page.name.setText("Edit oleh Operator")
     page.save()
     settled(view, wait_until)
     assert view.administration.member(view.login.token, data[0]).member.name == "Edit oleh Operator"
+
+
+def test_member_tabs_keep_selection_and_draft_and_support_keyboard(auth,data,views,wait_until):
+    service,_,_=auth
+    view=views(service)
+    sign_in(view,'root',NEW,wait_until)
+    page=open_page(view,'members',wait_until)
+    assert page.member_tabs.count()==2
+    assert page.member_tabs.currentWidget() is page.data_tab
+    page.table.selectRow(0)
+    settled(view,wait_until)
+    selected=page.selected.id
+    page.name.setText('Draf nama anggota')
+    bar=page.member_tabs.tabBar()
+    QTest.mouseClick(bar,Qt.MouseButton.LeftButton,pos=bar.tabRect(1).center())
+    assert page.member_tabs.currentWidget() is page.shift_tab
+    assert page.selected.id==selected and page.name.text()=='Draf nama anggota'
+    activate(view)
+    bar.setFocus()
+    QTest.keyClick(bar,Qt.Key.Key_Tab,Qt.KeyboardModifier.ControlModifier)
+    assert page.member_tabs.currentWidget() is page.data_tab
+    assert page.selected.id==selected and page.name.text()=='Draf nama anggota'
+    page.member_tabs.setCurrentWidget(page.shift_tab)
+    page.table.selectRow(1)
+    settled(view,wait_until)
+    assert page.selected.id!=selected and page.member_tabs.currentWidget() is page.shift_tab
+    page.member_tabs.setCurrentWidget(page.data_tab)
+    page.new_button.click()
+    assert page.selected is None and page.member_tabs.currentWidget() is page.data_tab
+    page.member_tabs.setCurrentWidget(page.shift_tab)
+    assert page.assignment_message.isVisible() and not page.assignment_widget.isVisible()
 
 
 def test_administration_search_typing_survives_periodic_checks(auth, data, views, wait_until):

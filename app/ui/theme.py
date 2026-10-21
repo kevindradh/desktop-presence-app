@@ -24,6 +24,10 @@ QLabel[kind="heroBody"] { color: #4a6650; font-size: 14px; }
 QLabel[kind="heroNote"] { color: #4a6650; font-size: 12px; }
 QFrame#featureCard { background: white; border: 1px solid #e0e7df; border-radius: 11px; }
 QWidget#attendanceDashboard QDateEdit:focus { border: 2px solid #2d6240; padding: 7px 9px; }
+QTabWidget#memberTabs::pane { border: 1px solid #d3ded4; background: white; border-radius: 6px; }
+QTabBar#memberTabBar::tab { background: white; color: #34503f; border: 2px solid transparent; padding: 9px 16px; }
+QTabBar#memberTabBar::tab:selected { background: #2d6240; color: white; }
+QTabBar#memberTabBar::tab:focus { border-color: #649372; }
 QFrame#reviewCard { background: #edf1eb; border-radius: 9px; }
 QFrame#errorBanner { background: #fff0e8; border: 1px solid #eed3bd; border-radius: 8px; }
 QPushButton { padding: 10px 16px; border: 1px solid #d3ded4; border-radius: 6px; background: #fff; color: #34503f; font-weight: 600; }

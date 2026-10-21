@@ -7,7 +7,7 @@ from PyQt6.QtCore import QDate, QTime, QTimer, Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (QCheckBox, QComboBox, QDateEdit, QFileDialog, QFormLayout, QGridLayout,
     QHBoxLayout, QLabel, QLayout, QLineEdit, QMessageBox, QPushButton, QSpinBox, QTableWidget,
-    QTableWidgetItem, QTimeEdit, QVBoxLayout, QWidget)
+    QTableWidgetItem, QTabWidget, QTimeEdit, QVBoxLayout, QWidget)
 
 from app.widgets.cards import text_label
 
@@ -329,6 +329,21 @@ class MembersPage(AdminPage):
         self.limit = 10
         self.photo_source = None
         self.detail = None
+        self.member_tabs = QTabWidget()
+        self.member_tabs.setObjectName('memberTabs')
+        self.member_tabs.tabBar().setObjectName('memberTabBar')
+        self.member_tabs.setAccessibleName('Bagian pengelolaan anggota')
+        self.data_tab = QWidget()
+        self.data_body = QVBoxLayout(self.data_tab)
+        self.data_body.setContentsMargins(16, 16, 16, 16)
+        self.data_body.setSpacing(14)
+        self.shift_tab = QWidget()
+        self.shift_body = QVBoxLayout(self.shift_tab)
+        self.shift_body.setContentsMargins(16, 16, 16, 16)
+        self.shift_body.setSpacing(14)
+        self.member_tabs.addTab(self.data_tab, 'Data anggota')
+        self.member_tabs.addTab(self.shift_tab, 'Penugasan shift')
+        self.body.addWidget(self.member_tabs)
         self.form_widget = QWidget()
         form = QGridLayout(self.form_widget)
         form.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
@@ -370,19 +385,22 @@ class MembersPage(AdminPage):
         tab_fields = [field for _, field in fields]+[self.photo_button]
         for previous, current in zip(tab_fields, tab_fields[1:]):
             QWidget.setTabOrder(previous, current)
-        self.body.addWidget(self.form_widget)
-        buttons = QHBoxLayout()
-        self.new_button = self.button("Form registrasi baru", self.clear_form, buttons)
-        self.save_button = self.button("Simpan perubahan", self.save, buttons)
-        self.deactivate_button = self.button("Nonaktifkan anggota", self.deactivate, buttons)
-        self.capture_button = self.button("Capture lima sudut", self.capture, buttons)
-        self.verify_button = self.button('Uji wajah tersimpan',self.verify_face,buttons)
-        self.body.addLayout(buttons)
+        self.data_body.addWidget(self.form_widget)
+        buttons = QVBoxLayout()
+        member_actions, face_actions = QHBoxLayout(), QHBoxLayout()
+        self.new_button = self.button("Form registrasi baru", self.clear_form, member_actions)
+        self.save_button = self.button("Simpan perubahan", self.save, member_actions)
+        self.deactivate_button = self.button("Nonaktifkan anggota", self.deactivate, member_actions)
+        self.capture_button = self.button("Capture lima sudut", self.capture, face_actions)
+        self.verify_button = self.button('Uji wajah tersimpan',self.verify_face,face_actions)
+        buttons.addLayout(member_actions)
+        buttons.addLayout(face_actions)
+        self.data_body.addLayout(buttons)
         self._build_assignments()
         self.history = table(["Waktu", "Event", "Status", "Tanggal kerja", "Grup", "Shift", "Pulang awal", "Sumber"])
         self.history_label = text_label("Pilih anggota untuk melihat riwayat yang sudah tersimpan.")
-        self.body.addWidget(self.history_label)
-        self.body.addWidget(self.history)
+        self.data_body.addWidget(self.history_label)
+        self.data_body.addWidget(self.history)
         self.debounce = QTimer(self)
         self.debounce.setSingleShot(True)
         self.debounce.setInterval(300)
@@ -398,8 +416,9 @@ class MembersPage(AdminPage):
     def _build_assignments(self):
         self.assignment_table = table(["Shift", "Mulai berlaku", "Akhir berlaku"])
         self.assignment_table.setMinimumHeight(140)
-        self.body.addWidget(text_label("Penugasan shift", "sectionTitle"))
-        self.body.addWidget(self.assignment_table)
+        self.assignment_message = text_label('Pilih anggota dari daftar untuk melihat penugasan shift.', 'muted')
+        self.shift_body.addWidget(self.assignment_message)
+        self.shift_body.addWidget(self.assignment_table)
         self.assignment_widget, form = form_widget()
         self.shift = QComboBox()
         self.starts, self.ends, self.end_existing_date = (QDateEdit(QDate.currentDate()) for _ in range(3))
@@ -426,7 +445,8 @@ class MembersPage(AdminPage):
         form.addRow("Tanggal akhir berlaku", self.end_existing_date)
         form.addRow(self.end_assignment_button)
         self.buttons.extend((self.assign_button, self.end_assignment_button))
-        self.body.addWidget(self.assignment_widget)
+        self.shift_body.addWidget(self.assignment_widget)
+        self.shift_body.addStretch()
 
     def controls(self):
         valid = bool(self.code.text().strip() and self.name.text().strip() and self.group.currentData())
@@ -439,6 +459,7 @@ class MembersPage(AdminPage):
         self.previous_button.setEnabled(not self.pending and self.offset > 0)
         self.next_button.setEnabled(not self.pending and self.offset + self.limit < self.total)
         can_assign = bool(self.detail and self.detail.can_assign and self.selected and self.selected.active)
+        self.assignment_message.setVisible(self.selected is None)
         self.assignment_widget.setVisible(bool(self.detail and self.detail.can_assign))
         self.assign_button.setEnabled(not self.pending and can_assign and self.shift.currentData() is not None)
         self.end_assignment_button.setEnabled(not self.pending and can_assign and self.existing_assignment.currentData() is not None)
@@ -446,6 +467,7 @@ class MembersPage(AdminPage):
     def clear_form(self):
         self.selected = self.detail = None
         self.photo_source = None
+        self.member_tabs.setCurrentWidget(self.data_tab)
         self.table.clearSelection()
         for field in (self.code, self.name, self.email, self.phone, self.position):
             field.clear()

@@ -28,3 +28,14 @@ Hasil: `evidence/members-two-columns.xml`. Gambar dengan data dan foto sintetis:
 - PASS, Purpose-Gate: dua kolom mengikuti permintaan pengguna; label dan tombol foto tetap memakai font/warna lama. Tidak menambah aset, gradasi, badge, bayangan, atau animasi.
 - PASS, Liveliness: ruang kerja StarGate dan dial di atas dipertahankan; pasangan field membentuk susunan form yang ringkas, tanpa dekorasi tambahan.
 - PASS, Craftsmanship: alasan susunan/jarak ditulis di atas; empat regresi UI lulus dan tidak ada perubahan pada penyimpanan anggota maupun aturan registrasi wajah.
+
+## Tab Data anggota dan Penugasan shift
+
+Sesuai permintaan pengguna, form/foto/tindakan/riwayat kini berada pada tab Data anggota, sedangkan daftar dan form penugasan berada pada tab Penugasan shift. Pencarian, tabel anggota, dan pagination tetap di atas kedua tab.
+Alasan: tab membuka bagian penugasan langsung tanpa melewati form data dan riwayat; pilihan anggota dan draf tidak direset saat berpindah tab. Membuka form baru kembali ke Data anggota. Penugasan yang berhasil tidak memindahkan tab.
+Tombol tindakan dibagi menjadi baris pengelolaan anggota dan baris wajah agar ukuran minimum tab tidak memaksa gulir horizontal. Warna tab aktif mengikuti hijau StarGate; tab lain memakai putih dan penanda fokus keyboard.
+Tanpa anggota terpilih, tab shift menampilkan petunjuk memilih anggota. Hak akses lama tetap berlaku: Operator dapat melihat penugasan tetapi tidak mendapatkan form perubahan shift.
+
+Delapan tes antarmuka administrasi lulus, termasuk dua tab, Ctrl+Tab, perpindahan dengan klik, draf/anggota yang tetap dipilih, penggantian pilihan pada tab shift, form baru, penugasan/akhiri penugasan, serta pembatasan Operator. Tiga ukuran jendela pada tes anggota dan tab shift tidak memiliki gulir horizontal di area halaman.
+Hasil: `evidence/members-tabs.xml`. Tangkapan layar sintetis yang diperiksa: `evidence/members-data-tab.png` dan `evidence/members-shift-tab.png`.
+Delivery Gate: Hard Gate PASS, kontrol tab dan hak akses diuji; Purpose-Gate PASS, alasan tab/warna/tombol dicatat di atas; Liveliness PASS, arah dan dial tetap mengikuti tema StarGate; Craftsmanship PASS, delapan regresi lulus dan kedua tab ditinjau secara visual. Kriteria form yang tidak berubah mengikuti pemeriksaan sebelumnya.
