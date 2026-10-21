@@ -1,0 +1,71 @@
+{
+  "stage": 12,
+  "date": "2026-10-20",
+  "status": "technical_pass_awaiting_user_review",
+  "previous_stage_review_accepted": true,
+  "report_format_approved_by_user": true,
+  "full_regression": {
+    "tests": 399,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 399.243
+  },
+  "native_macos_final": {
+    "tests": 65,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 162.093
+  },
+  "export_regression_after_pdf_row_polish": {
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 14.535
+  },
+  "coverage_run": {
+    "covered_lines": 6525,
+    "num_statements": 7241,
+    "missing_lines": 716,
+    "percent_covered": 90.11186300234775
+  },
+  "coverage_scope_note": "Full regression coverage measured before final report form layout and PDF row-pagination polish. The final changes were verified with 13 export tests and 65 native tests; full coverage was not recomputed for those visual adjustments.",
+  "database_readonly_check": {
+    "revision": "0004_devices",
+    "at_head": true,
+    "schema_valid": true,
+    "application_tables": 14,
+    "migrations_added": false
+  },
+  "operational_data_changed": false,
+  "runtime_dependencies_added": false,
+  "warning": "One existing InsightFace/scikit-image FutureWarning in full regression",
+  "visual_review": {
+    "pdf_pages": 24,
+    "summary_rows": 71,
+    "pages_reviewed": [
+      1,
+      12,
+      24
+    ],
+    "all_pdf_ids_checked": true,
+    "xlsx_sheets": [
+      "Kehadiran",
+      "Detail event"
+    ],
+    "viewer_demo_rows": 65,
+    "viewer_second_page_rows": 15,
+    "xlsx_visual_renderer": "Bundled artifact-tool import/render; original file unchanged",
+    "pdf_renderer": "Poppler"
+  },
+  "limitations": [
+    "Single-site organization timezone and LOCAL calendar for derived statuses",
+    "No historical reconstruction of changes to assignment/leave/activity/name labels",
+    "Snapshot TTL 15 minutes, at most two per instance; max 366 days, 50000 candidate rows and 200000 events",
+    "Unsupported PDF font characters fail explicitly; use XLSX",
+    "Windows PDF reader/font/filesystem verification remains Stage 14",
+    "Stage 13 not started"
+  ]
+}

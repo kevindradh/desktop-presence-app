@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "hash_provenance": "Initial hashes recorded from pinned upstream HTTPS downloads; not publisher signatures. Subsequent downloads must match.",
+  "assets": [
+    {
+      "id": "retinaface-weights",
+      "url": "https://raw.githubusercontent.com/minivision-ai/Silent-Face-Anti-Spoofing/b6d5f04ad78778917853b25c778acef6d5626d15/resources/detection_model/Widerface-RetinaFace.caffemodel",
+      "path": "resources/models/Widerface-RetinaFace.caffemodel",
+      "sha256": "d08338a2c207df16a9c566f767fea67fb43ba6fff76ce11e938fe3fabefb9402",
+      "role": "RetinaFace Caffe detector via OpenCV DNN",
+      "upstream_revision": "b6d5f04ad78778917853b25c778acef6d5626d15",
+      "license_note": "Repository Apache-2.0; model provenance retained; deployment review before release.",
+      "size_bytes": 1866013
+    },
+    {
+      "id": "retinaface-config",
+      "url": "https://raw.githubusercontent.com/minivision-ai/Silent-Face-Anti-Spoofing/b6d5f04ad78778917853b25c778acef6d5626d15/resources/detection_model/deploy.prototxt",
+      "path": "resources/models/deploy.prototxt",
+      "sha256": "9fe2f141b4baee039ed9442da2833e216af40a6ff3e639e7b39258812bcda808",
+      "role": "RetinaFace Caffe graph",
+      "upstream_revision": "b6d5f04ad78778917853b25c778acef6d5626d15",
+      "license_note": "Repository Apache-2.0; model provenance retained; deployment review before release.",
+      "size_bytes": 40787
+    },
+    {
+      "id": "minifasnet-weights",
+      "url": "https://raw.githubusercontent.com/minivision-ai/Silent-Face-Anti-Spoofing/b6d5f04ad78778917853b25c778acef6d5626d15/resources/anti_spoof_models/2.7_80x80_MiniFASNetV2.pth",
+      "path": "resources/models/2.7_80x80_MiniFASNetV2.pth",
+      "sha256": "a5eb02e1843f19b5386b953cc4c9f011c3f985d0ee2bb9819eea9a142099bec0",
+      "role": "MiniFASNetV2 liveness; scale 2.7, 80x80, conv6_kernel 5x5",
+      "upstream_revision": "b6d5f04ad78778917853b25c778acef6d5626d15",
+      "license_note": "Repository Apache-2.0; model provenance retained; deployment review before release.",
+      "size_bytes": 1849453
+    },
+    {
+      "id": "minifasnet-source",
+      "url": "https://raw.githubusercontent.com/minivision-ai/Silent-Face-Anti-Spoofing/b6d5f04ad78778917853b25c778acef6d5626d15/src/model_lib/MiniFASNet.py",
+      "path": "third_party/minifasnet/MiniFASNet.py",
+      "sha256": "e498c4ec5e1ddfaba62b941a126c19d65aa564999f3309661fe43ee8bf38acd7",
+      "role": "Unmodified upstream network definition",
+      "upstream_revision": "b6d5f04ad78778917853b25c778acef6d5626d15",
+      "license_note": "Repository Apache-2.0; model provenance retained; deployment review before release.",
+      "size_bytes": 12487
+    },
+    {
+      "id": "minifasnet-license",
+      "url": "https://raw.githubusercontent.com/minivision-ai/Silent-Face-Anti-Spoofing/b6d5f04ad78778917853b25c778acef6d5626d15/LICENSE",
+      "path": "third_party/minifasnet/LICENSE",
+      "sha256": "daf94bf1dc9cc5700fe5af2c7c0cbd1836e70d509ed78fd0bebef7432edee6fb",
+      "role": "Upstream Apache-2.0 license",
+      "upstream_revision": "b6d5f04ad78778917853b25c778acef6d5626d15",
+      "license_note": "Repository Apache-2.0; model provenance retained; deployment review before release.",
+      "size_bytes": 11340
+    },
+    {
+      "id": "arcface-weights",
+      "url": "https://github.com/deepinsight/insightface/releases/download/v0.7/buffalo_l.zip",
+      "archive_member": "w600k_r50.onnx",
+      "path": "resources/models/w600k_r50.onnx",
+      "sha256": "4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43",
+      "role": "ArcFace ResNet50, 112x112 BGR input through InsightFace, 512D output; SCRFD is not extracted/loaded",
+      "upstream_revision": "release-v0.7",
+      "license_note": "Pretrained weights: non-commercial research only unless separately licensed. Not cleared for production distribution.",
+      "size_bytes": 174383860
+    },
+    {
+      "id": "face-landmarks",
+      "url": "https://github.com/deepinsight/insightface/releases/download/v0.7/buffalo_l.zip",
+      "archive_member": "2d106det.onnx",
+      "path": "resources/models/2d106det.onnx",
+      "sha256": "f001b856447c413801ef5c42091ed0cd516fcd21f2d6b79635b1e733a7109dbf",
+      "role": "Auxiliary 106-point alignment model from InsightFace; detector remains RetinaFace",
+      "upstream_revision": "release-v0.7",
+      "license_note": "Pretrained weights: non-commercial research only unless separately licensed. Not cleared for production distribution.",
+      "size_bytes": 5030888
+    }
+  ]
+}

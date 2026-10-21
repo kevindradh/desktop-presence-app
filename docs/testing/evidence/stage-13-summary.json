@@ -1,0 +1,91 @@
+{
+  "stage": 13,
+  "date": "2026-10-20",
+  "previous_review": "Tahap 12 diterima pengguna; Tahap 13 diizinkan",
+  "full_regression": {
+    "tests": 442,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 588.422
+  },
+  "focused": {
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 127.651
+  },
+  "coverage": {
+    "covered_lines": 7080,
+    "num_statements": 7811,
+    "missing_lines": 731,
+    "percent_covered": 90.64140314940468
+  },
+  "native": {
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 259.926
+  },
+  "policy": {
+    "retention_days": 7,
+    "restore_biometrics": false,
+    "sessions_restored": false,
+    "user_approved": true
+  },
+  "recovery_evidence": [
+    "all application tables compared",
+    "profile asset checksums verified in authenticated archive",
+    "biometrics deliberately cleared per approved policy",
+    "accounts/business history/settings/audit recovered",
+    "transactional identity restart",
+    "mandatory encrypted safety copy read back before deletion",
+    "constraint/cancel rollback",
+    "spawned process crash before commit rollback",
+    "concurrent writer denied after session revocation",
+    "corrupt/wrong password/expired/version/schema/tampered path/checksum/file changed rejected"
+  ],
+  "development_database": {
+    "restored_during_tests": false,
+    "readonly_schema_check": "PASS: 0004_devices, 14 application tables",
+    "default_owner_helper_readonly_connection": "PASS"
+  },
+  "warning": "One existing InsightFace/skimage FutureWarning",
+  "limits": [
+    "Windows packaging/ACL and clean install remain Stage 14",
+    "RTSP hardware positive trial unavailable",
+    "128 MiB / 200000 records local backup bound; large-scale benchmark Stage 15",
+    "external exported backup copies require owner deletion within 7 days",
+    "managed safety cleanup on service startup or next restore; no forensic erase claim",
+    "data restore requires live migrated database and SuperAdmin login; not cluster/OS recovery",
+    "commit acknowledgement loss can be ambiguous; check state before retry"
+  ],
+  "review": "User review accepted 2026-10-20; Stage14 preparation authorized",
+  "native_retry": {
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 5.753
+  },
+  "native_initial": {
+    "tests": 69,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0,
+    "time": 193.319
+  },
+  "full_regression_status": "PASS final source, after demo queue/startup guard fix",
+  "full_regression_initial": {
+    "tests": 442,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 527.016
+  },
+  "native_ui_visual_review": "PASS: backup confirmation screenshot inspected; form, controls, policy and summary readable",
+  "backup_git_ignore": "PASS: *.sgbackup excluded",
+  "dependency_check": "PASS: cryptography 46.0.7/cffi 2.1.1/pycparser 3.11 pinned; pip check clean"
+}

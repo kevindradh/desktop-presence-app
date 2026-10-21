@@ -1,0 +1,11 @@
+{
+  "pip_check_exit": 0,
+  "pip_check_result": "No broken requirements found.",
+  "env_permission_octal": "0o600",
+  "private_paths_ignored": {
+    ".env": true,
+    ".venv/bin/python": true,
+    ".local/postgres/PG_VERSION": true,
+    "resources/models/w600k_r50.onnx": true
+  }
+}

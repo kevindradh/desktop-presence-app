@@ -1,0 +1,33 @@
+{
+  "stage": 1,
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "checks": {
+    "database": {
+      "status": "PASS",
+      "detail": [
+        {
+          "database": "stargate_dev",
+          "server": "PostgreSQL 17.11 (Homebrew)",
+          "pgvector": "0.8.7",
+          "vector_dimensions": 512,
+          "limited_role": true,
+          "cosine_order": [
+            1,
+            2
+          ]
+        },
+        {
+          "database": "stargate_test",
+          "server": "PostgreSQL 17.11 (Homebrew)",
+          "pgvector": "0.8.7",
+          "vector_dimensions": 512,
+          "limited_role": true,
+          "cosine_order": [
+            1,
+            2
+          ]
+        }
+      ]
+    }
+  }
+}

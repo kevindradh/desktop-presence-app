@@ -1,0 +1,19 @@
+{
+  "stage": 4,
+  "scope": "app + database; no new exclusions",
+  "totals": {
+    "covered_lines": 1850,
+    "num_statements": 2023,
+    "percent_covered": 91.44834404349976,
+    "percent_covered_display": "91",
+    "missing_lines": 173,
+    "excluded_lines": 0,
+    "percent_statements_covered": 91.44834404349976,
+    "percent_statements_covered_display": "91"
+  },
+  "tests": 100,
+  "failures": 0,
+  "skipped": 0,
+  "native_ui_tests": 10,
+  "native_keychain_cross_process": "PASS"
+}

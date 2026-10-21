@@ -1,0 +1,85 @@
+{
+  "stage": 1,
+  "execution": "Aggregated from individually executed checks; see source files for per-check evidence",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "checks": {
+    "imports": {
+      "status": "PASS",
+      "detail": {
+        "python": "3.11.17",
+        "machine": "arm64",
+        "packages": {
+          "PyQt6": "6.11.0",
+          "SQLAlchemy": "2.0.55",
+          "psycopg": "3.3.6",
+          "pgvector": "0.5.1",
+          "alembic": "1.20.0",
+          "bcrypt": "5.0.0",
+          "python-dotenv": "1.2.4",
+          "numpy": "1.26.4",
+          "opencv-python": "4.11.0.86",
+          "onnx": "1.23.2",
+          "onnxruntime": "1.31.0",
+          "insightface": "2.1",
+          "torch": "2.14.1",
+          "pandas": "2.3.3",
+          "openpyxl": "3.1.5",
+          "reportlab": "4.5.1",
+          "pytest": "9.1.1",
+          "pytest-cov": "7.1.0",
+          "pyinstaller": "6.22.3",
+          "Qt-compile": "6.11.0",
+          "Qt-runtime": "6.11.2"
+        },
+        "bcrypt": "hash/verify passed (test cost only)"
+      }
+    },
+    "database": {
+      "status": "PASS",
+      "detail": [
+        {
+          "database": "stargate_dev",
+          "server": "PostgreSQL 17.11 (Homebrew)",
+          "pgvector": "0.8.7",
+          "vector_dimensions": 512,
+          "limited_role": true,
+          "cosine_order": [
+            1,
+            2
+          ]
+        },
+        {
+          "database": "stargate_test",
+          "server": "PostgreSQL 17.11 (Homebrew)",
+          "pgvector": "0.8.7",
+          "vector_dimensions": 512,
+          "limited_role": true,
+          "cosine_order": [
+            1,
+            2
+          ]
+        }
+      ]
+    },
+    "models": {
+      "status": "PASS",
+      "detail": {
+        "checksums": 7,
+        "detector": "RetinaFace Caffe/OpenCV",
+        "recognizer": "ArcFace 512D / InsightFace / ONNX CPU",
+        "alignment": "106-point auxiliary model loaded; geometry validation in Stage 7",
+        "liveness": "MiniFASNetV2 / PyTorch CPU / 3 logits",
+        "input": "synthetic zero arrays only; no accuracy/liveness acceptance claim"
+      }
+    },
+    "qt": {
+      "status": "PASS",
+      "detail": {
+        "mode": "offscreen",
+        "event_loop": "PASS",
+        "timer": "PASS",
+        "clean_exit": true
+      }
+    }
+  }
+}

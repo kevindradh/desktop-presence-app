@@ -1,0 +1,10 @@
+{
+  "real_models": true,
+  "input": "synthetic zero BGR",
+  "no_face_rejected": true,
+  "partial_packet_exported": false,
+  "images_saved": 0,
+  "embeddings_saved": 0,
+  "physical_five_pose_trial": "NOT RUN: user trial required",
+  "clean_shutdown": true
+}

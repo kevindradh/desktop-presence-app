@@ -1,0 +1,9 @@
+{
+  "scope": "app package; no coverage exclusions added; subprocess bootstrap and native Qt worker tracing not fully represented by parent coverage run",
+  "tests": 26,
+  "tests_passed": 26,
+  "coverage_percent": 87.66,
+  "covered_lines": 533,
+  "statements": 608,
+  "threshold_percent": 80
+}

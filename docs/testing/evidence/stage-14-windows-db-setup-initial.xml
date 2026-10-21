@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="15" time="37.745" timestamp="2026-10-20T20:24:23.968713+07:00" hostname="KEVINDA9BE"><testcase classname="tests.test_administration" name="test_groups_crud_unique_stale_protected_delete_and_audit" time="2.458" /><testcase classname="tests.test_administration" name="test_shift_day_night_crud_and_references" time="1.862" /><testcase classname="tests.test_administration" name="test_member_filters_pagination_literals_edit_and_historical_group" time="1.879" /><testcase classname="tests.test_administration" name="test_member_soft_delete_preserves_everything_and_blocks_matching" time="1.959" /><testcase classname="tests.test_administration" name="test_photo_managed_copy_and_atomic_rollback" time="4.920" /><testcase classname="tests.test_administration" name="test_assignments_nonoverlap_inclusive_boundary_end_and_history" time="2.027" /><testcase classname="tests.test_administration" name="test_parallel_assignments_and_edits_do_not_overwrite" time="1.797" /><testcase classname="tests.test_administration" name="test_role_boundaries_all_admin_actions[SUPER_ADMIN]" time="2.951" /><testcase classname="tests.test_administration" name="test_role_boundaries_all_admin_actions[ADMIN]" time="2.946" /><testcase classname="tests.test_administration" name="test_role_boundaries_all_admin_actions[OPERATOR]" time="3.200" /><testcase classname="tests.test_administration" name="test_role_boundaries_all_admin_actions[VIEWER]" time="3.548" /><testcase classname="tests.test_administration" name="test_revoked_session_missing_records_and_invalid_payloads" time="2.089" /><testcase classname="tests.test_administration_demo" name="test_demo_role_data_and_cleanup_are_isolated[SUPER_ADMIN]" time="0.096"><failure message="sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation &quot;users&quot; does not exist&#10;LINE 2: FROM users&#10;             ^&#10;[SQL: SELECT count(*) AS count_1 &#10;FROM users]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)">.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1976: in _exec_single_context
+    self.dialect.do_execute(
+.venv-win\Lib\site-packages\sqlalchemy\engine\default.py:964: in do_execute
+    cursor.execute(statement, parameters)
+.venv-win\Lib\site-packages\psycopg\cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 2: FROM users
+E                ^
+
+The above exception was the direct cause of the following exception:
+tests\test_administration_demo.py:24: in test_demo_role_data_and_cleanup_are_isolated
+    before = counts(engine)
+             ^^^^^^^^^^^^^^
+tests\test_administration_demo.py:16: in counts
+    return (connection.scalar(select(func.count()).select_from(User)),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1317: in scalar
+    return meth(
+.venv-win\Lib\site-packages\sqlalchemy\sql\elements.py:544: in _execute_on_scalar
+    return self._execute_on_connection(
+.venv-win\Lib\site-packages\sqlalchemy\sql\elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1650: in _execute_clauseelement
+    ret = self._execute_context(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1855: in _execute_context
+    return self._exec_single_context(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1995: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:2372: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1976: in _exec_single_context
+    self.dialect.do_execute(
+.venv-win\Lib\site-packages\sqlalchemy\engine\default.py:964: in do_execute
+    cursor.execute(statement, parameters)
+.venv-win\Lib\site-packages\psycopg\cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 2: FROM users
+E                ^
+E   [SQL: SELECT count(*) AS count_1 
+E   FROM users]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)</failure></testcase><testcase classname="tests.test_administration_demo" name="test_demo_role_data_and_cleanup_are_isolated[ADMIN]" time="0.176"><failure message="sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation &quot;users&quot; does not exist&#10;LINE 2: FROM users&#10;             ^&#10;[SQL: SELECT count(*) AS count_1 &#10;FROM users]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)">.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1976: in _exec_single_context
+    self.dialect.do_execute(
+.venv-win\Lib\site-packages\sqlalchemy\engine\default.py:964: in do_execute
+    cursor.execute(statement, parameters)
+.venv-win\Lib\site-packages\psycopg\cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 2: FROM users
+E                ^
+
+The above exception was the direct cause of the following exception:
+tests\test_administration_demo.py:24: in test_demo_role_data_and_cleanup_are_isolated
+    before = counts(engine)
+             ^^^^^^^^^^^^^^
+tests\test_administration_demo.py:16: in counts
+    return (connection.scalar(select(func.count()).select_from(User)),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1317: in scalar
+    return meth(
+.venv-win\Lib\site-packages\sqlalchemy\sql\elements.py:544: in _execute_on_scalar
+    return self._execute_on_connection(
+.venv-win\Lib\site-packages\sqlalchemy\sql\elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1650: in _execute_clauseelement
+    ret = self._execute_context(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1855: in _execute_context
+    return self._exec_single_context(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1995: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:2372: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1976: in _exec_single_context
+    self.dialect.do_execute(
+.venv-win\Lib\site-packages\sqlalchemy\engine\default.py:964: in do_execute
+    cursor.execute(statement, parameters)
+.venv-win\Lib\site-packages\psycopg\cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 2: FROM users
+E                ^
+E   [SQL: SELECT count(*) AS count_1 
+E   FROM users]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)</failure></testcase><testcase classname="tests.test_administration_demo" name="test_demo_role_data_and_cleanup_are_isolated[OPERATOR]" time="0.090"><failure message="sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation &quot;users&quot; does not exist&#10;LINE 2: FROM users&#10;             ^&#10;[SQL: SELECT count(*) AS count_1 &#10;FROM users]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)">.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1976: in _exec_single_context
+    self.dialect.do_execute(
+.venv-win\Lib\site-packages\sqlalchemy\engine\default.py:964: in do_execute
+    cursor.execute(statement, parameters)
+.venv-win\Lib\site-packages\psycopg\cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   psycopg.errors.UndefinedTable: relation "users" does not exist
+E   LINE 2: FROM users
+E                ^
+
+The above exception was the direct cause of the following exception:
+tests\test_administration_demo.py:24: in test_demo_role_data_and_cleanup_are_isolated
+    before = counts(engine)
+             ^^^^^^^^^^^^^^
+tests\test_administration_demo.py:16: in counts
+    return (connection.scalar(select(func.count()).select_from(User)),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1317: in scalar
+    return meth(
+.venv-win\Lib\site-packages\sqlalchemy\sql\elements.py:544: in _execute_on_scalar
+    return self._execute_on_connection(
+.venv-win\Lib\site-packages\sqlalchemy\sql\elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1650: in _execute_clauseelement
+    ret = self._execute_context(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1855: in _execute_context
+    return self._exec_single_context(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1995: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:2372: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv-win\Lib\site-packages\sqlalchemy\engine\base.py:1976: in _exec_single_context
+    self.dialect.do_execute(
+.venv-win\Lib\site-packages\sqlalchemy\engine\default.py:964: in do_execute
+    cursor.execute(statement, parameters)
+.venv-win\Lib\site-packages\psycopg\cursor.py:117: in execute
+    raise ex.with_traceback(None)
+E   sqlalchemy.exc.ProgrammingError: (psycopg.errors.UndefinedTable) relation "users" does not exist
+E   LINE 2: FROM users
+E                ^
+E   [SQL: SELECT count(*) AS count_1 
+E   FROM users]
+E   (Background on this error at: https://sqlalche.me/e/20/f405)</failure></testcase></testsuite></testsuites>

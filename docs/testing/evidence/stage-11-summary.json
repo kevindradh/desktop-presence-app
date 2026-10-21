@@ -1,0 +1,57 @@
+{
+  "stage": 11,
+  "date": "2026-10-20",
+  "status": "technical_pass_awaiting_user_review",
+  "stage_10_review_accepted": true,
+  "definitions_approved_by_user": {
+    "present": "Unique people with committed IN; Late is a subset",
+    "absent": "Active scheduled members without IN at/after shift end",
+    "pending": "Before shift end without IN",
+    "leave": "From leave records, scheduled active members without IN"
+  },
+  "full_suite": {
+    "tests": 371,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 370.873
+  },
+  "native_macos": {
+    "tests": 59,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 154.809
+  },
+  "coverage": {
+    "covered_lines": 5974,
+    "num_statements": 6668,
+    "missing_lines": 694,
+    "percent_covered": 89.59208158368327
+  },
+  "warning": "One existing upstream InsightFace/scikit-image FutureWarning; no failure",
+  "database_read_only_check": {
+    "revision": "0004_devices",
+    "at_head": true,
+    "schema_valid": true,
+    "application_tables": 14,
+    "migration_added": false
+  },
+  "dependencies_added": false,
+  "operational_data_modified": false,
+  "privacy": "Only synthetic participants/vectors/frames and existing public model fixture; no new real face capture or enrollment",
+  "demo": "scripts/demo_dashboard.py; temporary owned schema in stargate_test",
+  "visual_review": [
+    "stage-11-dashboard.png",
+    "stage-11-demo.png",
+    "stage-11-charts-synthetic.png"
+  ],
+  "limitations": [
+    "Review and real-world statistics still require user confirmation",
+    "Single-site organization zone and LOCAL calendar for schedules",
+    "Leave/calendar editor not added",
+    "Charts capped at top 12 shifts/groups; monthly unit person-days",
+    "No Windows/RTSP/physical attack benchmark claim",
+    "Stage 12 not started"
+  ]
+}

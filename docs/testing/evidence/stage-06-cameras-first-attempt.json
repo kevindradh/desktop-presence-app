@@ -1,0 +1,136 @@
+{
+  "date": "2026-10-19",
+  "results": [
+    {
+      "case": "local-0-preview",
+      "passed": false,
+      "elapsed_seconds": 15.04,
+      "devices": [
+        {
+          "index": 0,
+          "state": "failed",
+          "frames": 2,
+          "size": [
+            1280,
+            720
+          ]
+        }
+      ],
+      "released": true
+    },
+    {
+      "case": "local-0-reopen-test",
+      "passed": true,
+      "elapsed_seconds": 2.08,
+      "devices": [
+        {
+          "index": 0,
+          "state": "test_ok",
+          "frames": 1,
+          "size": [
+            1280,
+            720
+          ]
+        }
+      ],
+      "released": true
+    },
+    {
+      "case": "local-1-preview",
+      "passed": true,
+      "elapsed_seconds": 1.12,
+      "devices": [
+        {
+          "index": 1,
+          "state": "streaming",
+          "frames": 5,
+          "size": [
+            1280,
+            720
+          ]
+        }
+      ],
+      "released": true
+    },
+    {
+      "case": "local-1-reopen-test",
+      "passed": true,
+      "elapsed_seconds": 0.92,
+      "devices": [
+        {
+          "index": 1,
+          "state": "test_ok",
+          "frames": 1,
+          "size": [
+            1280,
+            720
+          ]
+        }
+      ],
+      "released": true
+    },
+    {
+      "case": "multiple-local-cameras",
+      "passed": true,
+      "elapsed_seconds": 2.64,
+      "devices": [
+        {
+          "index": 0,
+          "state": "streaming",
+          "frames": 5,
+          "size": [
+            1280,
+            720
+          ]
+        },
+        {
+          "index": 1,
+          "state": "streaming",
+          "frames": 36,
+          "size": [
+            1280,
+            720
+          ]
+        }
+      ],
+      "released": true
+    },
+    {
+      "case": "missing-local-camera",
+      "passed": true,
+      "elapsed_seconds": 0.49,
+      "devices": [
+        {
+          "index": 15,
+          "state": "failed",
+          "frames": 0,
+          "size": [
+            0,
+            0
+          ]
+        }
+      ],
+      "released": true
+    },
+    {
+      "case": "invalid-rtsp-localhost",
+      "passed": true,
+      "elapsed_seconds": 0.28,
+      "devices": [
+        {
+          "index": 0,
+          "state": "failed",
+          "frames": 0,
+          "size": [
+            0,
+            0
+          ]
+        }
+      ],
+      "released": true
+    }
+  ],
+  "images_saved": false,
+  "real_rtsp": "NOT RUN: source unavailable",
+  "physical_unplug": "NOT RUN: manual test required"
+}

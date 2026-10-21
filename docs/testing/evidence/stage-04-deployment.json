@@ -1,0 +1,61 @@
+{
+  "stage": 4,
+  "databases": {
+    "dev": {
+      "current_revision": "0002_auth",
+      "expected_revision": "0002_auth",
+      "at_head": true,
+      "tables": [
+        "alembic_version",
+        "attendance",
+        "audit_logs",
+        "auth_sessions",
+        "calendar_days",
+        "devices",
+        "face_embeddings",
+        "locations",
+        "member_groups",
+        "member_leaves",
+        "members",
+        "settings",
+        "shift_assignments",
+        "shifts",
+        "users"
+      ],
+      "application_table_count": 14,
+      "schema_valid": true,
+      "missing_tables": [],
+      "missing_columns": {},
+      "user_count": 0,
+      "session_count": 0
+    },
+    "test": {
+      "current_revision": "0002_auth",
+      "expected_revision": "0002_auth",
+      "at_head": true,
+      "tables": [
+        "alembic_version",
+        "attendance",
+        "audit_logs",
+        "auth_sessions",
+        "calendar_days",
+        "devices",
+        "face_embeddings",
+        "locations",
+        "member_groups",
+        "member_leaves",
+        "members",
+        "settings",
+        "shift_assignments",
+        "shifts",
+        "users"
+      ],
+      "application_table_count": 14,
+      "schema_valid": true,
+      "missing_tables": [],
+      "missing_columns": {},
+      "user_count": 0,
+      "session_count": 0
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "stage": 1,
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "checks": {
+    "camera": {
+      "status": "PASS",
+      "detail": {
+        "status": "PASS",
+        "index": 0,
+        "frame_size": [
+          1920,
+          1080
+        ],
+        "saved_frames": 0
+      }
+    }
+  }
+}

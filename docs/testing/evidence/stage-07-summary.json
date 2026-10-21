@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-19",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "machine": "arm64",
+  "python": "3.11.17",
+  "packages": {
+    "PyQt6": "6.11.0",
+    "opencv-python": "4.11.0.86",
+    "insightface": "2.1",
+    "onnxruntime": "1.31.0",
+    "torch": "2.14.1",
+    "SQLAlchemy": "2.0.55",
+    "pgvector": "0.5.1",
+    "scikit-image": "0.26.0"
+  },
+  "regression": {
+    "tests": 233,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native": {
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "coverage": {
+    "covered_lines": 4034,
+    "num_statements": 4426,
+    "percent_covered": 91.1432444645278,
+    "percent_covered_display": "91",
+    "missing_lines": 392,
+    "excluded_lines": 0,
+    "percent_statements_covered": 91.1432444645278,
+    "percent_statements_covered_display": "91"
+  },
+  "coverage_scope": [
+    "app",
+    "database",
+    "ai"
+  ],
+  "models": [
+    {
+      "id": "retinaface-weights",
+      "sha256": "d08338a2c207df16a9c566f767fea67fb43ba6fff76ce11e938fe3fabefb9402"
+    },
+    {
+      "id": "retinaface-config",
+      "sha256": "9fe2f141b4baee039ed9442da2833e216af40a6ff3e639e7b39258812bcda808"
+    },
+    {
+      "id": "minifasnet-weights",
+      "sha256": "a5eb02e1843f19b5386b953cc4c9f011c3f985d0ee2bb9819eea9a142099bec0"
+    },
+    {
+      "id": "minifasnet-source",
+      "sha256": "e498c4ec5e1ddfaba62b941a126c19d65aa564999f3309661fe43ee8bf38acd7"
+    },
+    {
+      "id": "minifasnet-license",
+      "sha256": "daf94bf1dc9cc5700fe5af2c7c0cbd1836e70d509ed78fd0bebef7432edee6fb"
+    },
+    {
+      "id": "arcface-weights",
+      "sha256": "4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43"
+    },
+    {
+      "id": "face-landmarks",
+      "sha256": "f001b856447c413801ef5c42091ed0cd516fcd21f2d6b79635b1e733a7109dbf"
+    }
+  ],
+  "new_dependencies": false,
+  "new_migration": false,
+  "real_photos_saved": false,
+  "real_embeddings_saved": false,
+  "camera_trial": "8 samples partial_face; no genuine/live recognition acceptance",
+  "known_warning": "InsightFace SimilarityTransform.estimate deprecated by installed scikit-image",
+  "pending": [
+    "genuine liveness on quality-valid camera frames",
+    "new-frame known/unknown subject trials",
+    "printed-photo attack",
+    "screen-photo attack",
+    "video-replay attack",
+    "user review"
+  ],
+  "stage_gate": "PENDING_REAL_TRIALS_AND_USER_REVIEW",
+  "next_stage_started": false
+}

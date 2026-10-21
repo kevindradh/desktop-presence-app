@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="3" failures="0" skipped="0" tests="3" time="2.376" timestamp="2026-10-20T20:22:08.792771+07:00" hostname="KEVINDA9BE"><testcase classname="" name="prerequisites.Python-3.11.17.Lib.distutils.tests.test_archive_util" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\StarGate-build\prerequisites\Python-3.11.17\Lib\distutils\tests\test_archive_util.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+prerequisites\Python-3.11.17\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv-win\Lib\site-packages\setuptools\_distutils\tests\test_archive_util.py:21: in &lt;module&gt;
+    import path
+E   ModuleNotFoundError: No module named 'path'</error></testcase><testcase classname="" name="prerequisites.Python-3.11.17.Lib.distutils.tests.test_bdist" time="0.000"><error message="collection failure">import file mismatch:
+imported module 'distutils.tests.test_bdist' has this __file__ attribute:
+  C:\StarGate-build\.venv-win\Lib\site-packages\setuptools\_distutils\tests\test_bdist.py
+which is not the same as the test file we want to collect:
+  C:\StarGate-build\prerequisites\Python-3.11.17\Lib\distutils\tests\test_bdist.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules</error></testcase><testcase classname="" name="prerequisites.Python-3.11.17.Lib.distutils.tests.test_bdist_dumb" time="0.000"><error message="collection failure">import file mismatch:
+imported module 'distutils.tests.test_bdist_dumb' has this __file__ attribute:
+  C:\StarGate-build\.venv-win\Lib\site-packages\setuptools\_distutils\tests\test_bdist_dumb.py
+which is not the same as the test file we want to collect:
+  C:\StarGate-build\prerequisites\Python-3.11.17\Lib\distutils\tests\test_bdist_dumb.py
+HINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules</error></testcase></testsuite></testsuites>

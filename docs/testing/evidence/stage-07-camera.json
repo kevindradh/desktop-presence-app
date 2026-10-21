@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-19",
+  "camera_index": 0,
+  "requested_samples": 8,
+  "completed": true,
+  "images_saved": 0,
+  "embeddings_saved": 0,
+  "device_released": true,
+  "accuracy_claim": false,
+  "liveness_acceptance_claim": false,
+  "sample_count": 8,
+  "status_counts": {
+    "partial_face": 8
+  },
+  "observed_face_counts": [
+    1
+  ],
+  "elapsed_ms": {
+    "min": 2.7411670016590506,
+    "max": 10.634833000949584
+  },
+  "interpretation": "Transport/detection/partial-face quality rejection only; genuine liveness and recognition NOT VALIDATED"
+}

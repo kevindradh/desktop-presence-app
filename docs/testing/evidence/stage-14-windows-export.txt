@@ -1,0 +1,770 @@
+ StarGate - Laporan Kehadiran
+ Periode 20/10/2026 sampai 20/10/2026. Tanggal kerja mengikuti awal shift.
+ Grup: Semua grup. Shift: Semua shift. Anggota: Semua. Status: Semua status.
+ Dimuat 20/10/2026 23:40:21 (Asia/Jakarta). 71 baris. Semua halaman hasil filter.
+ Hadir mencakup Terlambat; Izin/Absent/Belum masuk berasal dari jadwal aktif dan kalender LOCAL saat dimuat.
+
+
+   Tanggal / anggota                 Grup / shift        Status           Masuk / keluar                Istirahat    Pulang / sumber /
+                                                                                                                     perangkat
+
+
+   20/10/2026                        Grup sintetis       Absent           Masuk: -                      Mulai: -     Pulang awal: -
+   EXPORT-000                        Windows                              Keluar: -                     Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 0
+
+
+   20/10/2026                        Grup sintetis       Absent           Masuk: -                      Mulai: -     Pulang awal: -
+   EXPORT-001                        Windows                              Keluar: -                     Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 1
+
+
+   20/10/2026                        Grup sintetis       Absent           Masuk: -                      Mulai: -     Pulang awal: -
+   EXPORT-002                        Windows                              Keluar: -                     Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 2
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                                        Halaman 1
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-003                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 3
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-004                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 4
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-005                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 5
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-006                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 6
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 2
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-007                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 7
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-008                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 8
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-009                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 9
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-010                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 10
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 3
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-011                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 11
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-012                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 12
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-013                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 13
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-014                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 14
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 4
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-015                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 15
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-016                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 16
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-017                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 17
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-018                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 18
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 5
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-019                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 19
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-020                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 20
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-021                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 21
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-022                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 22
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 6
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-023                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 23
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-024                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 24
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-025                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 25
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-026                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 26
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 7
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-027                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 27
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-028                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 28
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-029                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 29
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-030                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 30
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 8
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-031                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 31
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-032                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 32
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-033                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 33
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-034                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 34
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 9
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-035                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 35
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-036                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 36
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-037                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 37
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-038                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 38
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 10
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-039                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 39
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-040                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 40
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-041                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 41
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-042                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 42
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 11
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-043                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 43
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-044                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 44
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-045                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 45
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-046                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 46
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 12
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-047                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 47
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-048                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 48
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-049                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 49
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-050                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 50
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 13
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-051                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 51
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-052                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 52
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-053                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 53
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-054                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 54
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 14
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-055                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 55
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-056                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 56
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-057                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 57
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-058                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 58
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 15
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-059                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 59
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-060                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 60
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-061                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 61
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-062                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 62
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 16
+   Tanggal / anggota                 Grup / shift     Status   Masuk / keluar   Istirahat    Pulang / sumber /
+                                                                                             perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-063                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 63
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-064                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 64
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-065                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 65
+
+
+   20/10/2026                        Grup sintetis    Absent   Masuk: -         Mulai: -     Pulang awal: -
+   EXPORT-066                        Windows                   Keluar: -        Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 66
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                Halaman 17
+   Tanggal / anggota                 Grup / shift     Status        Masuk / keluar               Istirahat    Pulang / sumber /
+                                                                                                              perangkat
+
+
+   20/10/2026                        Grup sintetis    Absent        Masuk: -                     Mulai: -     Pulang awal: -
+   EXPORT-067                        Windows                        Keluar: -                    Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 67
+
+
+   20/10/2026                        Grup sintetis    Absent        Masuk: -                     Mulai: -     Pulang awal: -
+   EXPORT-068                        Windows                        Keluar: -                    Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 68
+
+
+   20/10/2026                        Grup sintetis    Absent        Masuk: -                     Mulai: -     Pulang awal: -
+   EXPORT-069                        Windows                        Keluar: -                    Selesai: -   Sumber OUT: -
+   José 東京 Nama sintetis             Shift sintetis
+   untuk uji Windows Nama            Windows
+   sintetis untuk uji Windows
+   Nama sintetis untuk uji
+   Windows 69
+
+
+   20/10/2026                        Grup sintetis    Hadir tepat   Masuk: 20/10/2026 08:00:00   Mulai: -     Pulang awal: -
+   WIN-UAT-001                       Windows          waktu         Keluar: -                    Selesai: -   Sumber OUT: -
+   Peserta Sintetis Windows          Shift sintetis                                                           Perangkat sintetis
+                                     Windows
+
+
+
+
+StarGate | Asia/Jakarta | 2026-10-20 - 2026-10-20                                                                                  Halaman 18
+

@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-19",
+  "python": "3.11.17",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "regression": {
+    "tests": 334,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 295.16
+  },
+  "native": {
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 112.41
+  },
+  "coverage": {
+    "covered_lines": 5285,
+    "num_statements": 5879,
+    "percent_covered": 89.89624085728866,
+    "percent_covered_display": "90",
+    "missing_lines": 594,
+    "excluded_lines": 0,
+    "percent_statements_covered": 89.89624085728866,
+    "percent_statements_covered_display": "90"
+  },
+  "coverage_scope": [
+    "app",
+    "database",
+    "ai"
+  ],
+  "new_dependencies": false,
+  "new_migration": false,
+  "schema_revision": "0004_devices",
+  "development_schema_check": "PASS read-only; schema_valid/at_head true",
+  "development_data_written_by_tests": false,
+  "real_face_photos_saved_by_tests": false,
+  "real_face_embeddings_saved_by_tests": false,
+  "input_provenance": [
+    "synthetic camera color frames and normalized vectors",
+    "real pinned models with zero frame; prior public/generated fixtures"
+  ],
+  "early_checkin": "User explicitly chose reject before shift; accept starting exactly at shift start",
+  "rules": [
+    "global member cooldown; exact 60 seconds accepted subject to state",
+    "AUTO/IN/OUT/BREAK_OUT/BREAK_IN",
+    "Present at grace boundary; Late after it; early leave independent",
+    "overnight work_date is shift start date",
+    "fresh signed policy/probe required; stale query/write rolls back",
+    "one-second detector absence rearms continuous-face hold including cooldown duplicates on second camera",
+    "auto checkout: application/session active; <=100 due entries per transaction; catch-up on next authorized login"
+  ],
+  "audio_evidence": "Play request verified after committed row using test stub; actual speaker output pending user manual trial",
+  "stage_09_review": "Accepted by user; no per-condition real-face counts/scores supplied",
+  "pending": [
+    "Stage 10 real camera attendance, print/replay and speaker trials",
+    "Stage 10 user review",
+    "RTSP positive hardware source still unavailable",
+    "Windows distribution Stage 14",
+    "SLA/accuracy/robustness targets Stage 15"
+  ],
+  "stage_gate": "PENDING_REAL_ATTENDANCE_AND_USER_REVIEW",
+  "next_stage_started": false,
+  "warning": "Existing upstream InsightFace/scikit-image FutureWarning remains visible"
+}

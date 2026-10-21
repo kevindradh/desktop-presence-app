@@ -1,0 +1,79 @@
+{
+  "stage": 5,
+  "databases": {
+    "dev": {
+      "status": {
+        "current_revision": "0003_admin",
+        "expected_revision": "0003_admin",
+        "at_head": true,
+        "tables": [
+          "alembic_version",
+          "attendance",
+          "audit_logs",
+          "auth_sessions",
+          "calendar_days",
+          "devices",
+          "face_embeddings",
+          "locations",
+          "member_groups",
+          "member_leaves",
+          "members",
+          "settings",
+          "shift_assignments",
+          "shifts",
+          "users"
+        ],
+        "application_table_count": 14,
+        "schema_valid": true,
+        "missing_tables": [],
+        "missing_columns": {}
+      },
+      "existing_accounts_sessions_and_counts_unchanged": true,
+      "counts": {
+        "users": 4,
+        "auth_sessions": 22,
+        "members": 0,
+        "member_groups": 0,
+        "shifts": 0,
+        "attendance": 0
+      }
+    },
+    "test": {
+      "status": {
+        "current_revision": "0003_admin",
+        "expected_revision": "0003_admin",
+        "at_head": true,
+        "tables": [
+          "alembic_version",
+          "attendance",
+          "audit_logs",
+          "auth_sessions",
+          "calendar_days",
+          "devices",
+          "face_embeddings",
+          "locations",
+          "member_groups",
+          "member_leaves",
+          "members",
+          "settings",
+          "shift_assignments",
+          "shifts",
+          "users"
+        ],
+        "application_table_count": 14,
+        "schema_valid": true,
+        "missing_tables": [],
+        "missing_columns": {}
+      },
+      "existing_accounts_sessions_and_counts_unchanged": true,
+      "counts": {
+        "users": 0,
+        "auth_sessions": 0,
+        "members": 0,
+        "member_groups": 0,
+        "shifts": 0,
+        "attendance": 0
+      }
+    }
+  }
+}

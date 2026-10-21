@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-19",
+  "python": "3.11.17",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "regression": {
+    "tests": 260,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native": {
+    "tests": 28,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "coverage": {
+    "covered_lines": 4539,
+    "num_statements": 5034,
+    "percent_covered": 90.1668653158522,
+    "percent_covered_display": "90",
+    "missing_lines": 495,
+    "excluded_lines": 0,
+    "percent_statements_covered": 90.1668653158522,
+    "percent_statements_covered_display": "90"
+  },
+  "coverage_scope": [
+    "app",
+    "database",
+    "ai"
+  ],
+  "new_dependencies": false,
+  "new_migration": false,
+  "schema_revision": "0004_devices",
+  "real_face_photos_saved_by_automated_tests": false,
+  "real_face_embeddings_saved_by_automated_tests": false,
+  "storage_authorization": "User explicitly allowed real data and delegated evidence-based retention recommendation",
+  "retention": "Active while needed; deactivate deletes biometrics, attendance history retained; re-registration replaces complete set atomically",
+  "pending": [
+    "real five-pose enrollment and re-registration",
+    "real identity probe after application restart",
+    "user review",
+    "RTSP positive from stage 6"
+  ],
+  "stage_gate": "PENDING_REAL_CAMERA_TRIALS_AND_USER_REVIEW",
+  "next_stage_started": false,
+  "warning": "Upstream InsightFace/scikit-image deprecation warning remains visible"
+}

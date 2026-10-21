@@ -1,0 +1,216 @@
+{
+  "stage": 14,
+  "date": "2026-10-21",
+  "scope": "Windows x64 installer built and installed on ARM64 Parallels; technical checks completed, manual UAT/review pending",
+  "stage13_review": "accepted",
+  "purpose": "competition/research/internal testing, not production clearance",
+  "parallels": {
+    "vm": "Windows 11",
+    "state_when_inspected": "running",
+    "guest_architecture": "ARM64",
+    "start_attempt": "failed: at least 1589 MB additional disk requested",
+    "user_choice": "resume and finish Stage14",
+    "previous_state": "stopped",
+    "windows": "Windows 11 Pro 10.0.26200",
+    "ram_bytes": 12878282752,
+    "guest_free_bytes_initial": 26706620416,
+    "previous_deferral": "prepare first, test Windows later"
+  },
+  "focused": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 5.892
+  },
+  "native_final": {
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 279.924
+  },
+  "native_initial": {
+    "tests": 69,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "time": 273.678
+  },
+  "full_regression": {
+    "tests": 452,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 917.345
+  },
+  "source_probe": "PASS: Qt image plugins, bundle assets, native imports, generic spawn, actual AI worker, pinned models/blank frame and private log dir",
+  "database_working_instance": "readonly check PASS: 0004_devices, 14 app tables; no migrate/restore",
+  "windows_executable": "PASS: 4615-file manifest; frozen Qt/native/spawn/pinned model worker/blank frame, no development Python PATH",
+  "windows_installer": {
+    "status": "BUILT AND INSTALLED",
+    "bytes": 456709976,
+    "sha256": "b12341fd78dd4711450d3673b18c5ce36ba38b0431e4dea2a46dd9437bcd6fd7",
+    "authenticode": "NotSigned"
+  },
+  "windows_clean_install": "PASS: new standard account SGStage14UAT, non-elevated token; own synthetic database only",
+  "windows_offline": "PASS: Ethernet physically disconnected in VM; frozen model probe and local database check, then NIC reconnected; full interactive offline UAT pending",
+  "windows_acl_drivers_upgrade_uninstall": "ACL/real cameras/repair/uninstall/reinstall PASS; historic Windows release upgrade unavailable for first package",
+  "stage14_gate": "PENDING USER MANUAL UAT/REVIEW; Stage15 not started",
+  "coverage": {
+    "covered_lines": 7115,
+    "num_statements": 7908,
+    "missing_lines": 793,
+    "percent_covered": 89.97218007081436
+  },
+  "coverage_scope": "app/database/ai parent process line coverage; native/subprocess probes independently verified. Windows-API guard additionally verified by final codec rerun. Coverage snapshot predates the Windows ACL/capture-group fixes; latest cross-platform changes additionally verified by focused tests.",
+  "backup_portability": {
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time": 10.704
+  },
+  "warning": "one existing InsightFace/skimage FutureWarning",
+  "dependency_check": "pip check and 75-wheel no-index require-hashes dry-run PASS; candidate Windows hash lock retained pending review",
+  "remaining": [
+    "Manual installed Windows face enrollment/attendance, physical USB unplug, audio, Excel/reader",
+    "Full interactive offline workflow with local PostgreSQL running",
+    "User review before Stage15",
+    "Real RTSP unavailable; physical x64 Windows not tested",
+    "Historical binary/schema upgrade not tested: no earlier Windows release",
+    "Public/commercial distribution license and signing review outside current research use"
+  ],
+  "transfer_kit": {
+    "file": "dist/StarGate-Windows-build-kit-stage14-final.zip",
+    "bytes": 169213199,
+    "files": 196,
+    "sha256": "2f5dc678d53c85943f8ff1ee184e4f01c4fd55ddb78bf54816304f31e3edb0ef",
+    "integrity": "PASS",
+    "known_source_credentials_absent": true,
+    "kind": "SOURCE BUILD KIT, not installer",
+    "research_models": true
+  },
+  "windows_preparation": {
+    "kit_transfer": "SHA256 verified; extracted on local NTFS C:\\StarGate-build",
+    "python": "CPython 3.11.17 built from official source; win-amd64, MSC v1944; 0 errors/3 Git metadata warnings",
+    "compiler": "VS2022 Build Tools 17.14.42 installed; publisher signature validated",
+    "installer_compiler": "Inno Setup 6.7.3 installed with winget checksum validation",
+    "postgresql": "17.11-5 EDB official Windows x64 archive SHA256 verified; isolated loopback cluster port55434",
+    "pgvector": "0.8.7 compiled and installed against this PostgreSQL x64",
+    "database": "0004_devices, 14 app tables; migrate/seed/check PASS; synthetic instance only",
+    "dependencies": "pip check PASS; PyTorch2.14.1+cpu basic tensor calculation PASS",
+    "source_package_probe": "PASS: Qt/native/spawn/pinned AI worker and blank frame",
+    "private_acl": "PASS: native protected DACL and Everyone removal; private files and directories",
+    "camera_source": "PASS: 7 cases; FaceTime HD Camera + C922 Pro Stream Webcam, each1280x720; no images saved; real RTSP and physical unplug still manual"
+  },
+  "windows_initial_regression": {
+    "passed": 189,
+    "failed": 3,
+    "skipped": 1,
+    "seconds": 862.55,
+    "stopped_at_maxfail": 3,
+    "status": "FAIL, superseded by targeted fixes; final full run pending"
+  },
+  "windows_targeted_fixes": {
+    "passed": 4,
+    "failed": 0,
+    "seconds": 52.58,
+    "scope": "late second camera within shared capture group; UI two-camera; restore click during held background poll; attendance demo isolated"
+  },
+  "latest_posix_targeted": {
+    "private_files": {
+      "passed": 15,
+      "skipped": 1,
+      "seconds": 4.11
+    },
+    "private_integration": {
+      "passed": 5,
+      "seconds": 15.75
+    },
+    "attendance_backup_packaging": {
+      "passed": 16,
+      "seconds": 21.28
+    },
+    "safe_model_diagnostics": {
+      "passed": 1,
+      "seconds": 0.26
+    },
+    "packaging_final": {
+      "passed": 11,
+      "skipped": 1,
+      "skip_reason": "real-model opt-in; actual frozen model independently verified",
+      "seconds": 1.07
+    }
+  },
+  "windows_full_regression": {
+    "tests": 458,
+    "passed": 455,
+    "failed": 2,
+    "skipped": 1,
+    "seconds": 1063.71,
+    "status": "NOT SINGLE-RUN GREEN; two timeout cases rechecked separately",
+    "evidence": "stage-14-windows-tests-final.xml"
+  },
+  "windows_timeout_recheck": {
+    "passed": 3,
+    "failed": 0,
+    "seconds": 12.54,
+    "production_timeout_changed": false,
+    "evidence": "stage-14-windows-timeout-recheck.xml"
+  },
+  "windows_symlink_privileged_recheck": {
+    "passed": 1,
+    "failed": 0,
+    "seconds": 0.6,
+    "account": "SYSTEM, existing privilege; no system security setting changed",
+    "evidence": "stage-14-windows-symlink-system.xml"
+  },
+  "windows_frozen_functional": {
+    "synthetic_members": 71,
+    "synthetic_attendance_rows": 1,
+    "export_rows": 71,
+    "pdf_pages": 18,
+    "bootstrap_change_login": true,
+    "native_credential_restart": true,
+    "backup_restore": true,
+    "biometrics_removed_on_restore": true,
+    "real_faces_used": false,
+    "data_preserved_after_reinstall": true
+  },
+  "windows_camera_final": {
+    "passed": 7,
+    "failed": 0,
+    "images_saved": false,
+    "evidence": "stage-14-windows-cameras-frozen-reconnected.json",
+    "scope": "temporary frozen entry reusing candidate PYZ/DLL; no UI click automation",
+    "initial_frozen_failures": 4,
+    "note": "USB disappeared during initial tests; source recheck overlapped reconnection; both devices OK and final frozen 7/7 PASS; first laptop startup failure not fully isolated, monitor soak/manual UAT"
+  },
+  "runtime_instance": {
+    "user": "kevind",
+    "database": "stargate_local",
+    "host": "127.0.0.1",
+    "port": 55434,
+    "postgres_service": "portable local test process; restart launcher provided",
+    "mac_working_data_copied": false,
+    "temporary_uat_account": "disabled after tests; synthetic data preserved"
+  },
+  "transfer_kit_initial": {
+    "file": "dist/StarGate-Windows-build-kit.zip",
+    "bytes": 169192587,
+    "files": 189,
+    "sha256": "f2980a8d061f6cd3edbd3cca6be564a487ea9cc4fc61bc306a0e56d32c5c4038",
+    "integrity": "PASS: all per-file SHA256 match",
+    "known_credentials_absent": true,
+    "kind": "source build kit, NOT executable/installer",
+    "research_models": true
+  },
+  "windows_distinct_cases_across_runs": {
+    "passed": 458,
+    "failed": 0,
+    "skipped": 0,
+    "single_run": false,
+    "scope": "Latest full run plus targeted timeout rechecks and separate SYSTEM symlink case; not all standard-user passes in one run"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "stop": {
+    "exit_code": 0
+  },
+  "start": {
+    "exit_code": 0
+  },
+  "status": {
+    "exit_code": 0
+  },
+  "database_after_restart": {
+    "exit_code": 0
+  }
+}

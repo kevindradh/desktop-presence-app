@@ -1,0 +1,94 @@
+[
+  {
+    "database": "dev",
+    "existing_rows_preserved": true,
+    "row_counts": {
+      "locations": 1,
+      "settings": 12,
+      "audit_logs": 70,
+      "users": 4,
+      "member_groups": 1,
+      "shifts": 2,
+      "calendar_days": 0,
+      "devices": 0,
+      "attendance": 0,
+      "face_embeddings": 0,
+      "member_leaves": 0,
+      "shift_assignments": 0,
+      "auth_sessions": 25,
+      "members": 0
+    },
+    "status": {
+      "current_revision": "0004_devices",
+      "expected_revision": "0004_devices",
+      "at_head": true,
+      "tables": [
+        "alembic_version",
+        "attendance",
+        "audit_logs",
+        "auth_sessions",
+        "calendar_days",
+        "devices",
+        "face_embeddings",
+        "locations",
+        "member_groups",
+        "member_leaves",
+        "members",
+        "settings",
+        "shift_assignments",
+        "shifts",
+        "users"
+      ],
+      "application_table_count": 14,
+      "schema_valid": true,
+      "missing_tables": [],
+      "missing_columns": {}
+    }
+  },
+  {
+    "database": "test",
+    "existing_rows_preserved": true,
+    "row_counts": {
+      "member_groups": 0,
+      "locations": 1,
+      "settings": 12,
+      "audit_logs": 1,
+      "shifts": 0,
+      "calendar_days": 0,
+      "devices": 0,
+      "attendance": 0,
+      "face_embeddings": 0,
+      "member_leaves": 0,
+      "shift_assignments": 0,
+      "members": 0,
+      "users": 0,
+      "auth_sessions": 0
+    },
+    "status": {
+      "current_revision": "0004_devices",
+      "expected_revision": "0004_devices",
+      "at_head": true,
+      "tables": [
+        "alembic_version",
+        "attendance",
+        "audit_logs",
+        "auth_sessions",
+        "calendar_days",
+        "devices",
+        "face_embeddings",
+        "locations",
+        "member_groups",
+        "member_leaves",
+        "members",
+        "settings",
+        "shift_assignments",
+        "shifts",
+        "users"
+      ],
+      "application_table_count": 14,
+      "schema_valid": true,
+      "missing_tables": [],
+      "missing_columns": {}
+    }
+  }
+]

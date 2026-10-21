@@ -1,0 +1,25 @@
+{
+  "stage": 2,
+  "mode": "offscreen",
+  "checks": {
+    "navigation": {
+      "status": "PASS",
+      "page_count": 10
+    },
+    "success_and_responsiveness": {
+      "status": "PASS",
+      "ui_ticks_during_task": 17
+    },
+    "safe_worker_error": {
+      "status": "PASS"
+    },
+    "cancel_and_retry": {
+      "status": "PASS"
+    },
+    "close_while_running": {
+      "status": "PASS",
+      "seconds": 0.016
+    }
+  },
+  "scope": "Synthetic tasks only; no camera/model/database activity"
+}

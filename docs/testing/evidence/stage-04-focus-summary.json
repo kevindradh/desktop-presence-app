@@ -1,0 +1,19 @@
+{
+  "bug": "AUTH-B004",
+  "tests": 102,
+  "failures": 0,
+  "skipped": 0,
+  "focus_regression_offscreen": 2,
+  "focus_regression_macos_native": 2,
+  "coverage": {
+    "covered_lines": 1854,
+    "num_statements": 2027,
+    "percent_covered": 91.46521953626048,
+    "percent_covered_display": "91",
+    "missing_lines": 173,
+    "excluded_lines": 0,
+    "percent_statements_covered": 91.46521953626048,
+    "percent_statements_covered_display": "91"
+  },
+  "scope": "app + database, no new exclusions"
+}

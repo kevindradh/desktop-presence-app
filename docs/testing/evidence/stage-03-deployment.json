@@ -1,0 +1,42 @@
+{
+  "stage": 3,
+  "targets": {
+    "dev": {
+      "upgrade": {
+        "exit_code": 0,
+        "result": "Migrasi selesai. Data yang sudah ada tidak dihapus."
+      },
+      "seed": {
+        "exit_code": 0,
+        "result": "{\"settings_inserted\": 12, \"locations_inserted\": 1}"
+      },
+      "seed_repeat": {
+        "exit_code": 0,
+        "result": "{\"settings_inserted\": 0, \"locations_inserted\": 0}"
+      },
+      "check": {
+        "exit_code": 0,
+        "result": "{\n  \"current_revision\": \"0001_stargate\",\n  \"expected_revision\": \"0001_stargate\",\n  \"at_head\": true,\n  \"tables\": [\n    \"alembic_version\",\n    \"attendance\",\n    \"audit_logs\",\n    \"calendar_days\",\n    \"devices\",\n    \"face_embeddings\",\n    \"locations\",\n    \"member_groups\",\n    \"member_leaves\",\n    \"members\",\n    \"settings\",\n    \"shift_assignments\",\n    \"shifts\",\n    \"users\"\n  ],\n  \"application_table_count\": 13\n}"
+      }
+    },
+    "test": {
+      "upgrade": {
+        "exit_code": 0,
+        "result": "Migrasi selesai. Data yang sudah ada tidak dihapus."
+      },
+      "seed": {
+        "exit_code": 0,
+        "result": "{\"settings_inserted\": 12, \"locations_inserted\": 1}"
+      },
+      "seed_repeat": {
+        "exit_code": 0,
+        "result": "{\"settings_inserted\": 0, \"locations_inserted\": 0}"
+      },
+      "check": {
+        "exit_code": 0,
+        "result": "{\n  \"current_revision\": \"0001_stargate\",\n  \"expected_revision\": \"0001_stargate\",\n  \"at_head\": true,\n  \"tables\": [\n    \"alembic_version\",\n    \"attendance\",\n    \"audit_logs\",\n    \"calendar_days\",\n    \"devices\",\n    \"face_embeddings\",\n    \"locations\",\n    \"member_groups\",\n    \"member_leaves\",\n    \"members\",\n    \"settings\",\n    \"shift_assignments\",\n    \"shifts\",\n    \"users\"\n  ],\n  \"application_table_count\": 13\n}"
+      }
+    }
+  },
+  "scope": "Apply initial migration and idempotent defaults only; no member/face/admin data inserted"
+}

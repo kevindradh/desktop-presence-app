@@ -1,0 +1,20 @@
+{
+  "stage": 5,
+  "tests": 147,
+  "failures": 0,
+  "skipped": 0,
+  "native_ui_and_auth_tests": 21,
+  "coverage": {
+    "covered_lines": 2728,
+    "num_statements": 2926,
+    "percent_covered": 93.23308270676692,
+    "percent_covered_display": "93",
+    "missing_lines": 198,
+    "excluded_lines": 0,
+    "percent_statements_covered": 93.23308270676692,
+    "percent_statements_covered_display": "93"
+  },
+  "scope": "app + database; no new exclusions",
+  "public_data": "no synthetic members or automatic accounts created in development",
+  "registration_gate": "capture/embedding deferred to stage 8"
+}

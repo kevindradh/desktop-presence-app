@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-19",
+  "regression": {
+    "tests": 191,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native_ui": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "coverage": {
+    "covered_lines": 3391,
+    "num_statements": 3671,
+    "percent_covered": 92.37265050394987,
+    "percent_covered_display": "92",
+    "missing_lines": 280,
+    "excluded_lines": 0,
+    "percent_statements_covered": 92.37265050394987,
+    "percent_statements_covered_display": "92"
+  },
+  "stage_gate": "PENDING_REAL_RTSP_PHYSICAL_UNPLUG_AND_USER_REVIEW",
+  "images_saved_from_real_cameras": false
+}

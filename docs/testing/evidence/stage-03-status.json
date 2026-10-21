@@ -1,0 +1,89 @@
+{
+  "stage": 3,
+  "targets": {
+    "dev": {
+      "schema": {
+        "current_revision": "0001_stargate",
+        "expected_revision": "0001_stargate",
+        "at_head": true,
+        "tables": [
+          "alembic_version",
+          "attendance",
+          "audit_logs",
+          "calendar_days",
+          "devices",
+          "face_embeddings",
+          "locations",
+          "member_groups",
+          "member_leaves",
+          "members",
+          "settings",
+          "shift_assignments",
+          "shifts",
+          "users"
+        ],
+        "application_table_count": 13,
+        "schema_valid": true,
+        "missing_tables": [],
+        "missing_columns": {}
+      },
+      "row_counts": {
+        "locations": 1,
+        "member_groups": 0,
+        "members": 0,
+        "face_embeddings": 0,
+        "shifts": 0,
+        "shift_assignments": 0,
+        "member_leaves": 0,
+        "calendar_days": 0,
+        "devices": 0,
+        "users": 0,
+        "settings": 12,
+        "attendance": 0,
+        "audit_logs": 1
+      }
+    },
+    "test": {
+      "schema": {
+        "current_revision": "0001_stargate",
+        "expected_revision": "0001_stargate",
+        "at_head": true,
+        "tables": [
+          "alembic_version",
+          "attendance",
+          "audit_logs",
+          "calendar_days",
+          "devices",
+          "face_embeddings",
+          "locations",
+          "member_groups",
+          "member_leaves",
+          "members",
+          "settings",
+          "shift_assignments",
+          "shifts",
+          "users"
+        ],
+        "application_table_count": 13,
+        "schema_valid": true,
+        "missing_tables": [],
+        "missing_columns": {}
+      },
+      "row_counts": {
+        "locations": 1,
+        "member_groups": 0,
+        "members": 0,
+        "face_embeddings": 0,
+        "shifts": 0,
+        "shift_assignments": 0,
+        "member_leaves": 0,
+        "calendar_days": 0,
+        "devices": 0,
+        "users": 0,
+        "settings": 12,
+        "attendance": 0,
+        "audit_logs": 1
+      }
+    }
+  }
+}

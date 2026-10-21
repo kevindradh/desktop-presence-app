@@ -1,0 +1,25 @@
+# Python 3.11. Resolved versions recorded in requirements-macos-arm64.lock.txt.
+# GUI: use PyQt6 only; do not request InsightFace's optional GUI (PySide6).
+PyQt6>=6.8,<7
+SQLAlchemy>=2.0,<2.1
+psycopg[binary]>=3.2,<4
+pgvector>=0.3,<1
+alembic>=1.14,<2
+bcrypt>=4.2,<6
+cryptography>=46,<47
+keyring>=25,<26
+python-dotenv>=1.0,<2
+tzdata>=2026.1
+numpy>=1.26,<2
+opencv-python>=4.10,<4.12
+onnx>=1.17,<2
+onnxruntime>=1.20,<2
+insightface==2.1
+torch>=2.6,<3
+pandas>=2.2,<3
+openpyxl>=3.1,<4
+reportlab>=4.2,<5
+pytest>=8.3,<10
+pytest-cov>=6,<8
+pyinstaller>=6.11,<7
+

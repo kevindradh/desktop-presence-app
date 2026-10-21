@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-19",
+  "python": "3.11.17",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "regression": {
+    "tests": 284,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 254.6
+  },
+  "native": {
+    "tests": 37,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 83.53
+  },
+  "coverage": {
+    "covered_lines": 4703,
+    "num_statements": 5204,
+    "percent_covered": 90.3727901614143,
+    "percent_covered_display": "90",
+    "missing_lines": 501,
+    "excluded_lines": 0,
+    "percent_statements_covered": 90.3727901614143,
+    "percent_statements_covered_display": "90"
+  },
+  "coverage_scope": [
+    "app",
+    "database",
+    "ai"
+  ],
+  "new_dependencies": false,
+  "new_migration": false,
+  "schema_revision": "0004_devices",
+  "development_schema_check": "PASS read-only; at_head/schema_valid true",
+  "development_settings_changed_by_tests": false,
+  "real_biometrics_saved_by_tests": false,
+  "settings_policy": "Database snapshot per new flow; running verification retains snapshot; enrollment liveness always on/.85",
+  "evidence_types": [
+    "isolated real PostgreSQL/pgvector",
+    "synthetic vectors and frames",
+    "pinned real models on generated/public fixture input",
+    "native macOS UI"
+  ],
+  "stage_08_review": "User accepted; no additional real-face per-condition scores/counts supplied",
+  "stage_gate": "PENDING_USER_MANUAL_TEST_AND_REVIEW",
+  "next_stage_started": false,
+  "pending": [
+    "Stage 9 user manual review",
+    "US-028 attendance end-to-end and current-policy commit gate at Stage 10",
+    "RTSP positive hardware source unavailable",
+    "Windows distribution Stage 14"
+  ],
+  "debug": [
+    "Initial full run stopped after Qt connection-mutex/GIL deadlock; persistent preconnected join timer implemented and 100-task reuse test passed",
+    "Native focus preconditions stabilized using raise/activate/qWaitForWindowActive; focus and typing assertions retained",
+    "Killed test run can leave an isolated synthetic fixture schema; unknown-owned schemas were not bulk-deleted"
+  ],
+  "warning": "Existing upstream InsightFace/scikit-image FutureWarning remains visible",
+  "final_targeted_regression": {
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

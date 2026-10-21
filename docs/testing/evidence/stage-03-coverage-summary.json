@@ -1,0 +1,11 @@
+{
+  "stage": 3,
+  "tests": 75,
+  "failures": 0,
+  "errors": 0,
+  "coverage_percent": 91.36,
+  "covered_lines": 1079,
+  "statements": 1181,
+  "threshold_percent": 80,
+  "scope": "All app + database modules, including migration and seed; no coverage exclusions added. Subprocess/Qt native thread tracing limitations from Stage 2 remain."
+}

@@ -1,0 +1,17 @@
+{
+  "stage": 1,
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "checks": {
+    "models": {
+      "status": "PASS",
+      "detail": {
+        "checksums": 7,
+        "detector": "RetinaFace Caffe/OpenCV",
+        "recognizer": "ArcFace 512D / InsightFace / ONNX CPU",
+        "alignment": "106-point auxiliary model loaded; geometry validation in Stage 7",
+        "liveness": "MiniFASNetV2 / PyTorch CPU / 3 logits",
+        "input": "synthetic zero arrays only; no accuracy/liveness acceptance claim"
+      }
+    }
+  }
+}

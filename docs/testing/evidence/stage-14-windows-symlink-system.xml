@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.596" timestamp="2026-10-21T05:59:14.279973+07:00" hostname="KEVINDA9BE"><testcase classname="tests.test_backup_codec" name="test_symlink_publication_does_not_replace_target" time="0.012" /></testsuite></testsuites>

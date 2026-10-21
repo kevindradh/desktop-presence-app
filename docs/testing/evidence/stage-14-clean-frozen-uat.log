@@ -1,0 +1,2 @@
+{"phase": "data", "bootstrap_login_change": true, "synthetic_attendance": true, "exports_rows": 71, "exports": ["xlsx", "pdf"]}
+{"phase": "restore", "database_roundtrip": true, "biometrics_removed": true, "history_preserved": true, "native_credential_saved": true, "real_faces_used": false}

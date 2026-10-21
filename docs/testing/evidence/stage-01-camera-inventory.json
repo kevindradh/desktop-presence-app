@@ -1,0 +1,17 @@
+{
+  "source": "Qt Multimedia QMediaDevices.videoInputs; device identifiers omitted",
+  "camera_count": 2,
+  "cameras": [
+    {
+      "index": 0,
+      "description": "C922 Pro Stream Webcam",
+      "default": true
+    },
+    {
+      "index": 1,
+      "description": "FaceTime HD Camera",
+      "default": false
+    }
+  ],
+  "note": "Qt enumeration order may differ from OpenCV indices; confirm before mapping."
+}

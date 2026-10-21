@@ -1,0 +1,15 @@
+{
+  "stage": 1,
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "checks": {
+    "qt": {
+      "status": "PASS",
+      "detail": {
+        "mode": "offscreen",
+        "event_loop": "PASS",
+        "timer": "PASS",
+        "clean_exit": true
+      }
+    }
+  }
+}
