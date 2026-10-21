@@ -270,7 +270,7 @@ def test_member_tabs_keep_selection_and_draft_and_support_keyboard(auth,data,vie
     view=views(service)
     sign_in(view,'root',NEW,wait_until)
     page=open_page(view,'members',wait_until)
-    assert page.member_tabs.count()==2
+    assert page.member_tabs.count()==3
     assert page.member_tabs.currentWidget() is page.data_tab
     page.table.selectRow(0)
     settled(view,wait_until)
@@ -283,12 +283,19 @@ def test_member_tabs_keep_selection_and_draft_and_support_keyboard(auth,data,vie
     activate(view)
     bar.setFocus()
     QTest.keyClick(bar,Qt.Key.Key_Tab,Qt.KeyboardModifier.ControlModifier)
+    assert page.member_tabs.currentWidget() is page.history_tab
+    assert page.history.isVisible() and page.history.rowCount()==1
+    assert page.selected.id==selected and page.name.text()=='Draf nama anggota'
+    snapshot(view,'members-history-tab.png')
+    QTest.keyClick(bar,Qt.Key.Key_Tab,Qt.KeyboardModifier.ControlModifier)
     assert page.member_tabs.currentWidget() is page.data_tab
     assert page.selected.id==selected and page.name.text()=='Draf nama anggota'
-    page.member_tabs.setCurrentWidget(page.shift_tab)
+    QTest.mouseClick(bar,Qt.MouseButton.LeftButton,pos=bar.tabRect(2).center())
+    assert page.member_tabs.currentWidget() is page.history_tab
     page.table.selectRow(1)
     settled(view,wait_until)
-    assert page.selected.id!=selected and page.member_tabs.currentWidget() is page.shift_tab
+    assert page.selected.id!=selected and page.member_tabs.currentWidget() is page.history_tab
+    assert page.history.rowCount()==0
     page.member_tabs.setCurrentWidget(page.data_tab)
     page.new_button.click()
     assert page.selected is None and page.member_tabs.currentWidget() is page.data_tab

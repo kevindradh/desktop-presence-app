@@ -39,3 +39,11 @@ Tanpa anggota terpilih, tab shift menampilkan petunjuk memilih anggota. Hak akse
 Delapan tes antarmuka administrasi lulus, termasuk dua tab, Ctrl+Tab, perpindahan dengan klik, draf/anggota yang tetap dipilih, penggantian pilihan pada tab shift, form baru, penugasan/akhiri penugasan, serta pembatasan Operator. Tiga ukuran jendela pada tes anggota dan tab shift tidak memiliki gulir horizontal di area halaman.
 Hasil: `evidence/members-tabs.xml`. Tangkapan layar sintetis yang diperiksa: `evidence/members-data-tab.png` dan `evidence/members-shift-tab.png`.
 Delivery Gate: Hard Gate PASS, kontrol tab dan hak akses diuji; Purpose-Gate PASS, alasan tab/warna/tombol dicatat di atas; Liveliness PASS, arah dan dial tetap mengikuti tema StarGate; Craftsmanship PASS, delapan regresi lulus dan kedua tab ditinjau secara visual. Kriteria form yang tidak berubah mengikuti pemeriksaan sebelumnya.
+
+## Tab ketiga: Riwayat kehadiran
+
+Sesuai review berikutnya, riwayat dipindah dari Data anggota ke tab tersendiri: Riwayat kehadiran. Susunan menjadi Data anggota, Penugasan shift, Riwayat kehadiran. Pilihan anggota tetap digunakan bersama ketiganya.
+Alasan: pengguna dapat membaca riwayat tanpa melewati form/foto dan dapat mengedit anggota tanpa tabel riwayat di bawahnya. Sisa tinggi tab Data anggota diarahkan ke ruang bawah, sehingga jarak antarfield tidak membesar.
+Verifikasi mencakup klik dan Ctrl+Tab melalui tiga tab, draf serta pilihan anggota yang dipertahankan, satu baris riwayat anggota pertama, dan riwayat kosong saat memilih anggota lain tanpa berpindah dari tab Riwayat kehadiran.
+Delivery Gate mengikuti pemeriksaan sebelumnya untuk arah, tema, kontras dan kontrol yang tidak berubah; pemisahan riwayat mengikuti pilihan pengguna dan tidak mengubah query ataupun penyimpanan kehadiran.
+PASS: delapan uji administrasi lulus; bukti pada `evidence/members-three-tabs.xml`. Pratinjau sintetis tab ketiga diperiksa pada `evidence/members-history-tab.png`.
