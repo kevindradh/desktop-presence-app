@@ -5,8 +5,8 @@ from zoneinfo import ZoneInfo
 from PyQt6 import sip
 from PyQt6.QtCore import QDate, QTime, QTimer, Qt
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import (QCheckBox, QComboBox, QDateEdit, QFileDialog, QFormLayout,
-    QHBoxLayout, QLabel, QLineEdit, QMessageBox, QPushButton, QSpinBox, QTableWidget,
+from PyQt6.QtWidgets import (QCheckBox, QComboBox, QDateEdit, QFileDialog, QFormLayout, QGridLayout,
+    QHBoxLayout, QLabel, QLayout, QLineEdit, QMessageBox, QPushButton, QSpinBox, QTableWidget,
     QTableWidgetItem, QTimeEdit, QVBoxLayout, QWidget)
 
 from app.widgets.cards import text_label
@@ -329,7 +329,14 @@ class MembersPage(AdminPage):
         self.limit = 10
         self.photo_source = None
         self.detail = None
-        self.form_widget, form = form_widget()
+        self.form_widget = QWidget()
+        form = QGridLayout(self.form_widget)
+        form.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setHorizontalSpacing(20)
+        form.setVerticalSpacing(12)
+        form.setColumnStretch(1, 1)
+        form.setColumnStretch(3, 1)
         self.code, self.name, self.email, self.phone, self.position = line(64), line(200), line(254), line(40), line(160)
         self.group = QComboBox()
         self.photo = text_label("Foto wajib tersedia untuk registrasi.")
@@ -339,14 +346,30 @@ class MembersPage(AdminPage):
         self.photo_button = QPushButton("Pilih foto PNG/JPEG")
         self.photo_button.clicked.connect(self.choose_photo)
         self.buttons.append(self.photo_button)
-        form.addRow("ID anggota *", self.code)
-        form.addRow("Nama lengkap *", self.name)
-        form.addRow("Grup *", self.group)
-        form.addRow("Foto *", self.photo)
-        form.addRow(self.preview, self.photo_button)
-        form.addRow("Email", self.email)
-        form.addRow("Telepon", self.phone)
-        form.addRow("Jabatan", self.position)
+        fields = (("ID anggota *", self.code), ("Nama lengkap *", self.name),
+                  ("Grup *", self.group), ("Jabatan", self.position),
+                  ("Email", self.email), ("Telepon", self.phone))
+        for index, (title, field) in enumerate(fields):
+            label = text_label(title, wrap=False)
+            label.setBuddy(field)
+            column = (index % 2)*2
+            form.addWidget(label, index//2, column)
+            form.addWidget(field, index//2, column+1)
+        photo_area = QWidget()
+        photo_area.setMinimumHeight(self.preview.height())
+        photo_row = QHBoxLayout(photo_area)
+        photo_row.setContentsMargins(0, 0, 0, 0)
+        photo_row.setSpacing(16)
+        photo_row.addWidget(self.preview)
+        photo_controls = QVBoxLayout()
+        photo_controls.addWidget(self.photo)
+        photo_controls.addWidget(self.photo_button, alignment=Qt.AlignmentFlag.AlignLeft)
+        photo_row.addLayout(photo_controls, 1)
+        form.addWidget(text_label("Foto *", wrap=False), 3, 0, alignment=Qt.AlignmentFlag.AlignTop)
+        form.addWidget(photo_area, 3, 1, 1, 3)
+        tab_fields = [field for _, field in fields]+[self.photo_button]
+        for previous, current in zip(tab_fields, tab_fields[1:]):
+            QWidget.setTabOrder(previous, current)
         self.body.addWidget(self.form_widget)
         buttons = QHBoxLayout()
         self.new_button = self.button("Form registrasi baru", self.clear_form, buttons)

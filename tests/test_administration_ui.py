@@ -115,6 +115,20 @@ def test_member_pagination_search_filter_details_edit_photo_and_registration_gat
     sign_in(view, "root", NEW, wait_until)
     page = open_page(view, "members", wait_until)
     assert page.table.rowCount() == 10 and "25 anggota" in page.page_label.text()
+    for width,height in ((1000,740),(1180,820),(1440,900)):
+        view.resize(width,height)
+        QTest.qWait(50)
+        for left,right in ((page.code,page.name),(page.group,page.position),(page.email,page.phone)):
+            assert left.y()==right.y() and left.geometry().right()<right.x()
+            assert page.form_widget.rect().contains(left.geometry())
+            assert page.form_widget.rect().contains(right.geometry())
+    activate(view)
+    page.code.setFocus()
+    wait_until(page.code.hasFocus)
+    for previous,current in ((page.code,page.name),(page.name,page.group),
+                             (page.group,page.position),(page.position,page.email),(page.email,page.phone)):
+        QTest.keyClick(previous,Qt.Key.Key_Tab)
+        assert current.hasFocus()
     snapshot(view, "stage-05-members.png")
     page.next_button.click()
     settled(view, wait_until)
@@ -153,6 +167,9 @@ def test_member_pagination_search_filter_details_edit_photo_and_registration_gat
     settled(view, wait_until)
     assert page.name.text() == "Edit UI Unicode 李" and page.group.currentData() == data[2]
     assert page.history.item(0,4).text() == "Kelas Uji"
+    assert page.preview.parentWidget().rect().contains(page.preview.geometry())
+    assert page.photo_button.parentWidget().rect().contains(page.photo_button.geometry())
+    assert page.form_widget.rect().contains(page.preview.parentWidget().geometry())
     snapshot(view, "stage-05-member-detail.png")
     page.new_button.click()
     page.code.setText("NEW")
