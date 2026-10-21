@@ -51,6 +51,8 @@ def test_camera_inference_commit_feedback_sound_history_and_latch(attendance, st
     wait_until(lambda:page.history.rowCount()==1,timeout=6000)
     assert not page.message.text() and not page.message.isVisible()
     assert rows(store)[0].attendance_type.value=='IN'
+    preview=next(iter(page.nodes.values())).preview
+    assert preview.notice.isVisible() and 'berhasil tersimpan' in preview.notice.text()
     selected=page.device.currentData()
     device=next(row for row in page.rows if row.id==selected)
     assert page.device.currentText()==f'{device.name} · {device.location_name}'
@@ -72,6 +74,9 @@ def test_camera_inference_commit_feedback_sound_history_and_latch(attendance, st
     attendance.now[0]+=timedelta(seconds=61)
     QTest.qWait(500)
     assert len(rows(store))==1 and page.sound.plays==1
+    wait_until(lambda:not preview.notice.isVisible(),timeout=4000)
+    QTest.qWait(300)
+    assert not preview.notice.isVisible() and len(rows(store))==1
     page.stop_button.click()
     wait_until(lambda:not page.busy and not view.cameras.busy,timeout=8000)
     assert page.empty_preview.isVisible() and page.device.currentData()==selected
@@ -114,6 +119,7 @@ def test_spoof_never_reaches_storage_and_error_never_plays_success(attendance, s
     page.start_button.click()
     wait_until(lambda:any(r.get('status')=='spoof' for r in responses),timeout=10000)
     assert not page.message.isVisible()
+    assert all(not n.preview.notice.isVisible() for n in page.nodes.values())
     assert not rows(store) and page.sound.plays==0
     page.stop()
     wait_until(lambda:not page.busy,timeout=8000)

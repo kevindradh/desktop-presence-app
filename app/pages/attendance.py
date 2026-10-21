@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 import numpy as np
 from PyQt6 import sip
 from PyQt6.QtCore import QTimer, Qt, QUrl
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QTransform
 from PyQt6.QtMultimedia import QSoundEffect
 from PyQt6.QtWidgets import (QComboBox, QGridLayout, QHBoxLayout, QLabel,
     QPushButton, QVBoxLayout, QWidget)
@@ -15,6 +15,50 @@ from app.services.cameras import FINAL
 from app.services.inference import InferenceController
 from app.services.settings import configured
 from app.widgets.cards import text_label
+
+
+class AttendancePreview(QLabel):
+    def __init__(self):
+        super().__init__()
+        self.setMinimumSize(480, 360)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setStyleSheet('background: #142d25; border: 1px solid #d3ded4; border-radius: 6px;')
+        self.notice = text_label('')
+        self.notice.setParent(self)
+        self.notice.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.notice.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        self.notice.setStyleSheet('background: #e6eee1; color: #213e31; border: 1px solid #d3ded4; '
+                                 'border-radius: 8px; padding: 10px 14px; font-size: 18px; font-weight: 650;')
+        self.notice.hide()
+        self.notice_timer = QTimer(self)
+        self.notice_timer.setSingleShot(True)
+        self.notice_timer.setInterval(3000)
+        self.notice_timer.timeout.connect(self.notice.hide)
+        self.last_event_id = None
+
+    def position_notice(self):
+        width = max(1, self.width()-32)
+        height = max(self.notice.sizeHint().height(), self.notice.heightForWidth(width))
+        self.notice.setGeometry(16, 16, width, height)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.position_notice()
+
+    def show_success(self, event_id, message):
+        if event_id is None or event_id == self.last_event_id:
+            return
+        self.last_event_id = event_id
+        self.notice.setText(message.replace(' — ', ': '))
+        self.position_notice()
+        self.notice.show()
+        self.notice.raise_()
+        self.notice_timer.start()
+
+    def clear_notice(self):
+        self.notice_timer.stop()
+        self.notice.clear()
+        self.notice.hide()
 
 
 @dataclass(repr=False)
@@ -72,7 +116,6 @@ class AttendancePage(QWidget):
         self.empty_preview = self.camera_preview()
         self.grid.addWidget(self.empty_preview, 0, 0)
         self.body.addLayout(self.grid, 1)
-        self.body.addWidget(text_label('Kehadiran terbaru'))
         self.history = table(['Nama', 'ID', 'Event', 'Waktu', 'Tanggal kerja', 'Status', 'Shift', 'Perangkat', 'Pulang awal', 'Sumber'])
         self.history.setMinimumHeight(180)
         self.history.setMaximumHeight(220)
@@ -123,11 +166,7 @@ class AttendancePage(QWidget):
 
     @staticmethod
     def camera_preview():
-        preview = QLabel()
-        preview.setMinimumSize(480, 360)
-        preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        preview.setStyleSheet('background: #142d25; border: 1px solid #d3ded4; border-radius: 6px;')
-        return preview
+        return AttendancePreview()
 
     def run(self, operation, callback):
         if self.pending or not self.controller.login or self.controller._closing:
@@ -257,13 +296,15 @@ class AttendancePage(QWidget):
                 node.latest.fill(0)
             node.latest = None
             node.preview.clear()
+            node.preview.clear_notice()
             return
         pointer = image.constBits(); pointer.setsize(image.sizeInBytes())
         rgb = np.frombuffer(pointer, dtype=np.uint8).reshape(image.height(), image.bytesPerLine())[:, :image.width()*3]
         rgb = rgb.reshape(image.height(), image.width(), 3)
         node.latest = np.ascontiguousarray(rgb[:, :, ::-1])
         node.latest_at = time.monotonic()
-        node.preview.setPixmap(QPixmap.fromImage(image).scaled(node.preview.size(), Qt.AspectRatioMode.KeepAspectRatio))
+        node.preview.setPixmap(QPixmap.fromImage(image).transformed(QTransform().scale(-1, 1)).scaled(
+            node.preview.size(), Qt.AspectRatioMode.KeepAspectRatio))
 
     def engine_changed(self, device, state):
         node = self.nodes.get(device)
@@ -304,10 +345,11 @@ class AttendancePage(QWidget):
             if node.packet is not None:
                 packet, node.packet = node.packet, None
                 generation = self.generation
-                def accepted(result, original_generation=generation):
+                def accepted(result, current=node, original_generation=generation):
                     if original_generation != self.generation or not self.isVisible():
                         return
                     if result.saved:
+                        current.preview.show_success(result.event_id, result.message)
                         self.sound.play()
                         if self.sound.status() == QSoundEffect.Status.Error:
                             self.show_message('Suara tidak tersedia; periksa keluaran audio.')
@@ -336,6 +378,7 @@ class AttendancePage(QWidget):
                 node.latest.fill(0)
             node.latest = None
             node.preview.clear()
+            node.preview.clear_notice()
             self.controller.attendance_service.cancel(node.entry.binding)
             self.manager.stop(device)
             node.inference.stop()
