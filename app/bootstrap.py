@@ -25,7 +25,7 @@ def main(argv=None):
         if not (args.check_config or args.package_check):
             from PyQt6.QtWidgets import QApplication, QMessageBox
             app = QApplication([])
-            QMessageBox.critical(None, "StarGate — Konfigurasi", str(error))
+            QMessageBox.critical(None, "StarGate", str(error))
         return 2
     if args.check_config:
         print("Konfigurasi valid. Nilai rahasia tidak ditampilkan.")

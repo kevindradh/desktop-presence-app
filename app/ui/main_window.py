@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
         self.users_page = users_page
         self.administrative_pages = administrative_pages or {}
         self.config, self.logger, self.reporter = config, logger, reporter
-        self.setWindowTitle("StarGate — Kehadiran")
+        self.setWindowTitle("StarGate")
         self.resize(1180, 820)
         self.setMinimumSize(1000, 740)
         self._closing = False

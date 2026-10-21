@@ -133,7 +133,7 @@ class SessionWindow(QMainWindow):
         self._remember_requested = False
         self.jobs = Jobs(reporter, self)
         self.jobs.interaction_busy_changed.connect(self._busy)
-        self.setWindowTitle("StarGate — Masuk")
+        self.setWindowTitle("StarGate")
         self.resize(1180, 820)
         self.setMinimumSize(1000, 740)
         self.stack = QStackedWidget()
@@ -349,7 +349,6 @@ class SessionWindow(QMainWindow):
         self.shell.logout_button.clicked.connect(self.logout)
         self.stack.addWidget(self.shell)
         self.stack.setCurrentWidget(self.shell)
-        self.setWindowTitle("StarGate — Kehadiran")
         QTimer.singleShot(0, self._auto_checkout)
 
     def _auto_checkout(self):
@@ -544,7 +543,6 @@ class SessionWindow(QMainWindow):
         self.password.clear()
         self.remember.setChecked(False)
         self.stack.setCurrentWidget(self.login_panel)
-        self.setWindowTitle("StarGate — Masuk")
         self._message(message)
 
     def eventFilter(self, watched, event):

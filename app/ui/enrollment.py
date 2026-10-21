@@ -22,7 +22,7 @@ class CaptureLab(AiLab):
         self.completed_photo=None
         effective=config if verification else replace(config,liveness_enabled=True,liveness_threshold=.85)
         super().__init__(effective,capture_target=capture_target,inference_target=target)
-        self.setWindowTitle('Capture lima sudut')
+        self.setWindowTitle('StarGate')
         self.reference_button.setText('Ambil sudut ini')
         if verification:self.reference_button.setText('Periksa wajah ini')
         self.reference_button.clicked.disconnect()
@@ -117,7 +117,7 @@ class EnrollmentDialog(QDialog):
         self.closing=False
         self.result_code=QDialog.DialogCode.Rejected
         self.verification=binding.get('purpose')=='verification'
-        self.setWindowTitle('StarGate — Registrasi wajah' if binding['member_id'] is None else 'StarGate — Registrasi ulang wajah')
+        self.setWindowTitle('StarGate')
         self.resize(1040,860)
         from app.services.settings import configured
         config=configured(controller.config,binding['settings'])
