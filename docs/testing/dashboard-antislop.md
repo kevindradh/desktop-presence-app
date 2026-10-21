@@ -107,3 +107,11 @@ PASS: label kontrol spesifik; penjelasan singkat memakai bahasa pengelola sehari
 PASS: bentuk pasif seperti “dihitung” menjelaskan aturan sistem, tanpa menyembunyikan pelaku yang diperlukan pengguna.
 Audit draf: kalimat penjelas yang terlalu padat dipisah menurut konteks ringkasan, aktivitas, dan grafik. Tidak ditemukan fakta tambahan di luar layanan yang sudah ada.
 Pemeriksaan baca: setiap kalimat menjelaskan angka, batas, atau tindakan nyata; tidak ada penutup pemasaran.
+
+## Revisi ringkasan sesuai review pengguna
+
+Empat kalimat penjelas tentang tanggal kerja, shift malam, cakupan Hadir, dan peralihan Belum masuk ke Tidak hadir dihapus atas permintaan pengguna. Panel hanya menampilkan judul dan angka; susunan kosong di samping Hadir juga dihapus.
+Delivery Gate di atas tetap PASS untuk lingkup revisi ini: warna, font, arah desain, perhitungan, dan kontrol tetap sama; perubahan hanya mengurangi teks dan merapikan susunannya.
+R-03/R-32/R-35 PASS: dua tes UI terarah lulus, meliputi tiga ukuran desktop, kalender, keyboard, filter tanggal, serta tombol simulasi check-in dan akhir shift. Bukti: `evidence/dashboard-summary-trimmed.xml`.
+R-02/R-16/R-31 PASS: tidak menambah teks baru; penghapusan memberi ruang untuk angka yang dibutuhkan pengelola.
+Pratinjau dengan data sintetis diperiksa pada `evidence/dashboard-summary-trimmed.png`.
