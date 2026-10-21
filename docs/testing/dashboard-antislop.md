@@ -143,3 +143,9 @@ Kalimat tentang hijau dan jingga di bawah judul Pola kehadiran dihapus. Keempat 
 R-04/R-23/R-25/R-31 PASS: kotak warna berfungsi sebagai penanda seri yang diminta pengguna, bukan dekorasi; label memakai teks gelap pada latar putih. Legenda dan grafik menggunakan konstanta warna yang sama agar maknanya selalu sesuai.
 R-03/R-32/R-35 PASS: dua tes UI terarah lulus pada tiga ukuran desktop dan kontrol filter/demo tetap berfungsi. Tampilan lengkap empat legenda diperiksa pada `evidence/dashboard-chart-legends.png`; hasil uji pada `evidence/dashboard-chart-legends.xml`.
 Delivery Gate lainnya tetap berlaku untuk sumber data, susunan kartu, dan kontrol yang tidak diubah.
+
+## Perbaikan jarak vertikal pada kartu grafik
+
+Kasus tiga shift bersebelahan dengan delapan grup mereproduksi jarak berlebihan pada header dan legenda. Sebelum perbaikan, regresi gagal karena tinggi judul 60 px untuk kebutuhan teks 20 px. Layout kini memakai jarak 8 px dan memberikan sisa tinggi hanya pada area grafik, sehingga header, deskripsi, dan legenda tetap rapat di atas.
+R-03/R-31/R-35 PASS: tiga regresi Qt offscreen lulus pada lebar konten 740, 900, dan 1200 px, dengan jumlah baris grafik tidak seimbang. Tinggi judul/legenda dan sela antarbagian diperiksa secara langsung. Bukti: `evidence/dashboard-chart-spacing.xml`; kartu sintetis diperiksa pada `evidence/dashboard-chart-spacing.png`.
+Delivery Gate lainnya tetap berlaku untuk warna, legenda, data dan kontrol yang tidak diubah.
