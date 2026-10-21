@@ -242,7 +242,15 @@ def test_member_shift_assignment_open_end_and_next_day(auth, data, views, wait_u
     settled(view, wait_until)
     assert page.assignment_table.rowCount() == 2
     assert page.member_tabs.currentWidget() is page.shift_tab
-    assert view.shell.pages.currentWidget().horizontalScrollBar().maximum()==0
+    for width,height in ((1000,740),(1180,820),(1440,900)):
+        view.resize(width,height)
+        QTest.qWait(50)
+        for left,right in ((page.shift,page.starts),(page.existing_assignment,page.end_existing_date)):
+            assert abs(left.geometry().center().y()-right.geometry().center().y())<=1
+            assert left.geometry().right()<right.x()
+            assert page.assignment_widget.rect().contains(left.geometry())
+            assert page.assignment_widget.rect().contains(right.geometry())
+        assert view.shell.pages.currentWidget().horizontalScrollBar().maximum()==0
     snapshot(view,'members-shift-tab.png')
 
 
@@ -285,6 +293,7 @@ def test_member_tabs_keep_selection_and_draft_and_support_keyboard(auth,data,vie
     QTest.keyClick(bar,Qt.Key.Key_Tab,Qt.KeyboardModifier.ControlModifier)
     assert page.member_tabs.currentWidget() is page.history_tab
     assert page.history.isVisible() and page.history.rowCount()==1
+    assert not page.history_label.isVisible() and page.history_label.text()==''
     assert page.selected.id==selected and page.name.text()=='Draf nama anggota'
     snapshot(view,'members-history-tab.png')
     QTest.keyClick(bar,Qt.Key.Key_Tab,Qt.KeyboardModifier.ControlModifier)
@@ -296,6 +305,7 @@ def test_member_tabs_keep_selection_and_draft_and_support_keyboard(auth,data,vie
     settled(view,wait_until)
     assert page.selected.id!=selected and page.member_tabs.currentWidget() is page.history_tab
     assert page.history.rowCount()==0
+    assert page.history_label.isVisible() and 'Belum ada riwayat' in page.history_label.text()
     page.member_tabs.setCurrentWidget(page.data_tab)
     page.new_button.click()
     assert page.selected is None and page.member_tabs.currentWidget() is page.data_tab

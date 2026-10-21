@@ -425,7 +425,14 @@ class MembersPage(AdminPage):
         self.assignment_message = text_label('Pilih anggota dari daftar untuk melihat penugasan shift.', 'muted')
         self.shift_body.addWidget(self.assignment_message)
         self.shift_body.addWidget(self.assignment_table)
-        self.assignment_widget, form = form_widget()
+        self.assignment_widget = QWidget()
+        form = QGridLayout(self.assignment_widget)
+        form.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setHorizontalSpacing(20)
+        form.setVerticalSpacing(12)
+        form.setColumnStretch(1, 1)
+        form.setColumnStretch(3, 1)
         self.shift = QComboBox()
         self.starts, self.ends, self.end_existing_date = (QDateEdit(QDate.currentDate()) for _ in range(3))
         for field in (self.starts, self.ends, self.end_existing_date):
@@ -435,21 +442,29 @@ class MembersPage(AdminPage):
         self.unlimited.setChecked(True)
         self.unlimited.toggled.connect(lambda checked: self.ends.setEnabled(not checked))
         self.ends.setEnabled(False)
-        form.addRow("Shift", self.shift)
-        form.addRow("Tanggal mulai", self.starts)
-        form.addRow("Tanggal akhir", self.ends)
-        form.addRow(self.unlimited)
         self.assign_button = QPushButton("Tetapkan shift")
         self.assign_button.clicked.connect(self.assign)
-        form.addRow(self.assign_button)
         self.existing_assignment = QComboBox()
         self.end_assignment_button = QPushButton("Akhiri penugasan")
         self.end_assignment_button.clicked.connect(self.end_assignment)
         self.shift.currentIndexChanged.connect(self.controls)
         self.existing_assignment.currentIndexChanged.connect(self.controls)
-        form.addRow("Penugasan yang diakhiri", self.existing_assignment)
-        form.addRow("Tanggal akhir berlaku", self.end_existing_date)
-        form.addRow(self.end_assignment_button)
+        for row, column, title, field in (
+                (0, 0, 'Shift', self.shift), (0, 2, 'Tanggal mulai', self.starts),
+                (1, 0, 'Tanggal akhir', self.ends),
+                (3, 0, 'Penugasan yang diakhiri', self.existing_assignment),
+                (3, 2, 'Tanggal akhir berlaku', self.end_existing_date)):
+            label = text_label(title, wrap=False)
+            label.setBuddy(field)
+            form.addWidget(label, row, column)
+            form.addWidget(field, row, column+1)
+        form.addWidget(self.unlimited, 1, 2, 1, 2)
+        form.addWidget(self.assign_button, 2, 0, 1, 4)
+        form.addWidget(self.end_assignment_button, 4, 0, 1, 4)
+        tab_fields = (self.shift, self.starts, self.ends, self.unlimited, self.assign_button,
+                      self.existing_assignment, self.end_existing_date, self.end_assignment_button)
+        for previous, current in zip(tab_fields, tab_fields[1:]):
+            QWidget.setTabOrder(previous, current)
         self.buttons.extend((self.assign_button, self.end_assignment_button))
         self.shift_body.addWidget(self.assignment_widget)
         self.shift_body.addStretch()
@@ -485,6 +500,7 @@ class MembersPage(AdminPage):
         fill_table(self.history, [])
         self.existing_assignment.clear()
         self.history_label.setText("Pilih anggota untuk melihat riwayat yang sudah tersimpan.")
+        self.history_label.show()
         self.controls()
 
     def filter_changed(self):
@@ -544,8 +560,9 @@ class MembersPage(AdminPage):
         set_options(self.existing_assignment, [(f"{a.shift_name} • {a.starts.isoformat()}", a.id) for a in result.assignments], placeholder="Pilih penugasan")
         fill_table(self.history, [(a.timestamp.astimezone(ZoneInfo(self.controller.config.timezone)).strftime("%d/%m/%Y %H:%M"), a.event, a.status,
             a.work_date.isoformat(), a.group_name, a.shift_name, "Ya" if a.early else "Tidak", "Otomatis" if a.automatic else "Scan") for a in result.history])
-        self.history_label.setText(f"Riwayat tersimpan: {result.history_total} event (maksimal 50 terbaru ditampilkan)." if result.history_total
+        self.history_label.setText('' if result.history_total
             else "Belum ada riwayat. Gunakan halaman Kehadiran untuk memulai absensi.")
+        self.history_label.setVisible(not bool(result.history_total))
         self.controls()
 
     def choose_photo(self):

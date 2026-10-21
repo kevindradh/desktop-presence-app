@@ -47,3 +47,11 @@ Alasan: pengguna dapat membaca riwayat tanpa melewati form/foto dan dapat menged
 Verifikasi mencakup klik dan Ctrl+Tab melalui tiga tab, draf serta pilihan anggota yang dipertahankan, satu baris riwayat anggota pertama, dan riwayat kosong saat memilih anggota lain tanpa berpindah dari tab Riwayat kehadiran.
 Delivery Gate mengikuti pemeriksaan sebelumnya untuk arah, tema, kontras dan kontrol yang tidak berubah; pemisahan riwayat mengikuti pilihan pengguna dan tidak mengubah query ataupun penyimpanan kehadiran.
 PASS: delapan uji administrasi lulus; bukti pada `evidence/members-three-tabs.xml`. Pratinjau sintetis tab ketiga diperiksa pada `evidence/members-history-tab.png`.
+
+## Form shift dua kolom dan riwayat tanpa jumlah event
+
+Form shift menjadi dua kolom sesuai permintaan: Shift berpasangan dengan Tanggal mulai, Tanggal akhir berpasangan dengan Tanpa tanggal akhir, dan Penugasan yang diakhiri berpasangan dengan Tanggal akhir berlaku. Tombol masing-masing tindakan berada setelah kelompok isiannya. Tujuannya memperpendek form tanpa mencampur tindakan menetapkan dan mengakhiri penugasan.
+Jarak 20/12 px, label buddy, urutan Tab dan batas minimum ukuran mengikuti form anggota dua kolom. Kontrol tetap memakai tinggi bawaan Qt, sehingga dropdown dan tanggal sejajar menurut titik tengahnya.
+Teks Riwayat tersimpan dan jumlah event tidak lagi ditampilkan ketika ada riwayat. Petunjuk saat belum memilih anggota atau belum ada riwayat tetap muncul; label disembunyikan tanpa ruang kosong ketika tabel berisi data.
+PASS: delapan regresi administrasi lulus. Pemeriksaan meliputi penetapan/akhir penugasan, batas tanggal, tiga ukuran jendela, kolom di dalam form tanpa gulir horizontal halaman, pemisahan hak akses, riwayat terisi tanpa label jumlah, dan pesan riwayat kosong.
+Delivery Gate mengikuti arah/tema sebelumnya: tata letak mempunyai alasan, kontrol menjalankan tindakan yang sama, tidak menambah klaim/angka, serta kedua tab diperiksa secara visual. Bukti: `evidence/members-shift-columns.xml`, `evidence/members-shift-two-columns.png`, dan `evidence/members-history-clean.png`.
