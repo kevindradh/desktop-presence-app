@@ -18,7 +18,6 @@ QLabel[kind="eyebrow"] { color: #4e7862; font-size: 11px; font-weight: 700; lett
 QLabel[kind="pageTitle"] { color: #213e31; font-size: 25px; font-weight: 650; }
 QLabel[kind="sectionTitle"] { font-size: 17px; font-weight: 650; }
 QLabel[kind="cardTitle"] { font-size: 20px; font-weight: 650; }
-QLabel#stageBadge { color: #456252; background: #e5ede6; padding: 7px 12px; border-radius: 12px; font-size: 11px; }
 QFrame#hero { background: #e6eee1; border: 1px solid #d5e1cf; border-radius: 13px; }
 QLabel[kind="heroTitle"] { font-size: 32px; font-weight: 700; color: #24482f; }
 QLabel[kind="heroBody"] { color: #4a6650; font-size: 14px; }

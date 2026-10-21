@@ -116,10 +116,6 @@ class MainWindow(QMainWindow):
         self.clock.setMinimumWidth(self.clock.fontMetrics().horizontalAdvance(
             "18 Oct 2026  20:00") + 18)
         header.addWidget(self.clock)
-        badge = text_label("PRATINJAU", wrap=False)
-        badge.setObjectName("stageBadge")
-        header.addSpacing(12)
-        header.addWidget(badge)
         body.addLayout(header)
         self.error_banner = QFrame()
         self.error_banner.setObjectName("errorBanner")
