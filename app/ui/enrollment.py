@@ -3,7 +3,7 @@ import time
 from dataclasses import replace
 import base64
 import json
-from PyQt6.QtCore import QTimer,pyqtSignal
+from PyQt6.QtCore import QEvent,QTimer,pyqtSignal
 from PyQt6.QtWidgets import QDialog,QHBoxLayout,QLabel,QPushButton,QVBoxLayout
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QImage,QPixmap,QTransform
@@ -45,10 +45,29 @@ class CaptureLab(AiLab):
                 label.hide()
             if label.objectName()=='pageTitle':
                 label.hide()
-        self.guide=QLabel(self.guides['FRONT'] if verification else '1/5 • '+self.guides['FRONT'])
+        self.guide=QLabel(self.guides['FRONT'] if verification else '1/5 • '+self.guides['FRONT'],self.preview)
         self.guide.setWordWrap(True)
-        self.centralWidget().layout().insertWidget(1,self.guide)
+        self.guide.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.guide.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        self.guide.setStyleSheet('background: #e6eee1; color: #213e31; border: 1px solid #d3ded4; '
+                                'border-radius: 8px; padding: 10px 14px; font-size: 18px; font-weight: 650;')
+        self.preview.installEventFilter(self)
+        self._position_guide()
         self.controls()
+
+    def _position_guide(self):
+        if not hasattr(self,'guide'):
+            return
+        self.guide.ensurePolished()
+        width=max(1,self.preview.width()-32)
+        height=max(self.guide.sizeHint().height(),self.guide.heightForWidth(width))
+        self.guide.setGeometry(16,16,width,height)
+        self.guide.raise_()
+
+    def eventFilter(self,watched,event):
+        if watched is self.preview and event.type()==QEvent.Type.Resize:
+            self._position_guide()
+        return super().eventFilter(watched,event)
 
     def controls(self):
         super().controls()
@@ -80,6 +99,7 @@ class CaptureLab(AiLab):
             count=response.get('captured',0)
             if hasattr(self,'guide'):
                 self.guide.setText(self.guides['FRONT'] if self.verification else (f'{count+1}/5 • '+self.guides[expected] if expected else 'Lima sudut lengkap. Periksa data, lalu pilih Simpan.'))
+                self._position_guide()
             super().analyzed(response)
             if response.get('capture_message'):
                 self.detail.setText(response['capture_message'])
@@ -125,6 +145,8 @@ class CaptureLab(AiLab):
     def start(self):
         super().start()
         self.preview_active=self.cameras.busy or self.inference.active
+        self.guide.setVisible(self.preview_active)
+        self._position_guide()
 
     def engine_state(self,state):
         super().engine_state(state)
@@ -146,6 +168,7 @@ class CaptureLab(AiLab):
         self.state_label.hide()
         if hasattr(self,'guide'):
             self.guide.setText(self.guides['FRONT'] if self.verification else '1/5 • '+self.guides['FRONT'])
+            self.guide.hide()
         self.discarded.emit()
 
 

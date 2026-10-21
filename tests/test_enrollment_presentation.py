@@ -20,6 +20,9 @@ def test_registration_preview_follows_motion_without_flipping_inference_or_photo
         assert not lab.state_label.isVisible() and not lab.detail.isVisible()
         assert not lab.threshold_label.isVisible()
         assert lab.preview.height()>400
+        assert lab.guide.parentWidget() is lab.preview
+        assert lab.preview.rect().contains(lab.guide.geometry())
+        assert lab.guide.font().pixelSize()>=18
         frame=QImage(80,40,QImage.Format.Format_RGB888)
         frame.fill(QColor('blue'))
         for x in range(40):
@@ -47,6 +50,7 @@ def test_registration_preview_follows_motion_without_flipping_inference_or_photo
         lab.stop()
         assert lab.preview.text()=='' and lab.preview.pixmap().isNull()
         assert lab.latest is None
+        assert not lab.guide.isVisible()
         lab.frame(1,frame)
         assert lab.preview.text()=='' and lab.preview.pixmap().isNull()
     finally:

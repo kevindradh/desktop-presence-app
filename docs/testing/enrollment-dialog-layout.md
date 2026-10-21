@@ -27,3 +27,10 @@ Hasil pengujian: `evidence/enrollment-dialog-ui.xml` (8 lulus) dan `evidence/enr
 | Craftsmanship | PASS: 11 pengujian lulus; pratinjau diperiksa; tidak mengubah cara AI memutuskan kelayakan sampel atau cara menyimpan data. |
 
 Panduan mandiri diperbarui pada `stage-08.md` dan `stage-09.md` untuk label/keterangan yang kini tampil.
+
+## Panel langkah di dalam frame kamera
+
+Sesuai permintaan pengguna, langkah dan panduan sudut kini berupa panel di bagian atas preview kamera. Teks 18 px, tebal, di atas latar hijau pucat dengan teks hijau gelap agar terbaca di atas video. Margin 16 px menjaga panel di dalam frame dan posisi/tingginya dihitung ulang saat kamera berubah ukuran atau panduan berganti.
+Panel tidak mengambil klik atau membalik teks saat pixmap kamera dibalik. Saat Hentikan & hapus dipilih, panel ikut disembunyikan sehingga frame benar-benar kosong; Mulai menampilkannya kembali.
+PASS: delapan tes alur dialog dan satu tes preview/layout lulus. Batas panel diperiksa pada ukuran dialog 900×720 dan 1120×820. Bukti: `evidence/enrollment-guide-ui.xml`, `evidence/enrollment-guide-layout.xml`, dan pratinjau sintetis `evidence/enrollment-guide-step1.png` yang telah diperiksa.
+Delivery Gate tetap mengikuti arah dan kontrol di atas; panel mempunyai tujuan menunjukkan langkah aktif, tidak menambah angka rekaan atau animasi, dan tidak mengubah hasil inferensi/penyimpanan.

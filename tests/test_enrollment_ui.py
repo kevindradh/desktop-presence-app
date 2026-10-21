@@ -64,6 +64,10 @@ def test_ui_register_reregister_and_no_partial_before_save(auth,store,views,wait
     assert dialog.cancel_button.text()=='Batal' and dialog.save_button.text()=='Simpan'
     assert dialog.cancel_button.y()==dialog.save_button.y()
     assert abs(dialog.cancel_button.width()-dialog.save_button.width())<=1
+    destination=os.environ.get('STARGATE_ENROLLMENT_EVIDENCE')
+    if destination:
+        Path(destination).mkdir(parents=True,exist_ok=True)
+        assert dialog.grab().save(str(Path(destination)/'enrollment-guide-step1.png'))
     capture_all(dialog,wait_until)
     for width,height in ((900,720),(1120,820)):
         dialog.resize(width,height)
@@ -72,6 +76,7 @@ def test_ui_register_reregister_and_no_partial_before_save(auth,store,views,wait
         assert dialog.rect().contains(dialog.save_button.geometry())
         assert dialog.rect().contains(QRect(dialog.lab.preview.mapTo(dialog,QPoint()),dialog.lab.preview.size()))
         assert dialog.lab.preview.width()>=640 and dialog.lab.preview.height()>=360
+        assert dialog.lab.preview.rect().contains(dialog.lab.guide.geometry())
     with store.db.transaction() as session:
         assert session.scalar(select(Member).where(Member.member_code=='CAP-UI-1')) is None
     destination=os.environ.get('STARGATE_ENROLLMENT_EVIDENCE')
