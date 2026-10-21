@@ -166,7 +166,10 @@ class SessionWindow(QMainWindow):
         card.setMaximumWidth(540)
         form = QVBoxLayout(card)
         form.setSpacing(18)
-        form.addWidget(text_label("StarGate", "pageTitle"))
+        brand = text_label("StarGate", "pageTitle")
+        brand.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        brand.setContentsMargins(0, 0, 0, 24)
+        form.addWidget(brand)
         form.addWidget(text_label(title, "pageTitle"))
         if description:
             form.addWidget(text_label(description))
