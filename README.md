@@ -253,6 +253,12 @@ Seed aman diulang dan tidak menimpa setting yang sudah diubah. Migrasi tidak
 dijalankan otomatis ketika GUI dibuka. Jangan edit revision yang sudah diterapkan;
 buat revision berikutnya untuk perubahan schema.
 
+## Data simulasi sekolah SMP
+
+Untuk mengisi data sekolah SMP setelah migrasi, jalankan `.venv/bin/python scripts/manage_database.py seed-school`.
+Seeder menyediakan 80 anggota simulasi, enam kelas, guru/staf, kalender, dan beberapa skenario kehadiran.
+Lihat [panduan seeder SMP](docs/school-seeder.md) untuk urutan perintah, kode skenario, dan aturan pengulangan.
+
 ## Reset database untuk testing
 
 Tutup aplikasi, lalu jalankan perintah berikut dari folder proyek. **Seluruh data aplikasi pada database tujuan akan dihapus**, kemudian migrasi dan pengaturan bawaan dibuat kembali tanpa akun contoh.

@@ -1,5 +1,6 @@
 """Explicit schema/seed/admin commands; never runs during normal GUI startup."""
 import argparse
+from datetime import date
 import getpass
 import json
 from pathlib import Path
@@ -24,22 +25,29 @@ def confirm_fresh(config, confirmation):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["upgrade", "fresh", "status", "check", "seed", "bootstrap-admin"])
+    parser.add_argument("action", choices=["upgrade", "fresh", "status", "check", "seed", "seed-school", "bootstrap-admin"])
     parser.add_argument("--database", choices=["dev", "test"], default="dev")
     parser.add_argument('--data-dir', type=Path)
     parser.add_argument('--config', type=Path)
     parser.add_argument('--confirm-database', help='Nama database untuk menyetujui penghapusan data pada fresh')
+    parser.add_argument('--date', type=date.fromisoformat, help='Tanggal acuan simulasi SMP (YYYY-MM-DD); bawaan hari ini')
+    parser.add_argument('--days', type=int, help='Panjang riwayat simulasi SMP: 14-90 hari, bawaan 30')
     args = parser.parse_args(argv)
     if args.confirm_database is not None and args.action != "fresh":
         parser.error('--confirm-database hanya dapat digunakan dengan fresh')
+    if (args.date is not None or args.days is not None) and args.action != 'seed-school':
+        parser.error('--date dan --days hanya dapat digunakan dengan seed-school')
     from app.settings.paths import runtime_paths
     data_root = runtime_paths(data_dir=args.data_dir).data
-    from app.services.database import Database, create_database_engine
+    from app.services.database import Database, DataValidationError, create_database_engine
     from database.runtime import connection_config, schema_status, upgrade, fresh
     engine = None
     try:
         migration = args.action in {"upgrade", "fresh", "status"}
         config = connection_config(args.database, migration=migration, root=data_root, env_file=args.config)
+        if args.action == 'seed-school' and (config.host not in {'localhost', '127.0.0.1', '::1'}
+                or config.name in {'postgres', 'template0', 'template1'}):
+            raise DataValidationError('Seeder SMP hanya diizinkan pada database aplikasi lokal.')
         if args.action == "fresh":
             confirm_fresh(config, args.confirm_database)
         engine = create_database_engine(config)
@@ -68,7 +76,20 @@ def main(argv=None):
             return 0 if result["at_head"] and result["schema_valid"] else 1
         else:
             db = Database(engine)
-            if args.action == "seed":
+            if args.action == 'seed-school':
+                from app.settings.config import load_config
+                from database.seed.school import seed_school
+                with engine.connect() as connection:
+                    status = schema_status(connection)
+                if not status['at_head'] or not status['schema_valid']:
+                    raise DataValidationError('Jalankan upgrade terlebih dahulu; schema belum sesuai versi aplikasi.')
+                with db.transaction() as session:
+                    result = seed_school(session, anchor=args.date,
+                        history_days=30 if args.days is None else args.days,
+                        timezone_name=load_config(data_root, env_file=args.config).timezone)
+                print(json.dumps(result, indent=2))
+                print('Data SIM SMP siap. Gunakan akun Anda sendiri; anggota simulasi belum memiliki wajah terdaftar.')
+            elif args.action == "seed":
                 from database.seed.defaults import seed_defaults
                 with db.transaction() as session:
                     result = seed_defaults(session)
