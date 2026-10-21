@@ -253,32 +253,85 @@ def test_close_waits_for_login_and_diagnostic_workers(auth, views, wait_until):
     assert not another.shell.tasks.busy
 
 
-def test_bootstrap_dialog_create_once_confirmation_and_forced_logout(store, views, wait_until):
+def test_first_run_setup_before_login_and_forced_logout(store, views, wait_until):
     from database.seed.defaults import seed_defaults
+    from PyQt6.QtWidgets import QPushButton
     with store.db.transaction() as session:
         seed_defaults(session)
     service = AuthService(store.db)
     view = views(service)
-    def submit_bootstrap(confirm):
-        view.bootstrap()
-        dialog = next(dialog for dialog in view.findChildren(QDialog) if dialog.isVisible())
-        fields = dialog.findChildren(QLineEdit)
-        for field, value in zip(fields, ("first", "Pengelola Pertama", OLD, confirm)):
-            field.setText(value)
-        buttons = dialog.findChild(QDialogButtonBox)
-        buttons.button(QDialogButtonBox.StandardButton.Ok).click()
+    assert view.stack.currentWidget() is view.setup_panel
+    assert not any('Super Admin' in button.text() for button in view.login_panel.findChildren(QPushButton))
+    # Login cannot bypass first-run setup, including a direct call.
+    sign_in(view, "first", OLD, wait_until)
+    assert view.login is None and view.stack.currentWidget() is view.setup_panel
+    def submit(confirm, password=OLD):
+        view.setup_username.setText("first")
+        view.setup_fullname.setText("Pengelola Pertama")
+        view.setup_password.setText(password)
+        view.setup_confirm.setText(confirm)
+        view.setup_submit.click()
         idle(view, wait_until)
-    submit_bootstrap("mismatch")
-    assert "tidak sesuai" in view.login_message.text()
-    submit_bootstrap(OLD)
+    submit("mismatch")
+    assert "tidak sesuai" in view.setup_message.text()
+    assert view.stack.currentWidget() is view.setup_panel
+    submit("short", "short")
+    assert "12" in view.setup_message.text() and service.bootstrap_required()
+    submit(OLD)
+    assert view.stack.currentWidget() is view.login_panel
     assert "dibuat" in view.login_message.text() and view.username.text() == "first"
-    submit_bootstrap(OLD)
-    assert "sudah tersedia" in view.login_message.text()
+    assert not view.setup_password.text() and not view.setup_confirm.text()
+    assert not service.bootstrap_required()
+    view.bootstrap()
+    assert view.stack.currentWidget() is view.login_panel
     sign_in(view, "first", OLD, wait_until)
     assert view.stack.currentWidget() is view.password_panel
     view._cancel_password()
     idle(view, wait_until)
     assert view.login is None and view.stack.currentWidget() is view.login_panel
+    restarted = views(service)
+    assert restarted.stack.currentWidget() is restarted.login_panel
+
+
+@pytest.mark.parametrize("has_admin", [False, True])
+def test_startup_database_failure_blocks_setup_and_login_until_retry(store, views, wait_until, monkeypatch, has_admin):
+    service = AuthService(store.db)
+    if has_admin:
+        service.bootstrap("existing", "Pengelola", OLD)
+    check = service.bootstrap_required
+    def unavailable():
+        raise DatabaseUnavailable()
+    monkeypatch.setattr(service, "bootstrap_required", unavailable)
+    view = views(service)
+    assert view.stack.currentWidget() is view.startup_panel
+    assert view.startup_retry.isVisible() and "Database" in view.startup_message.text()
+    view.bootstrap()
+    sign_in(view, "existing", OLD, wait_until)
+    assert view.login is None and view.stack.currentWidget() is view.startup_panel
+    monkeypatch.setattr(service, "bootstrap_required", check)
+    view.startup_retry.click()
+    idle(view, wait_until)
+    assert view.stack.currentWidget() is (view.login_panel if has_admin else view.setup_panel)
+
+
+def test_first_run_setup_handles_admin_created_by_another_instance(store, views, wait_until):
+    from sqlalchemy import select, func
+    from app.models.entities import User
+    service = AuthService(store.db)
+    view = views(service)
+    assert view.stack.currentWidget() is view.setup_panel
+    service.bootstrap("other", "Pengelola dari jendela lain", OLD)
+    view.setup_username.setText("first")
+    view.setup_fullname.setText("Pengelola Pertama")
+    view.setup_password.setText(OLD)
+    view.setup_confirm.setText(OLD)
+    view.setup_submit.click()
+    idle(view, wait_until)
+    assert view.stack.currentWidget() is view.login_panel and view.login is None
+    assert "sudah tersedia" in view.login_message.text()
+    with store.db.transaction() as session:
+        assert session.scalar(select(func.count()).select_from(User)) == 1
+        assert session.scalar(select(User.username)) == "other"
 
 
 @pytest.mark.parametrize("forced", [True, False])

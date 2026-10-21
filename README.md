@@ -116,7 +116,7 @@ Dari folder proyek:
 .venv/bin/python main.py
 ```
 
-1. Jika belum ada akun, pilih **Buat Super Admin pertama**. Isi username, nama
+1. Jika belum ada Super Admin aktif, halaman **Buat Super Admin** muncul otomatis sebelum login. Isi username, nama
    dan password awal 12–72 byte UTF-8, lalu ulangi password. Tidak ada akun atau
    password bawaan. Jika sudah membuat akun melalui CLI, gunakan akun tersebut.
 2. Masuk dengan akun tadi. Ganti password awal sebelum membuka ruang kerja.
@@ -262,7 +262,7 @@ Bootstrap akun awal disiapkan melalui terminal interaktif:
 Perintah meminta username, nama dan password dua kali tanpa menampilkan password.
 Tidak ada password default; jika Super Admin aktif sudah ada, bootstrap ditolak
 untuk melindungi akun tersebut. Ini membuat akun nyata pada database development;
-alternatif dari tombol **Buat Super Admin pertama** pada layar login.
+alternatif dari halaman penyiapan Super Admin yang muncul otomatis sebelum login.
 Akun yang sudah dibuat lewat salah satu cara dapat langsung dipakai pada GUI.
 Jangan mengirimkan password atau isi `.env` melalui chat.
 

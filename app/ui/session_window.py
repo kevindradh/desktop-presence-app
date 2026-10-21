@@ -131,6 +131,7 @@ class SessionWindow(QMainWindow):
         self._close_ready = False
         self._touched = False
         self._remember_requested = False
+        self._entry_state = "checking"
         self.jobs = Jobs(reporter, self)
         self.jobs.interaction_busy_changed.connect(self._busy)
         self.setWindowTitle("StarGate")
@@ -140,6 +141,9 @@ class SessionWindow(QMainWindow):
         self.setCentralWidget(self.stack)
         self._build_login()
         self._build_password()
+        self._build_setup()
+        self._build_startup()
+        self.stack.setCurrentWidget(self.startup_panel)
         self.error_banner = self.statusBar()
         self.error_message = text_label("")
         self.statusBar().addWidget(self.error_message, 1)
@@ -154,7 +158,7 @@ class SessionWindow(QMainWindow):
         self.checkout_timer.timeout.connect(self._auto_checkout)
         self.checkout_timer.start()
         self.logger.info("Login window opened")
-        QTimer.singleShot(0, self._restore)
+        QTimer.singleShot(0, self._initialize)
 
     def _panel(self, title, description=""):
         container = QWidget()
@@ -195,14 +199,43 @@ class SessionWindow(QMainWindow):
         body.addWidget(self.remember)
         self.signin_button = QPushButton("Masuk")
         self.signin_button.setProperty("variant", "primary")
-        self.bootstrap_button = QPushButton("Buat Super Admin pertama")
         body.addWidget(self.signin_button)
-        body.addWidget(self.bootstrap_button)
         self.login_message = text_label("")
         body.addWidget(self.login_message)
         self.signin_button.clicked.connect(self.sign_in)
         self.password.returnPressed.connect(self.sign_in)
-        self.bootstrap_button.clicked.connect(self.bootstrap)
+
+    def _build_startup(self):
+        self.startup_panel, body = self._panel("Menyiapkan aplikasi")
+        self.startup_message = text_label("Memeriksa akun pengelola…")
+        self.startup_retry = QPushButton("Coba lagi")
+        self.startup_retry.clicked.connect(self._initialize)
+        self.startup_retry.hide()
+        body.addWidget(self.startup_message)
+        body.addWidget(self.startup_retry)
+
+    def _build_setup(self):
+        self.setup_panel, body = self._panel("Buat Super Admin",
+            "Buat akun pengelola pertama untuk menggunakan aplikasi.")
+        form = QFormLayout()
+        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        self.setup_username, self.setup_fullname = QLineEdit(), QLineEdit()
+        self.setup_password, self.setup_confirm = secret_field(), secret_field()
+        self.setup_username.setMaxLength(80)
+        for title, widget in (("Username", self.setup_username), ("Nama lengkap", self.setup_fullname),
+                              ("Password awal", self.setup_password), ("Ulangi password", self.setup_confirm)):
+            form.addRow(title, widget)
+        body.addLayout(form)
+        self.setup_submit = QPushButton("Buat akun")
+        self.setup_submit.setProperty("variant", "primary")
+        self.setup_close = QPushButton("Tutup aplikasi")
+        self.setup_message = text_label("")
+        body.addWidget(self.setup_submit)
+        body.addWidget(self.setup_close)
+        body.addWidget(self.setup_message)
+        self.setup_submit.clicked.connect(self.bootstrap)
+        self.setup_confirm.returnPressed.connect(self.bootstrap)
+        self.setup_close.clicked.connect(self.close)
 
     def _build_password(self):
         self.password_panel, body = self._panel("Ganti password",
@@ -225,6 +258,8 @@ class SessionWindow(QMainWindow):
     def _busy(self, busy):
         self.login_panel.setEnabled(not busy)
         self.password_panel.setEnabled(not busy)
+        self.setup_panel.setEnabled(not busy)
+        self.startup_retry.setEnabled(not busy)
         if self.shell:
             self.shell.navigation.setEnabled(not busy)
             if self.shell.users_page:
@@ -242,8 +277,31 @@ class SessionWindow(QMainWindow):
         if self.shell and self.shell.users_page:
             self.shell.users_page.message.setText(text)
 
+    def _initialize(self):
+        if self.login or self._closing or self.jobs.tasks.busy:
+            return
+        self._entry_state = "checking"
+        self.stack.setCurrentWidget(self.startup_panel)
+        self.startup_message.setText("Memeriksa akun pengelola…")
+        self.startup_retry.hide()
+        def done(result):
+            if self._closing:
+                return
+            if result.error:
+                self.startup_message.setText(result.error)
+                self.startup_retry.show()
+            elif result.value:
+                self._entry_state = "setup"
+                self.stack.setCurrentWidget(self.setup_panel)
+                self.setup_username.setFocus()
+            else:
+                self._entry_state = "login"
+                self.stack.setCurrentWidget(self.login_panel)
+                self._restore()
+        self.jobs.run(self.service.bootstrap_required, done)
+
     def _restore(self):
-        if self.login or self._closing:
+        if self.login or self._closing or self._entry_state != "login":
             return
         def operation():
             token = self.credentials.get()
@@ -265,7 +323,7 @@ class SessionWindow(QMainWindow):
         self.jobs.run(operation, done)
 
     def sign_in(self):
-        if self.jobs.tasks.busy:
+        if self.jobs.tasks.busy or self._entry_state != "login":
             return
         username, password = self.username.text(), self.password.text()
         self.password.clear()
@@ -288,6 +346,7 @@ class SessionWindow(QMainWindow):
         self.jobs.run(operation, done)
 
     def _accepted(self, login):
+        self._entry_state = "login"
         self.login = login
         self._touched = False
         self._message("")
@@ -434,39 +493,40 @@ class SessionWindow(QMainWindow):
         self.jobs.run(operation, done)
 
     def bootstrap(self):
-        if self.jobs.tasks.busy:
+        if self.jobs.tasks.busy or self._closing or self._entry_state != "setup":
             return
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Buat Super Admin pertama")
-        form = QFormLayout(dialog)
-        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
-        username, fullname, password, confirm = QLineEdit(), QLineEdit(), secret_field(), secret_field()
-        form.addRow(text_label("Hanya tersedia jika belum ada Super Admin aktif. Password 12–72 byte UTF-8."))
-        for title, widget in (("Username", username), ("Nama lengkap", fullname),
-                              ("Password awal", password), ("Ulangi password", confirm)):
-            form.addRow(title, widget)
-        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        buttons.accepted.connect(dialog.accept)
-        buttons.rejected.connect(dialog.reject)
-        form.addRow(buttons)
-        def accepted():
-            value = password.text()
-            if value != confirm.text():
-                self._message("Pengulangan password tidak sesuai.")
+        name, full = self.setup_username.text(), self.setup_fullname.text()
+        value = self.setup_password.text()
+        if value != self.setup_confirm.text():
+            self.setup_message.setText("Pengulangan password tidak sesuai.")
+            return
+        self.setup_password.clear()
+        self.setup_confirm.clear()
+        self.setup_message.setText("")
+        def operation():
+            try:
+                self.service.bootstrap(name, full, value)
+            except (DataConflict, DataValidationError):
+                # Another instance may have finished setup while this form was open.
+                if not self.service.bootstrap_required():
+                    return False
+                raise
+            return True
+        def done(result):
+            if self._closing:
+                return
+            if result.error:
+                self.setup_message.setText(result.error)
             else:
-                name, full = username.text(), fullname.text()
-                def done(result):
-                    self._message(result.error or "Super Admin dibuat. Silakan masuk dan ganti password awal.")
-                    if not result.error:
-                        self.username.setText(name)
-                self.jobs.run(lambda: self.service.bootstrap(name, full, value), done)
-        def clear_fields():
-            password.clear()
-            confirm.clear()
-            dialog.deleteLater()
-        dialog.accepted.connect(accepted)
-        dialog.finished.connect(clear_fields)
-        dialog.open()
+                self.setup_username.clear()
+                self.setup_fullname.clear()
+                self._entry_state = "login"
+                self.stack.setCurrentWidget(self.login_panel)
+                if result.value:
+                    self.username.setText(name)
+                self._message("Super Admin dibuat. Silakan masuk dan ganti password awal." if result.value
+                    else "Super Admin sudah tersedia. Silakan masuk dengan akun yang sudah dibuat.")
+        self.jobs.run(operation, done)
 
     def refresh_users(self):
         if not self.login:
@@ -538,6 +598,7 @@ class SessionWindow(QMainWindow):
         self.jobs.run(operation, done)
 
     def _return_login(self, message):
+        self._entry_state = "login"
         self.jobs.discard_queued()
         for dialog in self.findChildren(QDialog):
             dialog.reject()

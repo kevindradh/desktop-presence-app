@@ -6,7 +6,7 @@ Status21 Oktober2026: installer sudah dibuat dan aplikasi sudah terbuka di akun 
 
 1. Buka VM Windows11 di Parallels. StarGate sudah dipasang per-user; dapat dibuka dari Start → StarGate.
 2. Jika VM baru direstart dan koneksi database gagal, buka `%LOCALAPPDATA%\StarGate-stage14\Start-StarGate.cmd`. Peluncur ini menyalakan PostgreSQL uji lokal lalu membuka aplikasi. PostgreSQL uji belum berupa service otomatis.
-3. Pada halaman masuk, pilih **Buat Super Admin pertama**. Isi akun dan kata sandi sendiri, lalu login dan selesaikan ganti kata sandi wajib. Jangan kirim kata sandi/isi `.env` ke chat.
+3. Pada versi sumber terbaru, jika belum ada Super Admin aktif, form **Buat Super Admin** muncul otomatis sebelum halaman login. Isi akun dan kata sandi sendiri, lalu login dan selesaikan ganti kata sandi wajib. Installer Windows yang dibuat sebelumnya masih memakai tombol **Buat Super Admin pertama** sampai dibangun ulang. Jangan kirim kata sandi/isi `.env` ke chat.
 4. Pastikan kamera USB diarahkan ke **Windows** melalui Devices → USB & Bluetooth di Parallels. Indeks kamera mengikuti deteksi Windows; jangan menganggap indeks0 selalu kamera laptop.
 
 ## Checklist singkat

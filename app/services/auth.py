@@ -108,6 +108,11 @@ class AuthService:
         with self.database.transaction() as session:
             return principal(bootstrap_super_admin(session, username, fullname, password))
 
+    def bootstrap_required(self):
+        with self.database.transaction() as session:
+            return session.scalar(select(User.id).where(
+                User.role == Role.SUPER_ADMIN, User.is_active.is_(True)).limit(1)) is None
+
     def login(self, username, password):
         error = None
         result = None
