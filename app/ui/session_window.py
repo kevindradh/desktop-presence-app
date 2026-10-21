@@ -223,7 +223,7 @@ class SessionWindow(QMainWindow):
         self.setup_password, self.setup_confirm = secret_field(), secret_field()
         self.setup_username.setMaxLength(80)
         for title, widget in (("Username", self.setup_username), ("Nama lengkap", self.setup_fullname),
-                              ("Password awal", self.setup_password), ("Ulangi password", self.setup_confirm)):
+                              ("Password", self.setup_password), ("Ulangi password", self.setup_confirm)):
             form.addRow(title, widget)
         body.addLayout(form)
         self.setup_submit = QPushButton("Buat akun")
