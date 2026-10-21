@@ -19,3 +19,5 @@ Bukti: `evidence/shifts-simple.xml` dan `evidence/shifts-simple.png` (halaman te
 ## Revisi petunjuk penugasan
 
 Sesuai review pengguna, petunjuk lokasi Anggota > Penugasan shift dihapus. Keterangan membuat shift baru untuk mengganti jam/toleransi yang sudah digunakan tetap ditampilkan. PASS untuk copywriting dan Purpose-Gate: hanya menghapus kalimat lokasi yang tidak diperlukan; label tindakan, layout, dan perilaku tidak berubah. Bukti gambar di atas merupakan tampilan sebelum penghapusan kalimat ini.
+
+Review berikutnya meminta penghapusan sisa keterangan tentang perubahan jam/toleransi. Seluruh label di bawah tombol kini dihapus, termasuk ruangnya. Aturan validasi layanan dan pesan galat tetap berlaku. Delivery Gate PASS untuk revisi ini: penghapusan teks sesuai arahan pengguna, tanpa kontrol/aset/klaim baru; tema, urutan keyboard, form dan fungsi tombol tetap sama. Pemeriksaan diff lulus; tes fungsional tidak diulang untuk penghapusan label saja. Gambar sebelumnya tidak mewakili penghapusan label ini.
