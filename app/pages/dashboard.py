@@ -81,8 +81,7 @@ class DashboardPage(QWidget):
         self.warning = text_label('')
         self.warning.hide()
         layout.addWidget(self.warning)
-        layout.addWidget(text_label('Aktivitas terbaru', 'sectionTitle'))
-        layout.addWidget(text_label('Maksimal 20 catatan pada tanggal kerja yang dipilih.', 'muted'))
+        layout.addWidget(text_label('20 aktivitas terbaru', 'sectionTitle'))
         self.feed_empty = text_label('Belum ada aktivitas pada tanggal kerja ini.', 'muted')
         self.feed_empty.hide()
         layout.addWidget(self.feed_empty)
@@ -165,6 +164,7 @@ class DashboardPage(QWidget):
         day = self.date.date().toPyDate()
         if self.snapshot is None:
             self.status.setText('Memuat ringkasan kehadiran...')
+            self.status.show()
         token, generation = c.login.token, self.generation
         self.request = (token, generation, day)
         def work(context):
@@ -183,6 +183,7 @@ class DashboardPage(QWidget):
             return
         if result.error:
             self.status.setText('Data belum diperbarui. '+result.error)
+            self.status.show()
             if self.snapshot is None:
                 for chart in self.charts.values():
                     chart.set_rows((), empty_text='Data kehadiran belum tersedia.')
@@ -195,8 +196,8 @@ class DashboardPage(QWidget):
         self.snapshot = data
         for key, value in self.counters.items():
             value.setText(str(getattr(data, key)))
-        self.status.setText('Diperbarui otomatis • '+data.updated.astimezone(c.dashboard_service.zone).strftime('%d/%m/%Y %H:%M:%S')+
-                            ' • Zona '+str(c.dashboard_service.zone))
+        self.status.clear()
+        self.status.hide()
         self.warning.setText(f'Periksa penugasan: {data.conflicts} anggota memiliki jadwal bertumpang tindih. Anggota tersebut belum dihitung dalam Izin, Tidak hadir, atau Belum masuk.' if data.conflicts else '')
         self.warning.setVisible(bool(data.conflicts))
         self.feed_empty.setVisible(not data.activity)
@@ -214,6 +215,7 @@ class DashboardPage(QWidget):
         for value in self.counters.values():
             value.setText('...')
         self.status.setText('Memuat ringkasan kehadiran...')
+        self.status.show()
         self.feed_empty.hide()
         self.feed.setRowCount(0)
         for chart in self.charts.values():

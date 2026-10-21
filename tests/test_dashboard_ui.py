@@ -153,9 +153,11 @@ def test_failure_marks_stale_and_recovers_without_fake_zeros(attendance, views, 
     def fail(*args):raise DatabaseUnavailable()
     monkeypatch.setattr(view.dashboard_service,'load',fail)
     wait_until(lambda:'belum diperbarui' in page.status.text(),timeout=8000)
+    assert page.status.isVisible()
     assert page.counters['pending'].text()=='1'
     monkeypatch.setattr(view.dashboard_service,'load',load)
-    wait_until(lambda:'Diperbarui otomatis' in page.status.text(),timeout=8000)
+    wait_until(lambda:not page.status.isVisible(),timeout=8000)
+    assert page.status.text()==''
 
 
 def test_initial_dashboard_failure_does_not_claim_empty_data(attendance, views, wait_until, monkeypatch):

@@ -129,3 +129,10 @@ Checkbox Ikuti hari ini diganti tombol Hari ini atas permintaan pengguna. Label 
 R-15/R-26/R-31 PASS: tombol menjalankan pengembalian tanggal, bukan toggle tersembunyi atau tombol tanpa tindakan; hasil pemuatan lama diabaikan saat tombol ditekan di tengah permintaan.
 R-03/R-32/R-35 PASS: 13 tes Dashboard UI lulus, termasuk klik tombol saat sibuk, Space melalui keyboard, pergantian hari, kalender, tiga ukuran jendela, dan fokus yang tetap selama polling. Bukti: `evidence/dashboard-today-button.xml`; tangkapan layar sintetis diperiksa pada `evidence/dashboard-today-button.png`.
 Delivery Gate lain tetap berlaku untuk susunan kartu, tema, warna, dan sumber data yang tidak diubah.
+
+## Judul aktivitas dan penghapusan status pembaruan
+
+Judul kini 20 aktivitas terbaru; kalimat batas 20 catatan dan status sukses berisi waktu pembaruan/zona dihapus sesuai permintaan pengguna. Pesan loading dan error tetap muncul ketika diperlukan, lalu disembunyikan setelah berhasil.
+R-15/R-17/R-31 PASS: judul menyebut batas query sebenarnya tanpa kalimat pendamping berulang; penghapusan status sukses memberi ruang untuk aktivitas.
+R-03/R-27/R-32/R-35 PASS: empat tes UI terarah lulus, meliputi error awal, error setelah data tersedia dan pemulihan, tiga ukuran desktop, filter/keyboard, dan kontrol demo. Bukti: `evidence/dashboard-activity-title.xml`; tangkapan layar sintetis diperiksa pada `evidence/dashboard-activity-title.png`.
+Delivery Gate lainnya tetap berlaku untuk komponen dan perhitungan yang tidak diubah.
