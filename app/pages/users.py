@@ -44,7 +44,7 @@ class UsersPage(QWidget):
         buttons = QHBoxLayout()
         self.new_button = QPushButton("Form akun baru")
         self.save_button = QPushButton("Simpan pengguna")
-        self.refresh_button = QPushButton("Muat ulang")
+        self.refresh_button = QPushButton("Refresh")
         self.reset_button = QPushButton("Reset password")
         for button in (self.new_button, self.save_button, self.refresh_button, self.reset_button):
             buttons.addWidget(button)

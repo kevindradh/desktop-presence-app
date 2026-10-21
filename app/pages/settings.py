@@ -59,7 +59,7 @@ class SettingsPage(QWidget):
         body.addWidget(text_label('Registrasi lima sudut tetap memeriksa keaslian dengan ambang 0,85. Aturan jeda absensi, awal shift dan checkout otomatis digunakan setelah modul absensi Tahap 10 tersedia.'))
         row = QHBoxLayout()
         self.save_button = QPushButton('Simpan pengaturan')
-        self.reload_button = QPushButton('Muat ulang dari database')
+        self.reload_button = QPushButton('Refresh')
         self.save_button.clicked.connect(self.save)
         self.reload_button.clicked.connect(self.reload)
         row.addWidget(self.save_button)

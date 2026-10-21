@@ -107,7 +107,7 @@ class AttendancePage(QWidget):
             self.mode.addItem(title, value)
         row.addWidget(self.mode, 1)
         self.start_button, self.stop_button, self.reload_button = (QPushButton(title) for title in
-            ('Mulai', 'Hentikan', 'Muat ulang'))
+            ('Mulai', 'Hentikan', 'Refresh'))
         self.start_button.setProperty('variant', 'primary')
         for button in (self.reload_button, self.stop_button, self.start_button):
             row.addWidget(button)

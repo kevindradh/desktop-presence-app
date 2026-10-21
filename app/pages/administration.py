@@ -177,7 +177,7 @@ class GroupsPage(AdminPage):
         self.new_button = self.button("Tambah", self.clear_form, buttons)
         self.save_button = self.button("Simpan", self.save, buttons)
         self.delete_button = self.button("Hapus", self.delete, buttons)
-        self.refresh_button = self.button("Muat ulang", self.refresh, buttons)
+        self.refresh_button = self.button("Refresh", self.refresh, buttons)
         self.body.addLayout(buttons)
         self.body.addStretch()
         self.name.textChanged.connect(self.controls)
@@ -260,7 +260,7 @@ class ShiftsPage(AdminPage):
         self.new_button = self.button("Tambah", self.clear_form, buttons)
         self.save_button = self.button("Simpan", self.save, buttons)
         self.delete_button = self.button("Hapus", self.delete, buttons)
-        self.refresh_button = self.button("Muat ulang", self.refresh, buttons)
+        self.refresh_button = self.button("Refresh", self.refresh, buttons)
         self.body.addLayout(buttons)
         self.body.addStretch()
         self.name.textChanged.connect(self.controls)
@@ -344,7 +344,7 @@ class MembersPage(AdminPage):
         self.page_label = text_label("Belum ada data")
         pagination.addWidget(self.page_label, 1)
         self.next_button = self.button("Berikutnya", lambda: self.turn(1), pagination)
-        self.refresh_button = self.button("Muat ulang", self.refresh, pagination)
+        self.refresh_button = self.button("Refresh", self.refresh, pagination)
         self.body.addLayout(pagination)
         self.offset = self.total = 0
         self.limit = 10

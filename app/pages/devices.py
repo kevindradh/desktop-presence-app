@@ -54,7 +54,7 @@ class DevicesPage(AdminPage):
         self.new_button = self.button("Form perangkat baru", self.clear_form, row)
         self.save_button = self.button("Simpan perangkat", self.save, row)
         self.delete_button = self.button("Hapus perangkat", self.delete, row)
-        self.refresh_button = self.button("Muat ulang", self.refresh, row)
+        self.refresh_button = self.button("Refresh", self.refresh, row)
         self.body.addLayout(row)
         row = QHBoxLayout()
         self.test_button = self.button("Uji koneksi", lambda: self.start_preview(test=True), row)
