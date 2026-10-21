@@ -7,7 +7,7 @@ from threading import Event
 import time
 
 import pytest
-from PyQt6.QtCore import QDate
+from PyQt6.QtCore import QDate, QPoint, Qt
 from PyQt6.QtTest import QTest
 
 from app.services.attendance import AttendanceService
@@ -90,6 +90,49 @@ def test_dashboard_rolls_date_only_when_follow_today_is_enabled(attendance, view
     assert page.snapshot.work_date==DAY+timedelta(days=1)
 
 
+def test_dashboard_empty_date_keyboard_filter_and_desktop_sizes(attendance, views, wait_until):
+    view,page=ready(attendance,views,wait_until)
+    activate(view)
+    QTest.mouseClick(page.date, Qt.MouseButton.LeftButton,
+                     pos=QPoint(page.date.width()-8,page.date.height()//2))
+    wait_until(lambda:page.date.calendarWidget().isVisible())
+    QTest.keyClick(page.date.calendarWidget(), Qt.Key.Key_Escape)
+    wait_until(lambda:not page.date.calendarWidget().isVisible())
+    activate(view)
+    page.date.setFocus()
+    wait_until(page.date.hasFocus)
+    # Qt visits the day, month and year sections before leaving the date field.
+    for _ in range(3):
+        QTest.keyClick(page.date, Qt.Key.Key_Tab)
+        if page.today.hasFocus():
+            break
+    assert page.today.hasFocus()
+    QTest.keyClick(page.today, Qt.Key.Key_Space)
+    assert not page.today.isChecked()
+    QTest.keyClick(page.today, Qt.Key.Key_Space)
+    assert page.today.isChecked()
+    wait_until(lambda:not page.busy)
+    previous=DAY-timedelta(days=1)
+    page.date.setDate(QDate(previous.year,previous.month,previous.day))
+    wait_until(lambda:page.snapshot is not None and page.snapshot.work_date==previous,timeout=8000)
+    assert not page.today.isChecked()
+    assert page.feed_empty.isVisible() and page.feed.rowCount()==0
+    assert page.counters['present'].text()=='0'
+    for width,height in ((1000,740),(1180,820),(1440,900)):
+        view.resize(width,height)
+        QTest.qWait(50)
+        summary=page.counters['present'].parentWidget()
+        for value in page.counters.values():
+            assert summary.rect().contains(value.geometry())
+        assert page.date.geometry().right()<page.today.geometry().left()
+        scroll=view.shell.pages.currentWidget()
+        assert scroll.horizontalScrollBar().maximum()==0
+        destination=os.environ.get('STARGATE_DASHBOARD_EVIDENCE')
+        if destination:
+            Path(destination).mkdir(parents=True,exist_ok=True)
+            assert view.grab().save(str(Path(destination)/f'dashboard-empty-{width}.png'))
+
+
 def test_failure_marks_stale_and_recovers_without_fake_zeros(attendance, views, wait_until, monkeypatch):
     view,page=ready(attendance,views,wait_until)
     assert page.counters['pending'].text()=='1'
@@ -100,6 +143,25 @@ def test_failure_marks_stale_and_recovers_without_fake_zeros(attendance, views, 
     assert page.counters['pending'].text()=='1'
     monkeypatch.setattr(view.dashboard_service,'load',load)
     wait_until(lambda:'Diperbarui otomatis' in page.status.text(),timeout=8000)
+
+
+def test_initial_dashboard_failure_does_not_claim_empty_data(attendance, views, wait_until, monkeypatch):
+    view=views(attendance.auth)
+    view.dashboard_service.clock=lambda:attendance.now[0]
+    load=view.dashboard_service.load
+    def fail(*args):raise DatabaseUnavailable()
+    monkeypatch.setattr(view.dashboard_service,'load',fail)
+    sign_in(view,'root',NEW,wait_until)
+    page=view.shell.administrative_pages['dashboard']
+    page.timer.setInterval(50)
+    wait_until(lambda:'belum diperbarui' in page.status.text(),timeout=8000)
+    assert page.snapshot is None
+    assert all(value.text()=='...' for value in page.counters.values())
+    assert not page.feed_empty.isVisible()
+    assert all(chart.empty_text=='Data kehadiran belum tersedia.' for chart in page.charts.values())
+    monkeypatch.setattr(view.dashboard_service,'load',load)
+    wait_until(lambda:page.snapshot is not None,timeout=8000)
+    assert page.counters['pending'].text()=='1'
 
 
 @pytest.mark.parametrize('action',['navigation','logout','close'])
@@ -180,6 +242,7 @@ def test_dashboard_demo_seed_and_terminal_button(store, tmp_path, qt_app, wait_u
         if destination:
             Path(destination).mkdir(parents=True,exist_ok=True)
             assert view.grab().save(str(Path(destination)/'stage-11-demo.png'))
+            assert page.grab().save(str(Path(destination)/'dashboard-full-synthetic.png'))
         # Queue a click made while a background session check is running.
         wait_until(lambda:not view.jobs.tasks.busy)
         entered,release=Event(),Event()

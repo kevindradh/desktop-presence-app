@@ -8,16 +8,18 @@ class AttendanceChart(QWidget):
     def __init__(self, *, trend=False):
         super().__init__()
         self.rows = ()
+        self.empty_text = 'Belum ada check-in'
         self.trend = trend
         self.setMinimumHeight(220)
 
-    def set_rows(self, rows):
-        if self.rows == rows:
+    def set_rows(self, rows, *, empty_text='Belum ada check-in'):
+        if self.rows == rows and self.empty_text == empty_text:
             return
         self.rows = rows
+        self.empty_text = empty_text
         self.setMinimumHeight(220 if self.trend else max(140, len(rows)*28+44))
         description = '\n'.join(f'{r.label}: hadir {r.present}, terlambat {r.late}' for r in rows)
-        self.setAccessibleName(description or 'Belum ada check-in pada tanggal kerja ini')
+        self.setAccessibleName(description or empty_text)
         self.setToolTip(description)
         self.update()
 
@@ -27,7 +29,7 @@ class AttendanceChart(QWidget):
         painter.fillRect(self.rect(), QColor('#ffffff'))
         if not self.rows or not any(r.present for r in self.rows):
             painter.setPen(QColor('#60736b'))
-            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, 'Belum ada check-in')
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, self.empty_text)
             painter.end()
             return
         maximum = max(r.present for r in self.rows) or 1
@@ -35,6 +37,7 @@ class AttendanceChart(QWidget):
             area = QRectF(35, 16, max(1, self.width()-55), self.height()-55)
             painter.setPen(QColor('#cbd9ce'))
             painter.drawLine(area.bottomLeft(), area.bottomRight())
+            painter.setPen(QColor('#60736b'))
             painter.drawText(QRectF(0, 0, 32, 30), Qt.AlignmentFlag.AlignCenter, str(maximum))
             for attribute, color in (('present', '#2d6240'), ('late', '#b36b19')):
                 path = QPainterPath()

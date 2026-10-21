@@ -23,6 +23,7 @@ class DashboardResult:
 class DashboardPage(QWidget):
     def __init__(self, controller):
         super().__init__()
+        self.setObjectName('attendanceDashboard')
         self.controller = controller
         self.snapshot = None
         self.generation = 0
@@ -35,52 +36,86 @@ class DashboardPage(QWidget):
         self.timer.timeout.connect(self.refresh)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(18)
         row = QHBoxLayout()
         row.addWidget(text_label('Tanggal kerja'))
         self.date = QDateEdit()
         self.date.setCalendarPopup(True)
         self.date.setDisplayFormat('dd/MM/yyyy')
         self.date.setDate(QDate.currentDate())
+        self.date.setAccessibleName('Tanggal kerja dashboard')
         row.addWidget(self.date)
         self.today = QCheckBox('Ikuti hari ini')
         self.today.setChecked(True)
         row.addWidget(self.today)
         row.addStretch()
         layout.addLayout(row)
-        layout.addWidget(text_label('Hadir mencakup Terlambat. Absent dihitung setelah shift berakhir; sebelumnya Belum masuk. Shift malam mengikuti tanggal mulai shift.', 'muted'))
+        summary = QFrame()
+        summary.setObjectName('dashboardSummary')
+        summary_body = QVBoxLayout(summary)
+        summary_body.setContentsMargins(22, 20, 22, 20)
+        summary_body.setSpacing(18)
+        headline = QHBoxLayout()
+        attendance = QVBoxLayout()
+        attendance.addWidget(text_label('Hadir', 'sectionTitle'))
+        present = text_label('...', 'dashboardTotal')
+        present.setAccessibleName('Jumlah anggota hadir')
+        attendance.addWidget(present)
+        attendance.addWidget(text_label('Sudah check-in, termasuk yang terlambat.', 'muted'))
+        headline.addLayout(attendance, 1)
+        headline.addWidget(text_label('Ringkasan mengikuti tanggal kerja yang dipilih.\nShift malam mengikuti tanggal mulai shift.', 'muted'), 1)
+        summary_body.addLayout(headline)
         grid = QGridLayout()
-        self.counters = {}
-        for i, (key, title) in enumerate((('registered', 'Anggota aktif'), ('present', 'Hadir'), ('late', 'Terlambat'),
-                                         ('absent', 'Absent'), ('on_leave', 'Izin'), ('pending', 'Belum masuk'))):
-            card = QFrame()
-            card.setObjectName('featureCard')
-            content = QVBoxLayout(card)
-            content.addWidget(text_label(title, 'muted'))
-            value = text_label('—', 'cardTitle')
-            content.addWidget(value)
+        grid.setHorizontalSpacing(16)
+        self.counters = {'present': present}
+        for i, (key, title, description) in enumerate((
+                ('late', 'Terlambat', 'Bagian dari jumlah Hadir.'),
+                ('pending', 'Belum masuk', 'Anggota terjadwal yang belum check-in sebelum shift berakhir.'),
+                ('absent', 'Tidak hadir', 'Anggota terjadwal yang belum check-in setelah shift berakhir (Absent).'),
+                ('on_leave', 'Izin', 'Anggota terjadwal yang belum check-in dan memiliki catatan izin.'),
+                ('registered', 'Anggota aktif', 'Jumlah anggota yang aktif saat ini, terlepas dari tanggal yang dipilih.'))):
+            title_label = text_label(title, 'muted')
+            title_label.setToolTip(description)
+            value = text_label('...', 'cardTitle')
+            value.setAccessibleName('Jumlah '+title.lower())
+            value.setToolTip(description)
             self.counters[key] = value
-            grid.addWidget(card, i//3, i%3)
-        layout.addLayout(grid)
-        self.status = text_label('Menunggu data…', 'muted')
+            grid.addWidget(title_label, 0, i)
+            grid.addWidget(value, 1, i)
+            grid.setColumnStretch(i, 1)
+        summary_body.addLayout(grid)
+        summary_body.addWidget(text_label('Belum masuk dihitung sebelum shift berakhir. Setelahnya, anggota yang belum check-in dihitung Tidak hadir.', 'muted'))
+        layout.addWidget(summary)
+        self.status = text_label('Memuat ringkasan kehadiran...', 'muted')
         layout.addWidget(self.status)
         self.warning = text_label('')
         self.warning.hide()
         layout.addWidget(self.warning)
-        layout.addWidget(text_label('Aktivitas terbaru • 20 event pada tanggal kerja terpilih', 'sectionTitle'))
+        layout.addWidget(text_label('Aktivitas terbaru', 'sectionTitle'))
+        layout.addWidget(text_label('Maksimal 20 catatan pada tanggal kerja yang dipilih.', 'muted'))
+        self.feed_empty = text_label('Belum ada aktivitas pada tanggal kerja ini.', 'muted')
+        self.feed_empty.hide()
+        layout.addWidget(self.feed_empty)
         self.feed = table(['Waktu', 'Nama', 'ID anggota', 'Aktivitas', 'Shift', 'Perangkat', 'Sumber'])
         self.feed.setMinimumHeight(220)
         layout.addWidget(self.feed)
-        layout.addWidget(text_label('Hijau: Hadir • Jingga: Terlambat (bagian dari Hadir). Grafik shift/grup menampilkan maksimal 12 teratas.', 'muted'))
+        layout.addWidget(text_label('Pola kehadiran', 'sectionTitle'))
+        layout.addWidget(text_label('Hijau menunjukkan Hadir. Jingga menunjukkan Terlambat, yang termasuk dalam Hadir.', 'muted'))
         charts = QGridLayout()
         self.charts = {}
-        for i, (key, title) in enumerate((('shifts', 'Kehadiran per shift'), ('groups', 'Kehadiran per grup'),
-                                         ('daily', 'Tren 30 hari • orang per tanggal kerja'),
-                                         ('monthly', 'Tren 12 bulan • hari-kehadiran'))):
+        for i, (key, title, description) in enumerate((
+                ('shifts', 'Per shift', 'Maksimal 12 shift dengan kehadiran terbanyak.'),
+                ('groups', 'Per grup', 'Maksimal 12 grup dengan kehadiran terbanyak.'),
+                ('daily', '30 hari terakhir', 'Jumlah anggota hadir setiap tanggal kerja.'),
+                ('monthly', '12 bulan terakhir', 'Total hari hadir anggota setiap bulan.'))):
             card = QFrame()
             card.setObjectName('featureCard')
             body = QVBoxLayout(card)
+            body.setContentsMargins(18, 16, 18, 16)
             body.addWidget(text_label(title, 'sectionTitle'))
+            body.addWidget(text_label(description, 'muted'))
             chart = AttendanceChart(trend=key in ('daily', 'monthly'))
+            chart.set_rows((), empty_text='Menunggu data kehadiran...')
             self.charts[key] = chart
             body.addWidget(chart)
             charts.addWidget(card, i//2, i%2)
@@ -130,6 +165,8 @@ class DashboardPage(QWidget):
         if self.busy:
             return
         day = self.date.date().toPyDate()
+        if self.snapshot is None:
+            self.status.setText('Memuat ringkasan kehadiran...')
         token, generation = c.login.token, self.generation
         self.request = (token, generation, day)
         def work(context):
@@ -148,6 +185,9 @@ class DashboardPage(QWidget):
             return
         if result.error:
             self.status.setText('Data belum diperbarui. '+result.error)
+            if self.snapshot is None:
+                for chart in self.charts.values():
+                    chart.set_rows((), empty_text='Data kehadiran belum tersedia.')
             if result.denied:
                 self.clear()
                 c._handle_denial(result.error)
@@ -159,8 +199,9 @@ class DashboardPage(QWidget):
             value.setText(str(getattr(data, key)))
         self.status.setText('Diperbarui otomatis • '+data.updated.astimezone(c.dashboard_service.zone).strftime('%d/%m/%Y %H:%M:%S')+
                             ' • Zona '+str(c.dashboard_service.zone))
-        self.warning.setText(f'{data.conflicts} anggota memiliki penugasan bertumpang tindih; tidak dimasukkan ke Izin/Absent/Belum masuk. Periksa penugasan.' if data.conflicts else '')
+        self.warning.setText(f'Periksa penugasan: {data.conflicts} anggota memiliki jadwal bertumpang tindih. Anggota tersebut belum dihitung dalam Izin, Tidak hadir, atau Belum masuk.' if data.conflicts else '')
         self.warning.setVisible(bool(data.conflicts))
+        self.feed_empty.setVisible(not data.activity)
         if old is None or old.activity != data.activity:
             scroll = self.feed.verticalScrollBar().value()
             fill_table(self.feed, [(entry.timestamp.astimezone(c.dashboard_service.zone).strftime('%d/%m %H:%M:%S'),
@@ -173,10 +214,12 @@ class DashboardPage(QWidget):
     def clear(self):
         self.snapshot = None
         for value in self.counters.values():
-            value.setText('—')
+            value.setText('...')
+        self.status.setText('Memuat ringkasan kehadiran...')
+        self.feed_empty.hide()
         self.feed.setRowCount(0)
         for chart in self.charts.values():
-            chart.set_rows(())
+            chart.set_rows((), empty_text='Menunggu data kehadiran...')
         self.warning.hide()
 
     def settled(self):

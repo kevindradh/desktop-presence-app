@@ -23,6 +23,12 @@ QLabel[kind="heroTitle"] { font-size: 32px; font-weight: 700; color: #24482f; }
 QLabel[kind="heroBody"] { color: #4a6650; font-size: 14px; }
 QLabel[kind="heroNote"] { color: #4a6650; font-size: 12px; }
 QFrame#featureCard { background: white; border: 1px solid #e0e7df; border-radius: 11px; }
+QFrame#dashboardSummary { background: white; border: 1px solid #d3ded4; border-radius: 11px; }
+QFrame#dashboardSummary QLabel[kind="dashboardTotal"] { color: #2d6240; font-size: 48px; font-weight: 700; }
+QFrame#dashboardSummary QLabel[kind="cardTitle"] { font-size: 25px; }
+QWidget#attendanceDashboard QDateEdit:focus { border: 2px solid #2d6240; padding: 7px 9px; }
+QWidget#attendanceDashboard QCheckBox { border: 2px solid transparent; border-radius: 3px; }
+QWidget#attendanceDashboard QCheckBox:focus { border: 2px solid #2d6240; border-radius: 3px; }
 QFrame#reviewCard { background: #edf1eb; border-radius: 9px; }
 QFrame#errorBanner { background: #fff0e8; border: 1px solid #eed3bd; border-radius: 8px; }
 QPushButton { padding: 10px 16px; border: 1px solid #d3ded4; border-radius: 6px; background: #fff; color: #34503f; font-weight: 600; }
