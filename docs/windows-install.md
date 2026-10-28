@@ -1,3 +1,5 @@
+> Panduan build aktif yang ringkas: [windows-build.md](windows-build.md). Isi di bawah adalah riwayat pengujian dan pengaturan sebelumnya.
+
 # Windows / Parallels — build dan instalasi paket penelitian
 
 Pembaruan 28 Oktober 2026: build aplikasi terbaru dengan PostgreSQL bawaan sudah dibuat. Pengujian installer otomatis, termasuk perbaikan repair ketika database hidup, dicatat terpisah pada [laporan terbaru](testing/stage-14-auto-20261028.md). Untuk pengujian customer gunakan [panduan installer otomatis](testing/stage-14-auto-manual.md). Bagian database manual di bawah tetap berlaku untuk paket yang dibangun tanpa runtime PostgreSQL.

@@ -1,3 +1,5 @@
+> Arsip panduan paket source percobaan. Alur aktif sekarang adalah clone dan build installer pada [panduan build Windows](windows-build.md). Paket offline percobaan telah dibersihkan.
+
 # StarGate dari source di Windows 11 AMD x64
 
 Paket source siap setup menyertakan kode aplikasi, wheel library Windows CPython3.11 x64, model AI, serta runtime PostgreSQL17/pgvector0.8.7. StarGate dijalankan dengan Python melalui `main.py`. Python dan Microsoft Visual C++ Runtime dipasang terpisah. Tidak perlu memasang Git, compiler C++, PostgreSQL sistem atau membangun pgvector untuk paket ini.
