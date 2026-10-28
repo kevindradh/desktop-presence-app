@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Instalasi developer · StarGate</title>
-  <meta name="description" content="Panduan clone, build, dan instalasi StarGate untuk Windows 11 x64.">
+  <meta name="description" content="Panduan clone, build, dan instalasi aplikasi StarGate untuk Windows dan macOS.">
   <style>
     :root { color-scheme: light; --ink:#203b33; --muted:#56645e; --green:#12613f; --line:#dce3de; --paper:#fff; --rail:#f5f7f5; }
     * { box-sizing:border-box; }
@@ -87,15 +87,22 @@
       <a href="#update">Build setelah perubahan</a>
       <a href="#masalah">Jika terjadi error</a>
       <a href="#storage">Membersihkan storage</a>
+      <p class="nav-label">macOS</p>
+      <a href="#macos">Aplikasi untuk Applications</a>
+      <a href="#mac-persiapan">Persiapan developer</a>
+      <a href="#mac-database">Database otomatis</a>
+      <a href="#mac-build">Build StarGate.app</a>
+      <a href="#mac-install">Install &amp; penggunaan</a>
     </nav>
     <p class="rail-note">HTML lokal. Tanpa server, CDN, atau library tambahan.</p>
   </aside>
   <main id="main">
     <article>
       <header id="mulai">
-        <p class="breadcrumb">Developer / Windows</p>
-        <h1>Dari source ke installer StarGate</h1>
+        <p class="breadcrumb">Developer / Instalasi</p>
+        <h1>Dari source ke aplikasi StarGate</h1>
         <p class="lead">Clone proyek, siapkan kebutuhan build, lalu hasilkan installer yang bisa dipasang di laptop pengguna.</p>
+        <p>Pilih panduan: <a href="#prasyarat">Windows</a> atau <a href="#macos">macOS</a>.</p>
         <p>Panduan ini untuk developer yang membangun StarGate di Windows 11 x64, termasuk komputer dengan prosesor AMD x64. Build Windows dijalankan di Windows. Jika mengembangkan di Mac, gunakan Windows melalui VM atau komputer Windows untuk langkah build.</p>
         <div class="note"><p>Persiapan pada langkah 1–5 cukup dilakukan sekali. Untuk build berikutnya, langsung ke <a href="#update">Build setelah perubahan</a>.</p></div>
         <p>Perintah membutuhkan internet saat mengambil source, library, dan model. Laptop pengguna nantinya cukup menerima installer.</p>
@@ -226,7 +233,80 @@ Invoke-WebRequest 'https://raw.githubusercontent.com/postgres/postgres/REL_17_ST
         <p>Pertahankan <code>.venv-win/</code>, model, dan runtime PostgreSQL jika akan build lagi. Tidak perlu membuat salinan source, wheelhouse, atau ZIP proyek untuk setiap pembaruan.</p>
         <div class="note"><p>Jangan menghapus database, foto anggota, <code>.env</code>, atau cadangan untuk membersihkan hasil build. Itu data aplikasi, bukan cache.</p></div>
       </section>
-      <footer>Panduan ini mengikuti <a href="windows-build.md">dokumentasi build Windows</a> dan script <code>packaging/windows/build.ps1</code> di proyek. Untuk penggunaan aplikasi, baca <a href="operations.md">panduan operasional</a>.</footer>
+      <section id="macos">
+        <h2>macOS: StarGate di Applications</h2>
+        <p>Hasil build macOS berupa <code>StarGate.app</code> dengan ikon StarGate. Pindahkan ke Applications, lalu buka seperti aplikasi Mac lainnya. Python dan library ikut di dalam aplikasi; penggunaan sehari-hari tidak membutuhkan Terminal.</p>
+        <p>PostgreSQL tetap dipasang terpisah melalui Homebrew dan berjalan otomatis saat pengguna login ke macOS. Panduan ini untuk aplikasi lokal di Mac yang sudah disiapkan, bukan paket yang sekaligus membawa database ke Mac lain.</p>
+        <p>Build mengikuti arsitektur Python: gunakan Python arm64 pada Apple Silicon atau x86_64 pada Intel. Build Apple Silicon tidak otomatis menjadi build Intel atau universal. Pengujian native proyek ini dilakukan di Apple Silicon.</p>
+      </section>
+
+      <section id="mac-persiapan">
+        <h2>Mac 1. Persiapan developer</h2>
+        <p>Pasang <a href="https://brew.sh/">Homebrew</a> terlebih dahulu dengan mengikuti situs resminya. Kemudian buka Terminal:</p>
+        <div class="code-block"><div class="code-header"><span>Terminal · macOS</span></div><pre><code>xcode-select --install
+brew install python@3.11 git postgresql@17 pgvector</code></pre></div>
+        <p>Jika Command Line Tools sudah terpasang, tidak perlu dipasang lagi. PostgreSQL 17 dan extension pgvector harus tersedia pada server yang sama.</p>
+        <p>Clone proyek jika belum ada. Ganti placeholder dengan URL Git Anda:</p>
+        <div class="code-block"><div class="code-header"><span>Terminal · macOS</span></div><pre><code>git clone &lt;URL_REPOSITORI_ANDA&gt; StarGate
+cd StarGate</code></pre></div>
+        <p>Dari folder proyek, siapkan environment dan model. Jika <code>.venv</code> yang sesuai sudah tersedia, gunakan environment tersebut.</p>
+        <div class="code-block"><div class="code-header"><span>Terminal · folder proyek</span></div><pre><code>"$(brew --prefix python@3.11)/bin/python3.11" -m venv .venv
+.venv/bin/python -m pip install -r requirements.in
+.venv/bin/python -m pip check
+.venv/bin/python scripts/download_models.py</code></pre></div>
+        <p>Model yang disertakan tetap mengikuti batas penggunaan penelitian, lomba, dan pengujian internal yang dijelaskan pada notice proyek.</p>
+      </section>
+
+      <section id="mac-database">
+        <h2>Mac 2. Database otomatis</h2>
+        <p>Pada pemasangan baru, jalankan service PostgreSQL Homebrew. Tanpa <code>sudo</code>, Homebrew mendaftarkannya untuk berjalan saat pengguna ini login kembali setelah restart.</p>
+        <div class="code-block"><div class="code-header"><span>Terminal · macOS</span></div><pre><code>brew services start postgresql@17
+brew services list
+"$(brew --prefix postgresql@17)/bin/pg_isready" -h /tmp -p 5432</code></pre></div>
+        <p>Pastikan server menerima koneksi pada port 5432. Jika port sudah dipakai server lain, periksa server tersebut terlebih dahulu; jangan membuat database pada server yang belum dikenali.</p>
+        <p>Berikut ini membuat akun database dengan password acak, menyimpan konfigurasi privat di Application Support, lalu memasang tabel aplikasi. Script menolak menimpa konfigurasi, role, atau database StarGate yang sudah ada.</p>
+        <div class="code-block"><div class="code-header"><span>Terminal · folder proyek · pemasangan baru</span></div><pre><code>STARGATE_MAC_DATA="$HOME/Library/Application Support/StarGate"
+.venv/bin/python scripts/provision_local_db.py --data-dir "$STARGATE_MAC_DATA" --admin-host /tmp --port 5432
+.venv/bin/python scripts/manage_database.py upgrade --data-dir "$STARGATE_MAC_DATA"
+.venv/bin/python scripts/manage_database.py seed --data-dir "$STARGATE_MAC_DATA"
+.venv/bin/python scripts/manage_database.py check --data-dir "$STARGATE_MAC_DATA"</code></pre></div>
+        <p>Jika satu perintah gagal, selesaikan penyebabnya sebelum melanjutkan. Pemeriksaan terakhir harus menunjukkan <code>at_head: true</code> dan <code>schema_valid: true</code>. Jangan menjalankan <code>fresh</code> untuk instalasi atau pembaruan biasa.</p>
+        <div class="note"><p>Sudah memakai database pengembangan proyek pada port 55432? Langkah di atas membuat pemasangan terpisah pada port 5432 dan tidak memindahkan data lama. Backup dahulu jika ingin memigrasikan data. Jangan menyalin konfigurasi lama begitu saja karena database proyek tersebut belum otomatis berjalan saat login.</p></div>
+        <p>Konfigurasi pemasangan baru tidak menetapkan <code>STARGATE_MODEL_DIR</code>, agar aplikasi mengambil model dari bundle <code>.app</code>, bukan folder source.</p>
+      </section>
+
+      <section id="mac-build">
+        <h2>Mac 3. Build StarGate.app</h2>
+        <p>Jalankan dari folder proyek pada Mac dengan arsitektur yang dituju:</p>
+        <div class="code-block"><div class="code-header"><span>Terminal · folder proyek</span></div><pre><code>.venv/bin/python scripts/build_package.py --target macos --include-research-models</code></pre></div>
+        <p>Hasilnya <code>dist/StarGate.app</code>, termasuk Python, library, model AI, ikon, dan keterangan izin kamera. Script memeriksa signature lokal aplikasi dan menyimpan manifest build di samping bundle. Folder sementara hasil pengumpulan aplikasi dihapus setelah build berhasil agar tidak menyimpan dua salinan aplikasi.</p>
+        <p>Periksa paket dan model sebelum memasang. Perintah ini tidak membuka kamera dan tidak menghubungi database:</p>
+        <div class="code-block"><div class="code-header"><span>Terminal · folder proyek</span></div><pre><code>dist/StarGate.app/Contents/MacOS/StarGate --package-check --verify-models</code></pre></div>
+        <p>Hasil harus menunjukkan <code>package_check: PASS</code>. Build ulang memakai perintah yang sama setelah source berubah. Jalankan pemasangan library dan unduhan model lagi jika dependency atau manifest model berubah.</p>
+      </section>
+
+      <section id="mac-install">
+        <h2>Mac 4. Install dan buka</h2>
+        <ol>
+          <li>Buka folder <code>dist</code> melalui Finder.</li>
+          <li>Seret <strong>StarGate.app</strong> ke <strong>Applications</strong>. Untuk pembaruan, tutup StarGate dahulu lalu pilih Replace pada aplikasi lama.</li>
+          <li>Buka Applications, kemudian klik dua kali <strong>StarGate</strong>.</li>
+          <li>Buat Super Admin pada pemasangan baru. Saat menggunakan kamera, izinkan akses kamera untuk StarGate.</li>
+          <li>Klik kanan ikon di Dock, pilih <strong>Options → Keep in Dock</strong> jika ingin menyimpannya di Dock.</li>
+        </ol>
+        <p>Setelah persiapan ini, cukup buka StarGate dari Applications atau Dock. Database berjalan melalui service Homebrew, sedangkan model dimuat saat registrasi atau absensi dimulai.</p>
+        <p>Konfigurasi, log, dan foto berada di <code>~/Library/Application Support/StarGate</code>. Database service Homebrew berada di cluster PostgreSQL Homebrew, terpisah dari folder tersebut. Backup StarGate sebelum memindahkan komputer atau menghapus PostgreSQL.</p>
+        <h3>Uji setelah pemasangan</h3>
+        <p>Buka aplikasi dari Applications, login, lalu uji kamera, registrasi wajah, dan absensi. Restart Mac, login kembali, kemudian buka StarGate dan ulangi pemeriksaan. Uji restart ini memastikan service database ikut berjalan pada akun macOS yang sama.</p>
+        <h3>Jika macOS menolak membuka aplikasi</h3>
+        <p>Build lokal memakai signature ad hoc, belum Developer ID dan notarization Apple. Untuk aplikasi yang Anda build sendiri dan percayai, ikuti petunjuk <a href="https://support.apple.com/en-us/102445">Apple untuk membuka aplikasi yang diblokir</a>. Jangan menonaktifkan Gatekeeper secara menyeluruh. Distribusi publik membutuhkan proses signing dan notarization tersendiri.</p>
+        <h3>Jika kamera atau database belum siap</h3>
+        <p>Periksa System Settings → Privacy &amp; Security → Camera untuk izin StarGate. Untuk database, periksa <code>brew services list</code> dan hasil <code>pg_isready</code> pada langkah Mac 2. Periksa juga konfigurasi privat di Application Support; jangan kirim passwordnya melalui chat.</p>
+        <h3>Membersihkan hasil build Mac</h3>
+        <p>Setelah aplikasi di Applications diuji, hapus <code>build/</code> dan salinan <code>dist/StarGate.app</code> jika tidak diperlukan. Pertahankan environment dan model jika akan build lagi. Jangan menghapus Application Support, data PostgreSQL Homebrew, atau backup sebagai bagian dari pembersihan build.</p>
+        <p>Referensi teknis: <a href="https://pyinstaller.org/en/stable/spec-files.html#spec-file-options-for-a-macos-bundle">bundle macOS PyInstaller</a>, <a href="https://formulae.brew.sh/formula/postgresql@17">PostgreSQL 17 Homebrew</a>, <a href="https://formulae.brew.sh/formula/pgvector">pgvector Homebrew</a>, dan <a href="https://docs.brew.sh/Manpage#services-subcommand-args">service Homebrew</a>.</p>
+      </section>
+      <footer>Panduan ini mengikuti <a href="windows-build.md">dokumentasi build Windows</a> dan script build di proyek. Untuk penggunaan aplikasi, baca <a href="operations.md">panduan operasional</a>.</footer>
     </article>
   </main>
   <script>

@@ -25,7 +25,7 @@ def validate_build(target,include_models):
         verified_assets(ROOT,ROOT/'resources/models')
 
 
-def finalize_output(output, include_models):
+def finalize_output(output, include_models, *, manifest_path=None):
     output=Path(output)
     if platform.system()=='Windows':
         from PyInstaller.utils.hooks import collect_delvewheel_libs_directory
@@ -43,7 +43,7 @@ def finalize_output(output, include_models):
     for path in output.rglob('*'):
         if path.is_file() and path.name!='build-manifest.json':
             with path.open('rb') as stream:files[path.relative_to(output).as_posix()]=hashlib.file_digest(stream,'sha256').hexdigest()
-    (output/'build-manifest.json').write_text(json.dumps({'purpose':'private non-commercial research',
+    Path(manifest_path or output/'build-manifest.json').write_text(json.dumps({'purpose':'private non-commercial research',
       'platform':platform.system(),'architecture':platform.machine(),'python':platform.python_version(),
       'research_models':include_models,'windows_uat':'required separately','files':files},indent=2)+'\n')
 
@@ -81,10 +81,16 @@ def main(argv=None):
         prepare_previous_output(ROOT/'dist/StarGate')
         result=subprocess.run([sys.executable,'-m','PyInstaller','--noconfirm','--clean',str(ROOT/'packaging/StarGate.spec')],cwd=ROOT,env=env)
         if result.returncode:return result.returncode
-        output=ROOT/'dist/StarGate'
+        output=ROOT/('dist/StarGate.app' if args.target=='macos' else 'dist/StarGate')
         if args.postgres_runtime:
             shutil.copytree(args.postgres_runtime,output/'_internal/postgresql')
-        finalize_output(output,args.include_research_models)
+        if args.target=='macos':
+            # Keep the manifest outside the signed application bundle.
+            finalize_output(output,args.include_research_models,manifest_path=ROOT/'dist/StarGate-build-manifest.json')
+            subprocess.run(['/usr/bin/codesign','--verify','--deep','--strict',str(output)],check=True)
+            shutil.rmtree(ROOT/'dist/StarGate')
+        else:
+            finalize_output(output,args.include_research_models)
         print('Paket dibuat; lakukan package-check dan UAT pada OS target sebelum distribusi.')
         return 0
     except Exception as error:

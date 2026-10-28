@@ -32,7 +32,15 @@ Database lokal disiapkan saat pemasangan dan dinyalakan saat aplikasi dibuka. Mo
 
 ## Pengembangan macOS
 
-Gunakan environment dan konfigurasi lokal yang sudah disiapkan:
+Untuk menghasilkan aplikasi yang dapat dibuka dari **Applications**, ikuti [panduan macOS (HTML)](docs/developer-install.html#macos). Setelah database lokal disiapkan sekali melalui service Homebrew, build dengan:
+
+```bash
+.venv/bin/python scripts/build_package.py --target macos --include-research-models
+```
+
+Pindahkan `dist/StarGate.app` ke Applications. Python dan model ikut di dalam bundle; PostgreSQL dipasang terpisah dan berjalan saat login melalui Homebrew. Build mengikuti arsitektur Mac yang digunakan.
+
+Untuk menjalankan dari source dengan konfigurasi pengembangan lama:
 
 ```bash
 .venv/bin/python scripts/local_postgres.py start
@@ -45,7 +53,7 @@ Gunakan environment dan konfigurasi lokal yang sudah disiapkan:
 
 ## Dokumentasi
 
-- [Panduan instalasi developer (HTML)](docs/developer-install.html): buka langsung di browser; tersedia daftar isi dan tombol salin perintah.
+- [Panduan instalasi developer Windows dan macOS (HTML)](docs/developer-install.html): buka langsung di browser; tersedia daftar isi dan tombol salin perintah.
 - [Build dan prasyarat Windows](docs/windows-build.md)
 - [Penggunaan aplikasi](docs/operations.md)
 - [Tahapan proyek](PLAN.md) dan [pengujian yang masih terbuka](docs/testing/remaining-acceptance.md)

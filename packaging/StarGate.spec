@@ -56,3 +56,12 @@ gui=EXE(pyz,gui_scripts,[],exclude_binaries=True,name='StarGate',console=False,d
         icon=str(root/'resources/branding/stargate.ico'))
 admin=EXE(pyz,admin_scripts,[],exclude_binaries=True,name='StarGateAdmin',console=True,debug=False,upx=False)
 collection=COLLECT(gui,admin,a.binaries,a.datas,strip=False,upx=False,name='StarGate')
+if sys.platform == 'darwin':
+    app=BUNDLE(collection, name='StarGate.app',
+        icon=str(root/'resources/branding/stargate.icns'),
+        bundle_identifier='org.stargate.attendance', version='0.14.3',
+        info_plist={
+            'CFBundleDisplayName': 'StarGate',
+            'NSHighResolutionCapable': True,
+            'NSCameraUsageDescription': 'StarGate menggunakan kamera untuk registrasi wajah dan absensi.',
+        })
