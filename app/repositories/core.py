@@ -164,6 +164,14 @@ class EmbeddingRepository(Repository):
         if not 1 <= limit <= 100:
             raise DataValidationError("Batas hasil pencarian wajah tidak valid.")
         distance = FaceEmbedding.embedding.cosine_distance(normalized_vector(vector))
+        if limit == 1:
+            query = (select(Member.id, distance.label("distance"))
+                     .join(FaceEmbedding, FaceEmbedding.member_id == Member.id)
+                     .where(Member.is_active.is_(True), FaceEmbedding.is_active.is_(True),
+                            FaceEmbedding.model_version == model_version)
+                     .order_by(distance, Member.id).limit(1))
+            return [FaceMatch(row.id, max(-1.0, min(1.0, 1.0 - row.distance)))
+                    for row in self.session.execute(query)]
         # Group by member so five enrolled angles do not crowd out other identities.
         best = func.min(distance)
         query = (select(Member.id, best.label("distance"))
