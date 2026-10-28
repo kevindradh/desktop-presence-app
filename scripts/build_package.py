@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import platform
+import plistlib
 import subprocess
 import sys
 import sysconfig
@@ -61,6 +62,19 @@ def prepare_previous_output(output):
             path.chmod(stat.S_IREAD | stat.S_IWRITE)
 
 
+def validate_macos_bundle(output):
+    output = Path(output)
+    with (output/'Contents/Info.plist').open('rb') as stream:
+        info = plistlib.load(stream)
+    if info.get('LSBackgroundOnly') or info.get('LSUIElement'):
+        raise ValueError('Bundle macOS harus berupa aplikasi GUI dengan akses keyboard dan ikon Dock.')
+    if info.get('CFBundleExecutable') != 'StarGate' or info.get('CFBundlePackageType') != 'APPL':
+        raise ValueError('Entry point bundle macOS bukan aplikasi StarGate.')
+    icon = info.get('CFBundleIconFile')
+    if not icon or Path(icon).name != icon or not (output/'Contents/Resources'/icon).is_file():
+        raise ValueError('Ikon bundle macOS tidak tersedia.')
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target',choices=['windows','macos'],required=True)
@@ -85,6 +99,7 @@ def main(argv=None):
         if args.postgres_runtime:
             shutil.copytree(args.postgres_runtime,output/'_internal/postgresql')
         if args.target=='macos':
+            validate_macos_bundle(output)
             # Keep the manifest outside the signed application bundle.
             finalize_output(output,args.include_research_models,manifest_path=ROOT/'dist/StarGate-build-manifest.json')
             subprocess.run(['/usr/bin/codesign','--verify','--deep','--strict',str(output)],check=True)

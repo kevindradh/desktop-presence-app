@@ -62,6 +62,10 @@ if sys.platform == 'darwin':
         bundle_identifier='org.stargate.attendance', version='0.14.3',
         info_plist={
             'CFBundleDisplayName': 'StarGate',
+            # COLLECT also contains the console admin helper; the app itself is foreground GUI.
+            'LSBackgroundOnly': False,
+            'LSUIElement': False,
+            'NSPrincipalClass': 'NSApplication',
             'NSHighResolutionCapable': True,
             'NSCameraUsageDescription': 'StarGate menggunakan kamera untuk registrasi wajah dan absensi.',
         })
