@@ -4,6 +4,8 @@ Status 28 Oktober 2026: **installer 0.14.1-research sudah dibangun di Windows** 
 
 Paket terbaru: `dist/windows/StarGate-Research-Windows-x64-0.14.1.exe`. Identitas/hash dicatat di [artifact.json](testing/evidence/automatic-windows-20261028/artifact.json). Berkas tanpa nomor versi adalah installer lama.
 
+Sesudah uji interaktif Parallels, pengguna mengizinkan lanjut bersyarat ke Tahap15 sesuai D-29. [Hasil awal Tahap15](testing/stage-15.md) memisahkan hasil regresi, pengukuran performa dan pengujian hardware yang tertunda.
+
 ## Alur customer setelah paket baru lolos pengujian
 
 1. Jalankan installer x64 pada akun Windows pemakai.

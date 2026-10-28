@@ -1,0 +1,76 @@
+{
+  "results": [
+    {
+      "case": "preview-0",
+      "passed": true,
+      "released": true,
+      "seconds": 9.39,
+      "devices": [
+        {
+          "index": 0,
+          "state": "streaming",
+          "frames": 30,
+          "size": [
+            1280,
+            720
+          ]
+        }
+      ]
+    },
+    {
+      "case": "preview-1",
+      "passed": false,
+      "released": true,
+      "seconds": 18.09,
+      "devices": [
+        {
+          "index": 1,
+          "state": "failed",
+          "frames": 0,
+          "size": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "case": "reopen-0",
+      "passed": true,
+      "released": true,
+      "seconds": 6.83,
+      "devices": [
+        {
+          "index": 0,
+          "state": "streaming",
+          "frames": 30,
+          "size": [
+            1280,
+            720
+          ]
+        }
+      ]
+    },
+    {
+      "case": "unavailable-index",
+      "passed": true,
+      "released": true,
+      "seconds": 0.73,
+      "devices": [
+        {
+          "index": 15,
+          "state": "failed",
+          "frames": 0,
+          "size": [
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "images_saved": false,
+  "embeddings_saved": false,
+  "physical_unplug": "not tested",
+  "real_rtsp": "not available"
+}

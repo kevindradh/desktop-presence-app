@@ -176,3 +176,11 @@ Pengguna pada 20 Oktober 2026 menyebut Windows melalui Parallels dan tujuan lomb
 Pengguna meminta penghapusan kewajiban mengganti password untuk semua akun, termasuk Super Admin pertama, akun buatan pengelola dan hasil reset. Login langsung membuka halaman sesuai peran; menu Ganti password tetap tersedia dan dapat dibatalkan. Reset tetap menghasilkan password acak yang ditampilkan sekali dan mencabut sesi lama. Hashing, batas panjang password, penguncian login gagal, masa sesi dan pemeriksaan izin tetap berlaku.
 
 Migrasi `0005_optional_password` mengubah default penanda lama menjadi false dan menghapus penanda wajib pada akun yang sudah ada, tanpa mengubah password atau menghapus akun/riwayat. Kolom lama tetap disimpan untuk kompatibilitas struktur dan berkas cadangan, tetapi tidak lagi menghalangi login, remember-session, atau akses fitur.
+
+## D-29: lanjut bersyarat menggunakan Parallels, 28 Oktober 2026
+
+Pengguna meminta mencoba build terbaru pada Parallels lalu melanjutkan tahap berikutnya karena deadline dan customer tidak berada bersama pengguna. Pengguna mengonfirmasi dashboard terlihat setelah login pada ruang uji baru. Kamera FaceTime HD Camera indeks0 berhasil pada1280x720, ditutup/dibuka ulang; pengguna memilih melanjutkan dengan kamera yang tersedia dahulu ketika kamera kedua tidak tersedia.
+
+Tahap15 boleh dimulai berdasarkan hasil installer/runtime Parallels dan konfirmasi dashboard tersebut. Pengujian AMD fisik dan kamera kedua ditunda; keduanya tetap belum diuji pada putaran ini. USB dicabut secara fisik, RTSP positif, suara, pembaca laporan, restart Windows dan alur wajah nyata menyeluruh tetap mempunyai catatan pengujian terbuka. Keputusan melanjutkan tidak mengubah kasus yang belum diuji menjadi PASS, tidak menjamin kompatibilitas AMD, dan tidak mengubah target akurasi/liveness/SLA.
+
+Ruang uji interaktif memakai `%LOCALAPPDATA%\StarGate-Parallels-0141`, database kelolaan baru dan seeder SMP fiktif. Konfigurasi lama `%LOCALAPPDATA%\StarGate\.env` dipertahankan. Model dan stack produksi tetap mengikuti ketentuan awal; pengukuran vektor sintetis hanya menilai kinerja pencarian.

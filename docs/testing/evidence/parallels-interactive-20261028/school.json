@@ -1,0 +1,30 @@
+{
+  "version": "smp-v2",
+  "date": "2026-10-28",
+  "days": 30,
+  "zone": "Asia/Jakarta",
+  "start": "2026-09-29",
+  "cutoff": "2026-10-28T01:35:22.119151+00:00",
+  "groups": 8,
+  "members": 80,
+  "active_members": 74,
+  "students": 72,
+  "teachers": 6,
+  "staff": 2,
+  "shifts": 4,
+  "devices": 3,
+  "assignments": 74,
+  "leaves": 12,
+  "calendar_days": 9,
+  "attendance_events": 2467,
+  "holiday": "2026-10-16",
+  "ended_assignment": "2026-10-21",
+  "already_seeded": false,
+  "accounts_created": [
+    "smp.superadmin",
+    "smp.admin",
+    "smp.operator",
+    "smp.viewer"
+  ],
+  "upgraded": false
+}

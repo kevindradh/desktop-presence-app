@@ -265,7 +265,7 @@ Dependensi: Tahap 12. Cakupan: US-029, 030, 031. Status: Review pengguna diterim
 
 ### Tahap 14 - Packaging, instalasi bersih, dan pemulihan operasional
 
-Dependensi: Tahap13. Status28 Oktober2026: installer terbaru **0.14.1-research**, aplikasi x64 dengan PostgreSQL17.11/pgvector0.8.7 bawaan, berhasil dibangun dan diuji pada Windows11 ARM64 Parallels. Setup data kosong, model, migrasi0005, bootstrap/login, dashboard, native credential, repair ketika database hidup dan uninstall/reinstall mempertahankan data lulus. Tes terarah Windows29PASS/3SKIP dan Mac29PASS/3SKIP; bukan run regresi penuh baru. Bukti terbaru: `docs/testing/stage-14-auto-20261028.md`; uji mandiri: `docs/testing/stage-14-auto-manual.md`. Hasil paket lama dan regresi455PASS/2timeout/1SKIP tetap tercatat pada `docs/testing/stage-14.md`. Uji AMD fisik/perangkat/alur lengkap serta review gerbang belum selesai; Tahap15 belum dimulai.
+Dependensi: Tahap13. Status28 Oktober2026: installer terbaru **0.14.1-research**, aplikasi x64 dengan PostgreSQL17.11/pgvector0.8.7 bawaan, berhasil dibangun dan diuji pada Windows11 ARM64 Parallels. Setup data kosong, model, migrasi0005, bootstrap/login, dashboard, native credential, repair ketika database hidup dan uninstall/reinstall mempertahankan data lulus. Tes terarah Windows29PASS/3SKIP dan Mac29PASS/3SKIP; bukan run regresi penuh baru. Bukti terbaru: `docs/testing/stage-14-auto-20261028.md`; uji mandiri: `docs/testing/stage-14-auto-manual.md`. Hasil paket lama dan regresi455PASS/2timeout/1SKIP tetap tercatat pada `docs/testing/stage-14.md`. Uji AMD fisik/perangkat/alur lengkap belum selesai. Pengguna mengizinkan lanjut bersyarat ke Tahap15 melalui Parallels sesuai D-29 dan mengonfirmasi dashboard setelah login.
 
 - [x] Paket/installer Windows dengan PyQt6/plugin/runtime AI/model/resource, manifest4615file dan hash output; NotSigned, cakupan penelitian/internal.
 - [x] Pisahkan bundle dari data/config/log per-user; DACL privat Windows diuji, file .env/data privat ditolak dari paket.
@@ -275,7 +275,7 @@ Dependensi: Tahap13. Status28 Oktober2026: installer terbaru **0.14.1-research**
 - [x] Kamera laptop/USB dan simultan melalui runtime frozen lulus setelah USB dihubungkan kembali; tanpa menyimpan gambar.
 - [x] Adaptor jaringan diputus: probe worker AI dan PostgreSQL lokal PASS, jaringan dikembalikan Up.
 - [ ] Uji mandiri Windows: registrasi wajah/IN-OUT, cabut USB fisik, audio, Excel/reader dan alur lengkap tanpa internet.
-- [ ] Gerbang: pengguna memasang/menjalankan berdasarkan panduan dan menyetujui review hasil Windows; Tahap15 belum dimulai.
+- [x] Izin lanjut bersyarat 28 Oktober2026: installer terbaru dipasang pada akun pengguna di Parallels, pengguna mengonfirmasi dashboard setelah login. Pengguna menerima penundaan AMD dan kamera kedua untuk mulai Tahap15; pengujian perangkat/fitur yang belum dilakukan tetap terbuka sesuai D-29.
 - [x] Siapkan kode installer opsional dengan PostgreSQL17/pgvector bawaan, provisioning/config/password otomatis, migrasi/data dasar, pemeriksaan runtime dan start cluster saat aplikasi dibuka. Pengaman serta SQL/lifecycle cluster terpisah diuji di Mac; lihat `docs/windows-auto-setup.md`.
 - [x] Build ulang aplikasi terbaru dengan PostgreSQL17/pgvector dan model penelitian pada Windows11 ARM64 Parallels, paket x64 versi0.14.1. Setup dari data kosong pada akun standar, model, migrasi0005, bootstrap/login, dashboard, toast dan credential native lintas proses lulus. Lock Windows diperbaiki. Bukti: `docs/testing/stage-14-auto-20261028.md`.
 - [x] Perbaiki dan uji ulang repair saat database kelolaan hidup: hentikan cluster sebelum mengganti DLL, lanjutkan setup/pemeriksaan, pertahankan konfigurasi dan data.
@@ -284,17 +284,20 @@ Dependensi: Tahap13. Status28 Oktober2026: installer terbaru **0.14.1-research**
 
 ### Tahap 15 - Validasi performa, keamanan, regresi, dan UAT
 
-Dependensi: Tahap 14. Status: Belum dimulai.
+Dependensi: Tahap14 dengan pengecualian D-29. Status28 Oktober2026: sedang dikerjakan. Pengujian AMD fisik/kamera kedua ditunda atas pilihan pengguna; hasil Parallels dipisahkan. Regresi penuh536PASS/1SKIP dan coverage gabungan89,70% selesai. Baseline pencarian Windows10.000anggota/50.000vektor/1.000probe menghasilkan p95=364,83ms; target100ms belum tercapai (PERF-B001 OPEN). Akurasi wajah, liveness, soak dan availability belum tersertifikasi. Laporan: `docs/testing/stage-15.md`.
 
-- [ ] Jalankan seluruh acceptance criteria US-001 sampai US-031 serta kebutuhan PRD tambahan.
-- [ ] Ukur unit test coverage >=80%; dokumentasikan cakupan dan pengecualian, serta pastikan integration test lulus.
+- [x] Petakan seluruh31 user story ke bukti otomatis dan pengujian nyata yang masih terbuka: `docs/testing/stage-15-acceptance-map.md`.
+- [ ] Selesaikan seluruh acceptance criteria US-001 sampai US-031 serta kebutuhan PRD tambahan, termasuk uji nyata yang belum tersedia.
+- [x] Regresi penuh sumber: 536PASS/1SKIP, PostgreSQL dan model nyata, native credential, 629,48detik. Coverage gabungan unit/integrasi/UI pada app/database/ai89,70% (7.941/8.853 statement), tanpa exclusion; Windows DACL SKIP pada Mac ditopang bukti Windows terpisah.
+- [ ] Pisahkan penilaian unit-only bila dipersyaratkan pada interpretasi akhir D-20; angka89,70% adalah coverage gabungan proses utama, bukan coverage executable/child Windows.
 - [ ] Ukur face detection <300 ms, recognition <500 ms, attendance save <200 ms, startup <5 detik.
-- [ ] Ukur absensi end-to-end <=2 detik dan pencarian <=100 ms untuk 10.000 member; gunakan jumlah embedding realistis karena satu member memiliki beberapa sampel.
+- [x] Ukur baseline pencarian pada runtime Windows terpasang:10.000anggota/50.000embedding512D,1.000probe; p50=305,32ms,p95=364,83ms,max=957,27ms. Semua ID fiktif benar dan schema sementara dihapus; bukan ukuran akurasi wajah.
+- [ ] Penuhi target pencarian <=100ms (PERF-B001) dan ukur absensi end-to-end <=2detik; startup/deteksi/recognition/save tetap terpisah.
 - [ ] Ukur recognition accuracy >=98% dengan protokol yang disepakati; laporkan false accept/false reject dan kondisi pengujian.
 - [ ] Ukur spoof detection >=95% dengan serangan foto/video dan kamera target; sertakan penolakan pengguna asli.
 - [ ] Jalankan pengujian durasi panjang/multi-camera: memori, antrean frame, respons UI, stream putus, restart database, dan pemulihan aplikasi.
 - [ ] Evaluasi availability 99,5% berdasarkan periode observasi yang disepakati; jangan menyatakannya terbukti dari smoke test singkat.
-- [ ] Uji ulang otorisasi seluruh aksi, session, lockout, penyimpanan password, kredensial RTSP, akses data biometrik, dan backup.
+- [x] Regresi otomatis otorisasi, session, lockout, hashing password, kredensial RTSP, akses biometrik dan backup lulus pada run penuh; pemeriksaan DACL Windows dicatat terpisah.
 - [ ] Perbaiki bug, ulangi kasus gagal dan regresi terkait, lalu jalankan UAT bersama pengguna.
 - [ ] Gerbang: seluruh target yang diwajibkan dan DoD lulus dengan bukti; pengecualian membutuhkan keputusan terdokumentasi dan tidak boleh diberi status lulus penuh.
 

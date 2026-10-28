@@ -8,6 +8,8 @@ Setiap baris mempunyai ID test yang sama dengan akhiran ID kebutuhan. Status men
 
 ## User stories
 
+Pembaruan28 Oktober2026: [peta penerimaan Tahap15](testing/stage-15-acceptance-map.md) menghubungkan seluruh31user story dengan run regresi terbaru dan pengujian nyata yang masih terbuka. Status historis setiap tahap di bawah tetap dibedakan dari UAT Windows/AMD penuh.
+
 | ID | Halaman US | Tahap | Hasil wajib / acceptance criteria | ID test | Keputusan | Status |
 |---|---|---|---|---|---|---|
 | US-001 | 1 | 4 | Login benar membuka Dashboard dan membuat session; password salah menampilkan error dan ditolak | TC-US-001 | D-16 | PASS |
@@ -70,7 +72,7 @@ Setiap baris mempunyai ID test yang sama dengan akhiran ID kebutuhan. Status men
 | PRD-SPEED | 1,15 | 15 | Absensi <2s di ringkasan dan <=2s di MVP | TC-PRD-SPEED | D-20,D-21 | NOT RUN |
 | PRD-ACCURACY | 1,15 | 15 | Recognition >98% di ringkasan dan >=98% di MVP | TC-PRD-ACCURACY | D-20,D-21 | NOT RUN |
 | PRD-LIVENESS | 15 | 7/15 | Spoof detection >=95% | TC-PRD-LIVENESS | D-05,D-20 | NOT RUN |
-| PRD-SEARCH | 15 | 3/7/15 | Search <=100 ms untuk 10.000 member | TC-PRD-SEARCH | D-14,D-20 | NOT RUN |
+| PRD-SEARCH | 15 | 3/7/15 | Search <=100 ms untuk 10.000 member | TC-PRD-SEARCH | D-14,D-20 | Belum memenuhi target pada Parallels:10.000anggota/50.000vektor,1.000probe,p95=364,83ms; PERF-B001 OPEN. AMD belum diuji; lihat Tahap15 |
 | PRD-AVAILABILITY | 11 | 15 | Availability 99.5% | TC-PRD-AVAILABILITY | D-20 | NOT RUN |
 | PRD-DONE | US h.9-10 | 15/16 | US/AC selesai; coverage >=80%; integration lulus; bug/audit/akses/docs/SLA/UAT | TC-PRD-DONE | D-20 | NOT RUN |
 | PRD-SCOPE | 3,15-16 | 0/16 | V1 tanpa mobile/SaaS/GPS/payroll/mask/visitor; roadmap V2 terpisah | TC-PRD-SCOPE | D-01,D-22 | NOT RUN |

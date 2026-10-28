@@ -231,4 +231,8 @@ DIST-B010 (28 Oktober 2026): repair installer otomatis ketika PostgreSQL kelolaa
 
 Percobaan awal installer otomatis juga mengembalikan kegagalan setup tanpa output child yang dapat dibaca. Pencatatan ExecAndLogOutput dan exit code diperjelas; pemasangan dari data kosong berikutnya berhasil. Penyebab pasti percobaan pertama tidak diklaim sudah terisolasi. Log percobaan awal tetap disimpan pada akun uji.
 
+## Temuan performa Tahap15
+
+PERF-B001, OPEN, High: benchmark produksi exact search pada10.000anggota x5embedding512D di Windows11 ARM64 Parallels/executable x64 menghasilkan p50=305,32ms, p95=364,83ms, maksimum957,27ms untuk1.000probe setelah5pemanasan. Target PRD-SEARCH100ms belum terpenuhi pada VM. Semua ID sintetis sesuai expected dan schema sementara dibuang. Akar biaya belum diprofilkan; tidak menyimpulkan hasil AMD fisik dari pengukuran ini. Rencana: EXPLAIN/biaya query dan evaluasi perbaikan dengan data serta correctness yang sama; ulangi pengukuran sebelum menutup temuan. Bukti: testing/evidence/parallels-interactive-20261028/search-scale.json. Tahap15 belum ditutup.
+
 Pembaruan21 Oktober2026: installer/akun standar/model/DB/credential lintas proses, ekspor/restore sintetis, probe offline dan repair/uninstall/reinstall lulus. Regresi penuh terakhir455PASS/2timeout/1SKIP; kedua kasus timeout lulus terpisah3/3 tanpa mengubah batas produksi. Symlink yang SKIP pada token standar lulus1/1 saat dijalankan terpisah dengan hak SYSTEM yang sudah tersedia. Kamera frozen awal4FAIL/3PASS saat USB tidak terdeteksi; recheck setelah pengguna menghubungkan kembali USB7/7PASS. Kegagalan pembukaan pertama laptop belum terisolasi sepenuhnya, tetap observasi/soak. Tidak menyatakan satu run regresi penuh hijau atau review manual pengguna sudah diterima.
