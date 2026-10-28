@@ -1,6 +1,6 @@
 # Logo StarGate
 
-Logo berasal dari PNG transparan yang diberikan pengguna, `Forest Green Archway Star Emblem.png`. Berkas PNG disalin tanpa mengubah bentuk, warna, atau proporsinya. ICO dan ICNS merupakan konversi format untuk ikon sistem operasi.
+Logo berasal dari PNG transparan yang diberikan pengguna, `Forest Green Archway Star Emblem.png`. Berkas PNG disalin tanpa mengubah bentuk, warna, atau proporsinya. Sesuai revisi pengguna, ikon sistem operasi memakai alas putih bersudut membulat agar terlihat pada Dock/taskbar gelap. Logo di dalam aplikasi tetap memakai PNG transparan asli.
 
 ## Penerapan
 
@@ -12,7 +12,9 @@ Logo berasal dari PNG transparan yang diberikan pengguna, `Forest Green Archway 
 
 ## Aset
 
-`resources/branding/stargate.png`: PNG asli1254×1254, transparan. `stargate.ico`: ukuran16,24,32,48,64,128,256piksel. `stargate.icns`: format ikon macOS. Pembacaan UI memakai resource bundle, terpisah dari folder data pengguna.
+`resources/branding/stargate.png`: PNG asli1254×1254, transparan. `stargate-app.png`: ikon1024×1024 dengan alas putih dan sudut luar transparan. `stargate.ico`: ukuran16,24,32,48,64,128,256piksel. `stargate.icns`: format ikon macOS. Pembacaan UI memakai resource bundle, terpisah dari folder data pengguna.
+
+Jalankan `.venv/bin/python scripts/prepare_brand_icons.py` untuk merender ulang ikon. Skrip menempatkan PNG asli pada alas putih melalui QPainter lalu mengekspor PNG/ICO/ICNS; tidak menggambar ulang atau mewarnai ulang simbol. Ikon baru memerlukan restart aplikasi; binary Windows lama tetap memerlukan build ulang.
 
 ## Pemeriksaan
 

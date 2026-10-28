@@ -9,6 +9,7 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules, copy
 root=Path(SPECPATH).parent
 common=[(str(root/'models/manifest.json'),'models'),
         (str(root/'resources/branding/stargate.png'),'resources/branding'),
+        (str(root/'resources/branding/stargate-app.png'),'resources/branding'),
         (str(root/'resources/branding/stargate.ico'),'resources/branding'),
         (str(root/'resources/branding/stargate.icns'),'resources/branding'),
         (str(root/'resources/sounds/success.wav'),'resources/sounds'),
