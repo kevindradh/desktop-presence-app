@@ -1,0 +1,11 @@
+{
+  "applies_to": "StarGate source0.14.3",
+  "files": {
+    "ai/process.py": "1d95a4e692117ed05fae6196b0af9e850e1535432c744434b40cbc3f96dbbedb",
+    "app/services/package_probe.py": "6b5d5f35d4abcff604dc5110944117af4a68a08ff67ac8527cf49f41bb8058bd"
+  },
+  "database_or_models_replaced": false,
+  "archive": "dist/StarGate-source-0.14.3-ai-stop-fix.zip",
+  "bytes": 4672,
+  "sha256": "0aecd853c47a78be2e402b2ac5c6e064b65af2fda81b8b178dcb54466c7cda6e"
+}

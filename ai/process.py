@@ -10,6 +10,7 @@ def inference_process(root,model_dir,options,pixels,shape,lock,connection):
     os.dup2(null,2)
     os.close(null)
     reference=None
+    stopped=False
     try:
         from ai.engine import FaceEngine
         engine=FaceEngine(root,model_dir,options)
@@ -17,6 +18,7 @@ def inference_process(root,model_dir,options,pixels,shape,lock,connection):
         while True:
             command=connection.recv()
             if command=="stop":
+                stopped=True
                 break
             if command=="clear":
                 reference=None
@@ -69,4 +71,9 @@ def inference_process(root,model_dir,options,pixels,shape,lock,connection):
             reference.fill(0)
         np.frombuffer(pixels,dtype=np.uint8).fill(0)
         shape[:]=(0,0)
+        if stopped:
+            try:
+                connection.send({"event":"stopped"})
+            except (OSError,BrokenPipeError):
+                pass
         connection.close()

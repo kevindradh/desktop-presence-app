@@ -3,6 +3,39 @@ import json
 import multiprocessing as mp
 
 
+def stop_model_probe(process,connection,pixels,shape,*,ack_timeout=5,exit_timeout=3,reap_timeout=5):
+    """Confirm memory cleanup before reaping this disposable probe process."""
+    import numpy as np
+    import signal
+    import sys
+    acknowledged=False
+    try:
+        connection.send('stop')
+        if connection.poll(ack_timeout):
+            response=connection.recv()
+            acknowledged=isinstance(response,dict) and response.get('event')=='stopped'
+    except (EOFError,OSError):
+        pass
+    cleared=acknowledged and tuple(shape[:])==(0,0) and not np.any(np.frombuffer(pixels,dtype=np.uint8))
+    process.join(exit_timeout)
+    before=process.exitcode
+    forced=False
+    if process.is_alive():
+        forced=True
+        process.terminate()
+        process.join(reap_timeout)
+        if process.is_alive():
+            process.kill()
+            process.join(reap_timeout)
+    code=process.exitcode
+    controlled={-signal.SIGTERM} if sys.platform=='win32' else {-signal.SIGTERM,-signal.SIGKILL}
+    clean_exit=not process.is_alive() and (code==0 or (forced and before is None and code in controlled))
+    result={'stop_acknowledged':acknowledged,'buffers_cleared':bool(cleared),
+        'graceful_exit':not forced and code==0,'forced_termination':forced,
+        'exit_code_before_cleanup':before,'exit_code':code,'reaped':not process.is_alive()}
+    return bool(acknowledged and cleared and clean_exit),result
+
+
 def spawned_probe(connection):
     connection.send('stargate-worker-ok')
     connection.close()
@@ -33,7 +66,7 @@ def model_diagnostics(root, model_dir, connection):
 
 
 def check_package(config, *, verify_models=False):
-    checks={};process=None;diagnostics=[];worker_event=None
+    checks={};process=None;diagnostics=[];worker_event=None;shutdown=None
     try:
         from PyQt6.QtWidgets import QApplication
         from PyQt6.QtGui import QImageReader
@@ -76,8 +109,9 @@ def check_package(config, *, verify_models=False):
                 parent.send('analyze')
                 result=parent.recv() if parent.poll(20) else {}
                 checks['ai_worker_blank_frame']=result.get('event')=='result' and result.get('status')=='no_face'
-                parent.send('stop');process.join(15)
-                checks['ai_worker_exit']=process.exitcode==0
+                checks['ai_worker_exit'],shutdown=stop_model_probe(process,parent,pixels,shape)
+                checks['ai_worker_stop_ack']=shutdown['stop_acknowledged']
+                checks['ai_worker_buffers_cleared']=shutdown['buffers_cleared']
             parent.close()
             if not checks['pinned_ai_models']:
                 if process.is_alive():process.terminate();process.join(5)
@@ -95,6 +129,7 @@ def check_package(config, *, verify_models=False):
         report={'package_check':'PASS' if all(checks.values()) else 'FAIL','checks':checks}
         if diagnostics:report['model_diagnostics']=diagnostics
         if verify_models:report['ai_worker_event']=worker_event
+        if shutdown is not None:report['ai_worker_shutdown']=shutdown
         print(json.dumps(report,indent=2))
         return 0 if all(checks.values()) else 2
     except Exception as error:
