@@ -45,6 +45,7 @@ Gunakan environment dan konfigurasi lokal yang sudah disiapkan:
 
 ## Dokumentasi
 
+- [Panduan instalasi developer (HTML)](docs/developer-install.html): buka langsung di browser; tersedia daftar isi dan tombol salin perintah.
 - [Build dan prasyarat Windows](docs/windows-build.md)
 - [Penggunaan aplikasi](docs/operations.md)
 - [Tahapan proyek](PLAN.md) dan [pengujian yang masih terbuka](docs/testing/remaining-acceptance.md)

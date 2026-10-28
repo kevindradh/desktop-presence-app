@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instalasi developer · StarGate</title>
+  <meta name="description" content="Panduan clone, build, dan instalasi StarGate untuk Windows 11 x64.">
+  <style>
+    :root { color-scheme: light; --ink:#203b33; --muted:#56645e; --green:#12613f; --line:#dce3de; --paper:#fff; --rail:#f5f7f5; }
+    * { box-sizing:border-box; }
+    html { scroll-padding-top:32px; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.7 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    a { color:var(--green); text-underline-offset:3px; }
+    a:hover { text-decoration-thickness:2px; }
+    :focus-visible { outline:3px solid var(--green); outline-offset:4px; }
+    .skip { position:fixed; top:-80px; left:16px; z-index:5; padding:8px 16px; background:white; }
+    .skip:focus { top:10px; }
+    aside { position:fixed; inset:0 auto 0 0; width:270px; padding:32px 24px; border-right:1px solid var(--line); background:var(--rail); overflow-y:auto; }
+    .brand { display:block; color:var(--ink); font-size:25px; font-weight:750; letter-spacing:-1px; text-decoration:none; }
+    .subtitle { margin:0 0 32px; color:var(--muted); font-size:14px; }
+    nav a { display:block; margin:3px 0; padding:7px 12px; border-left:2px solid transparent; color:var(--muted); text-decoration:none; font-size:14px; line-height:1.5; }
+    nav a:hover, nav a[aria-current="location"] { background:#e8eee9; border-left-color:var(--green); color:var(--green); }
+    .nav-label { margin:24px 12px 8px; font-size:12px; font-weight:650; color:var(--muted); }
+    .rail-note { margin:32px 12px 0; font-size:13px; color:var(--muted); }
+    main { margin-left:270px; padding:54px 56px 96px; }
+    article { max-width:800px; margin:auto; min-width:0; }
+    .breadcrumb { margin:0 0 14px; font-size:14px; color:var(--muted); }
+    h1 { margin:0 0 18px; font-size:clamp(30px,4vw,42px); line-height:1.2; letter-spacing:-1.3px; }
+    h2 { margin:0 0 16px; font-size:25px; line-height:1.3; letter-spacing:-.5px; }
+    h3 { margin:28px 0 10px; font-size:18px; line-height:1.4; }
+    p { margin:0 0 16px; }
+    .lead { font-size:18px; color:var(--muted); }
+    section { margin-top:48px; padding-top:32px; border-top:1px solid var(--line); }
+    ul,ol { padding-left:24px; }
+    li { margin:8px 0; }
+    .note { margin:24px 0; padding:14px 18px; border-left:3px solid var(--green); background:#f1f6f2; }
+    .note p:last-child { margin:0; }
+    code { font: .88em/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; }
+    :not(pre)>code { background:#f0f3f0; border-radius:3px; padding:2px 5px; }
+    .code-block { margin:20px 0; overflow:hidden; border:1px solid var(--line); border-radius:7px; }
+    .code-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 14px; background:#edf2ed; border-bottom:1px solid var(--line); font-size:12px; color:var(--muted); }
+    button { font:inherit; color:var(--ink); border:1px solid #b6c4bb; border-radius:4px; padding:4px 10px; background:white; cursor:pointer; }
+    button:hover { background:#e1eae3; }
+    button:disabled { cursor:wait; }
+    pre { margin:0; padding:18px; background:#f8faf8; white-space:pre-wrap; overflow-wrap:anywhere; tab-size:2; }
+    pre code { display:block; }
+    .copy-status { margin:0; padding:0 14px; font-size:12px; color:var(--green); }
+    .copy-status:not(:empty) { padding-bottom:8px; }
+    table { width:100%; border-collapse:collapse; margin:20px 0; font-size:14px; }
+    th,td { text-align:left; padding:12px 10px; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
+    th { background:var(--rail); font-weight:650; }
+    .mobile-bar { display:none; }
+    footer { margin-top:48px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+    @media (min-width:1500px) { main { padding-right:180px; } }
+    @media (max-width:850px) {
+      html { scroll-padding-top:80px; }
+      .mobile-bar { display:flex; position:sticky; top:0; z-index:2; align-items:center; justify-content:space-between; padding:12px 20px; border-bottom:1px solid var(--line); background:white; }
+      .mobile-bar a { font-weight:750; color:var(--ink); text-decoration:none; }
+      aside { display:none; position:sticky; top:58px; width:auto; max-height:65vh; padding:16px 20px; border-bottom:1px solid var(--line); z-index:1; }
+      aside.open { display:block; }
+      aside .brand, aside .subtitle, .rail-note { display:none; }
+      .nav-label { margin-top:10px; }
+      main { margin-left:0; padding:32px 24px 64px; }
+      section { margin-top:36px; }
+    }
+    @media (max-width:420px) { main { padding-inline:18px; } th,td { padding:10px 6px; } pre { padding:14px; } }
+    @media print { aside,.mobile-bar,.skip,.code-header button { display:none; } main { margin:0; padding:0; } article { max-width:none; } section { break-inside:avoid; } a { color:inherit; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Lewati ke panduan</a>
+  <div class="mobile-bar"><a href="#mulai">StarGate</a><button id="menu" aria-controls="sidebar" aria-expanded="false">Daftar isi</button></div>
+  <aside id="sidebar">
+    <a class="brand" href="#mulai">StarGate</a>
+    <p class="subtitle">Dokumentasi developer</p>
+    <nav aria-label="Daftar isi">
+      <a href="#mulai" aria-current="location">Instalasi Windows</a>
+      <p class="nav-label">Persiapan sekali</p>
+      <a href="#prasyarat">1. Alat yang diperlukan</a>
+      <a href="#clone">2. Clone proyek</a>
+      <a href="#environment">3. Environment Python</a>
+      <a href="#model">4. Model AI</a>
+      <a href="#database">5. Runtime database</a>
+      <p class="nav-label">Build &amp; distribusi</p>
+      <a href="#build">6. Build installer</a>
+      <a href="#install">7. Install di laptop tujuan</a>
+      <a href="#update">Build setelah perubahan</a>
+      <a href="#masalah">Jika terjadi error</a>
+      <a href="#storage">Membersihkan storage</a>
+    </nav>
+    <p class="rail-note">HTML lokal. Tanpa server, CDN, atau library tambahan.</p>
+  </aside>
+  <main id="main">
+    <article>
+      <header id="mulai">
+        <p class="breadcrumb">Developer / Windows</p>
+        <h1>Dari source ke installer StarGate</h1>
+        <p class="lead">Clone proyek, siapkan kebutuhan build, lalu hasilkan installer yang bisa dipasang di laptop pengguna.</p>
+        <p>Panduan ini untuk developer yang membangun StarGate di Windows 11 x64, termasuk komputer dengan prosesor AMD x64. Build Windows dijalankan di Windows. Jika mengembangkan di Mac, gunakan Windows melalui VM atau komputer Windows untuk langkah build.</p>
+        <div class="note"><p>Persiapan pada langkah 1–5 cukup dilakukan sekali. Untuk build berikutnya, langsung ke <a href="#update">Build setelah perubahan</a>.</p></div>
+        <p>Perintah membutuhkan internet saat mengambil source, library, dan model. Laptop pengguna nantinya cukup menerima installer.</p>
+      </header>
+
+      <section id="prasyarat">
+        <h2>1. Alat yang diperlukan</h2>
+        <p>Pasang alat berikut di komputer untuk build. Gunakan versi x64.</p>
+        <table>
+          <thead><tr><th scope="col">Alat</th><th scope="col">Kebutuhan</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://www.python.org/downloads/windows/">Python 3.11</a></td><td>Menjalankan kode dan menyiapkan environment.</td></tr>
+            <tr><td><a href="https://git-scm.com/downloads/win">Git</a></td><td>Mengambil dan memperbarui source proyek.</td></tr>
+            <tr><td><a href="https://visualstudio.microsoft.com/visual-cpp-build-tools/">Visual Studio Build Tools</a></td><td>Pilih <strong>Desktop development with C++</strong>. Dibutuhkan untuk pgvector dan library yang perlu dikompilasi.</td></tr>
+            <tr><td><a href="https://www.postgresql.org/download/windows/">PostgreSQL 17</a></td><td>Sumber runtime database yang akan dibawa installer.</td></tr>
+            <tr><td><a href="https://jrsoftware.org/isdl.php">Inno Setup 6</a></td><td>Membuat file installer <code>.exe</code>.</td></tr>
+            <tr><td><a href="https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist">Visual C++ Redistributable x64</a></td><td>Runtime untuk library native Windows.</td></tr>
+          </tbody>
+        </table>
+        <p>Visual C++ Redistributable dan Build Tools memiliki fungsi berbeda. Redistributable saja tidak menyediakan compiler <code>nmake</code>.</p>
+      </section>
+
+      <section id="clone">
+        <h2>2. Clone proyek</h2>
+        <p>Buka PowerShell. Ganti <code>&lt;URL_REPOSITORI_ANDA&gt;</code> dengan URL Git proyek ini.</p>
+        <div class="code-block"><div class="code-header"><span>PowerShell</span></div><pre><code>git clone &lt;URL_REPOSITORI_ANDA&gt; StarGate
+cd StarGate</code></pre></div>
+        <p>Jalankan perintah PowerShell berikutnya dari folder proyek, kecuali ada instruksi untuk berpindah terminal.</p>
+      </section>
+
+      <section id="environment">
+        <h2>3. Environment Python</h2>
+        <p>Buat environment khusus proyek, lalu pasang PyTorch versi CPU sebelum library lainnya. Dengan begitu, build tidak mengambil paket GPU yang tidak dibutuhkan.</p>
+        <div class="code-block"><div class="code-header"><span>PowerShell · folder proyek</span></div><pre><code>py -3.11 -m venv .venv-win
+.\.venv-win\Scripts\python.exe -m pip install "torch&gt;=2.6,&lt;3" --index-url https://download.pytorch.org/whl/cpu
+.\.venv-win\Scripts\python.exe -m pip install -r requirements.in
+.\.venv-win\Scripts\python.exe -m pip check</code></pre></div>
+        <p>Pemeriksaan terakhir seharusnya menampilkan <code>No broken requirements found.</code> Perintah menggunakan Python dari environment secara langsung, sehingga tidak perlu aktivasi environment.</p>
+      </section>
+
+      <section id="model">
+        <h2>4. Ambil model AI</h2>
+        <p>Bobot model tidak ikut Git. Script berikut mengunduh model yang tercatat di manifest dan memeriksa checksum untuk memastikan berkas sesuai.</p>
+        <div class="code-block"><div class="code-header"><span>PowerShell · folder proyek</span></div><pre><code>.\.venv-win\Scripts\python.exe scripts/download_models.py</code></pre></div>
+        <p>Tunggu sampai selesai sebelum build. Paket dengan model saat ini mengikuti penggunaan lomba, penelitian, dan pengujian internal. Lihat <a href="../packaging/THIRD_PARTY_NOTICES.md">notice dependency dan model</a> sebelum distribusi komersial.</p>
+      </section>
+
+      <section id="database">
+        <h2>5. Siapkan runtime database</h2>
+        <p>Installer membawa PostgreSQL dan pgvector supaya pengguna tidak perlu menyalakan database secara manual. Siapkan folder runtime ini satu kali, lalu gunakan kembali untuk build berikutnya.</p>
+        <h3>Pasang pgvector pada PostgreSQL</h3>
+        <p>Buka <strong>x64 Native Tools Command Prompt</strong> dari Visual Studio Build Tools, dengan hak untuk memasang extension ke direktori PostgreSQL. Terminal pada langkah ini menggunakan CMD, bukan PowerShell.</p>
+        <div class="code-block"><div class="code-header"><span>x64 Native Tools Command Prompt · CMD</span></div><pre><code>git clone --branch v0.8.7 --depth 1 https://github.com/pgvector/pgvector.git C:\StarGate-pgvector
+set "PGROOT=C:\Program Files\PostgreSQL\17"
+cd /d C:\StarGate-pgvector
+nmake /F Makefile.win
+nmake /F Makefile.win install</code></pre></div>
+        <p>Jika PostgreSQL terpasang di lokasi lain, sesuaikan <code>PGROOT</code> dan path pada perintah berikut. Panduan upstream tersedia di <a href="https://github.com/pgvector/pgvector#installation">dokumentasi pgvector</a>.</p>
+        <h3>Kemas runtime untuk installer</h3>
+        <p>Kembali ke PowerShell di folder proyek. Perintah ini mengambil lisensi PostgreSQL lalu menyalin runtime dan lisensinya ke folder baru.</p>
+        <div class="code-block"><div class="code-header"><span>PowerShell · folder proyek</span></div><pre><code>New-Item -ItemType Directory -Force .local | Out-Null
+Invoke-WebRequest 'https://raw.githubusercontent.com/postgres/postgres/REL_17_STABLE/COPYRIGHT' -OutFile '.local\postgresql-COPYRIGHT'
+.\.venv-win\Scripts\python.exe scripts/prepare_postgres_runtime.py --source 'C:\Program Files\PostgreSQL\17' --output 'C:\StarGate-runtime\postgresql' --postgres-license '.local\postgresql-COPYRIGHT' --pgvector-license 'C:\StarGate-pgvector\LICENSE'</code></pre></div>
+        <p>Output harus berupa folder baru. Setelah berhasil, folder <code>C:\StarGate-runtime\postgresql</code> berisi <code>runtime-manifest.json</code>. Proses ini menyalin program database, bukan isi database pengguna.</p>
+      </section>
+
+      <section id="build">
+        <h2>6. Build installer</h2>
+        <p>Setelah environment, model, dan runtime siap, jalankan:</p>
+        <div class="code-block"><div class="code-header"><span>PowerShell · folder proyek</span></div><pre><code>.\packaging\windows\build.ps1 -IncludeResearchModels -PostgresRuntime 'C:\StarGate-runtime\postgresql'</code></pre></div>
+        <p>Script menjalankan PyInstaller, menyertakan ikon StarGate, memeriksa paket dan model, lalu membuat installer dengan Inno Setup. Jika pemeriksaan gagal, script berhenti sebelum membuat installer.</p>
+        <table>
+          <thead><tr><th scope="col">Hasil</th><th scope="col">Lokasi</th></tr></thead>
+          <tbody>
+            <tr><td>Aplikasi hasil build</td><td><code>dist\StarGate\StarGate.exe</code><br>Pertahankan seluruh folder <code>dist\StarGate</code> jika menjalankan hasil ini langsung.</td></tr>
+            <tr><td>Installer untuk pengguna</td><td><code>dist\installer\StarGate-Research-Windows-x64.exe</code></td></tr>
+          </tbody>
+        </table>
+        <p>Kirim file installer ke laptop tujuan. Jangan mengambil <code>StarGate.exe</code> sendirian dari folder build karena aplikasi membutuhkan berkas di sekitarnya.</p>
+      </section>
+
+      <section id="install">
+        <h2>7. Install di laptop tujuan</h2>
+        <ol>
+          <li>Jalankan <code>StarGate-Research-Windows-x64.exe</code> dan ikuti proses pemasangan.</li>
+          <li>Buka <strong>StarGate</strong> dari Start Menu.</li>
+          <li>Pada penggunaan pertama, buat akun Super Admin.</li>
+          <li>Klik kanan ikon StarGate saat berjalan, lalu pilih <strong>Pin to taskbar</strong>.</li>
+        </ol>
+        <p>Laptop pengguna tidak perlu Python, Git, Build Tools, atau Inno Setup. Database lokal dinyalakan saat StarGate dibuka. Model dimuat ketika registrasi wajah atau absensi dimulai.</p>
+        <p>Data aplikasi berada di <code>%LOCALAPPDATA%\StarGate</code>, terpisah dari berkas program. Setelah restart Windows, buka StarGate kembali dari shortcut atau taskbar.</p>
+        <h3>Periksa hasil pemasangan</h3>
+        <ul>
+          <li>Login, kemudian buka halaman anggota dan perangkat.</li>
+          <li>Buka kamera, lakukan registrasi wajah, lalu coba absensi.</li>
+          <li>Tutup aplikasi, restart Windows, lalu pastikan login, data, kamera, dan model tetap berfungsi.</li>
+        </ul>
+        <p>Build yang selesai tetap perlu diuji di laptop tujuan. Pengujian VM Parallels belum menggantikan pengujian langsung pada perangkat AMD tersebut.</p>
+      </section>
+
+      <section id="update">
+        <h2>Build setelah perubahan</h2>
+        <p>Tutup StarGate yang berjalan dari folder build. Jika mengambil pembaruan dari Git, simpan atau commit perubahan lokal terlebih dahulu, lalu jalankan <code>git pull</code>.</p>
+        <p>Dengan environment, model, dan runtime yang masih tersedia, jalankan lagi:</p>
+        <div class="code-block"><div class="code-header"><span>PowerShell · folder proyek</span></div><pre><code>.\packaging\windows\build.ps1 -IncludeResearchModels -PostgresRuntime 'C:\StarGate-runtime\postgresql'</code></pre></div>
+        <p>Jika dependency atau manifest model berubah, ulangi langkah pemasangan library atau pengunduhan model sebelum build. Bagikan installer yang baru dihasilkan.</p>
+      </section>
+
+      <section id="masalah">
+        <h2>Jika terjadi error</h2>
+        <h3>Python 3.11 tidak ditemukan</h3>
+        <p>Pastikan Python 3.11 x64 dan Python Launcher terpasang. Periksa daftar Python dengan <code>py -0p</code>, lalu buka terminal baru setelah instalasi.</p>
+        <h3>nmake tidak dikenali</h3>
+        <p>Jalankan langkah pgvector di x64 Native Tools Command Prompt. Pastikan komponen Desktop development with C++ sudah terpasang.</p>
+        <h3>runtime-manifest.json tidak ditemukan</h3>
+        <p>Selesaikan langkah 5 dan periksa lokasi output runtime. Nilai <code>-PostgresRuntime</code> harus menunjuk folder yang memuat manifest tersebut.</p>
+        <h3>PowerShell menolak menjalankan script</h3>
+        <p>Gunakan kebijakan menjalankan script yang diizinkan di komputer Anda. Pada perangkat yang dikelola organisasi, hubungi pengelolanya.</p>
+        <h3>Inno Setup tidak ditemukan</h3>
+        <p>Pasang Inno Setup 6. Script mencari <code>ISCC.exe</code> melalui PATH dan lokasi instalasi standar per pengguna atau sistem.</p>
+        <h3>Package check gagal atau non-zero exit status</h3>
+        <p>Baca hasil pemeriksaan sebelum baris terakhir. Nilai <code>false</code> menunjukkan pemeriksaan yang gagal; kode exit saja belum menjelaskan penyebabnya. Salin bagian error dan perintah yang gagal saat melaporkan masalah, tanpa menyertakan password atau isi <code>.env</code>.</p>
+      </section>
+
+      <section id="storage">
+        <h2>Membersihkan storage</h2>
+        <p>Setelah aplikasi dan proses build ditutup, folder <code>build/</code> serta keluaran <code>dist/</code> yang tidak dipakai boleh dihapus. Simpan satu installer terbaru jika masih dibutuhkan.</p>
+        <p>Pertahankan <code>.venv-win/</code>, model, dan runtime PostgreSQL jika akan build lagi. Tidak perlu membuat salinan source, wheelhouse, atau ZIP proyek untuk setiap pembaruan.</p>
+        <div class="note"><p>Jangan menghapus database, foto anggota, <code>.env</code>, atau cadangan untuk membersihkan hasil build. Itu data aplikasi, bukan cache.</p></div>
+      </section>
+      <footer>Panduan ini mengikuti <a href="windows-build.md">dokumentasi build Windows</a> dan script <code>packaging/windows/build.ps1</code> di proyek. Untuk penggunaan aplikasi, baca <a href="operations.md">panduan operasional</a>.</footer>
+    </article>
+  </main>
+  <script>
+    const menu = document.querySelector('#menu');
+    const sidebar = document.querySelector('#sidebar');
+    const links = [...document.querySelectorAll('nav a')];
+    function closeMenu() {
+      sidebar.classList.remove('open');
+      menu.setAttribute('aria-expanded', 'false');
+    }
+    menu.addEventListener('click', () => {
+      const open = sidebar.classList.toggle('open');
+      menu.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && sidebar.classList.contains('open')) {
+        closeMenu();
+        menu.focus();
+      }
+    });
+    function markCurrent() {
+      const hash = location.hash || '#mulai';
+      links.forEach(link => {
+        if (link.hash === hash) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    }
+    window.addEventListener('hashchange', markCurrent);
+    links.forEach(link => link.addEventListener('click', () => {
+      closeMenu();
+      const target = document.querySelector(link.hash);
+      target.setAttribute('tabindex', '-1');
+      target.focus({ preventScroll:true });
+    }));
+    markCurrent();
+    async function copyText(value) {
+      try {
+        if (!navigator.clipboard) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(value);
+      } catch (error) {
+        const previous = document.activeElement;
+        const field = document.createElement('textarea');
+        field.value = value;
+        field.style.position = 'fixed';
+        field.style.opacity = '0';
+        document.body.append(field);
+        field.select();
+        let copied = false;
+        try { copied = document.execCommand('copy'); }
+        finally { field.remove(); previous.focus(); }
+        if (!copied) throw new Error('Copy failed');
+      }
+    }
+    document.querySelectorAll('.code-block').forEach((block, index) => {
+      const button = document.createElement('button');
+      button.textContent = 'Salin';
+      button.setAttribute('aria-label', `Salin perintah ${index + 1}`);
+      const status = document.createElement('p');
+      status.className = 'copy-status';
+      status.setAttribute('role', 'status');
+      block.append(status);
+      block.querySelector('.code-header').append(button);
+      let timer;
+      button.addEventListener('click', async () => {
+        clearTimeout(timer);
+        button.disabled = true;
+        status.textContent = 'Menyalin…';
+        try {
+          await copyText(block.querySelector('code').textContent);
+          status.textContent = 'Perintah disalin.';
+        } catch (error) {
+          status.textContent = 'Belum tersalin. Pilih teks perintah dan salin secara manual.';
+        } finally {
+          button.disabled = false;
+          timer = setTimeout(() => { status.textContent = ''; }, 5000);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
