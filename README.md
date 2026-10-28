@@ -408,4 +408,7 @@ Verifikasi awal Tahap14 di macOS: **452 regresi PASS/89,97% coverage**, **69 nat
 
 ## Kandidat penelitian28 Oktober2026
 
-Installer terbaru: `dist/windows/StarGate-Research-Windows-x64-0.14.2.exe`, dengan database otomatis dan migrasi0006. Versi0.14.1 tetap disimpan sebagai artefak historis. [Identitas dan pemulihan](docs/release-candidate.md), [panduan operasi](docs/operations.md), [hasil uji akhir](docs/testing/stage-15.md), serta [gerbang yang belum selesai](docs/testing/remaining-acceptance.md) menjelaskan cakupannya. Regresi akhir538PASS/1SKIP; coverage gabungan89,73%. Pencarian produksi p95=50,92ms, tetapi3dari1.000query>100ms. Kamera0 lulus pada pengulangan sesudah satu kegagalan awal yang tetap dicatat. Kandidat ini untuk UAT internal, belum penerimaan V1 penuh.
+Installer pada putaran awal: `dist/windows/StarGate-Research-Windows-x64-0.14.2.exe`, dengan database otomatis dan migrasi0006. Versi0.14.1 tetap disimpan sebagai artefak historis. [Identitas dan pemulihan](docs/release-candidate.md), [panduan operasi](docs/operations.md), [hasil uji akhir](docs/testing/stage-15.md), serta [gerbang yang belum selesai](docs/testing/remaining-acceptance.md) menjelaskan cakupannya. Regresi akhir538PASS/1SKIP; coverage gabungan89,73%. Pencarian produksi p95=50,92ms, tetapi3dari1.000query>100ms. Kamera0 lulus pada pengulangan sesudah satu kegagalan awal yang tetap dicatat. Kandidat ini untuk UAT internal, belum penerimaan V1 penuh.
+
+
+Installer terbaru **0.14.3-research**: `dist/windows/StarGate-Research-Windows-x64-0.14.3.exe`. Versi ini memuat logo StarGate dan ikon berlatar putih, sudah dipasang di Parallels dengan pemeriksaan model/schema/data/resource UI. [Hasil pembaruan logo Windows](docs/testing/windows-logo-0.14.3.md).

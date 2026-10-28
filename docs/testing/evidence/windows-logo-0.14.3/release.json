@@ -1,0 +1,10 @@
+{
+  "archive": "dist/releases/StarGate-Research-Windows-x64-0.14.3.zip",
+  "sha256": "08de2ffdf0a5749682148b7dde8113150390dfb5cd81acc2da13177e69c3cbf3",
+  "version": "0.14.3-research",
+  "files": 116,
+  "source_files_verified": 225,
+  "archive_bytes": 487174817,
+  "all_hashes_verified": true,
+  "private_source_excluded": true
+}

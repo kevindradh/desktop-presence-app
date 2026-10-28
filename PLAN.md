@@ -420,3 +420,6 @@ Fondasi UI dan persistensi database tersedia. Pengguna menyetujui Tahap 3 dan me
 
 
 Pembaruan28 Oktober2026: paket0.14.2 dipasang pada akun pengguna Parallels; model/schema0006 lulus, baseline80anggota/4akun/2.467kehadiran masih ada. Pencarian p95=50,92ms tetapi3/1.000query>100ms, sehingga PERF-B001 masih OPEN. Kamera0 gagal pertama lalu preview/reopen ulang lulus; CAM-B004 masih OPEN untuk isolasi penyebab. Dokumentasi operasi/arsitektur/ERD/notice/DoD dan daftar gerbang tersisa disiapkan. Bukti: `docs/testing/stage-15.md`, `docs/testing/stage-16.md`, `docs/testing/remaining-acceptance.md`. Tidak ada penerimaan V1 penuh.
+
+
+Pembaruan logo Windows28 Oktober2026: installer0.14.3 dibangun/dipasang di Parallels. Ikon PE executable dan installer cocok dengan aset putih; model, schema, hitungan data dan hash konfigurasi sebelum/sesudah lulus. Logo empat panel dan form1000×740 lulus pada renderer offscreen dari bundle. Live login/taskbar belum dikonfirmasi melalui kendali UI. Gerbang Tahap15/16 yang masih terbuka tetap dipertahankan. Bukti: `docs/testing/windows-logo-0.14.3.md`.

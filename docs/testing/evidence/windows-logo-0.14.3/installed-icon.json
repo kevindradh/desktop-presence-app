@@ -1,0 +1,41 @@
+{
+  "resource_group": "1",
+  "sizes": [
+    [
+      16,
+      16
+    ],
+    [
+      24,
+      24
+    ],
+    [
+      32,
+      32
+    ],
+    [
+      48,
+      48
+    ],
+    [
+      64,
+      64
+    ],
+    [
+      128,
+      128
+    ],
+    [
+      256,
+      256
+    ]
+  ],
+  "checked_size": [
+    256,
+    256
+  ],
+  "white_pixels": 32707,
+  "green_pixels": 15030,
+  "pixels_match_approved_icon": true,
+  "installed_bytes_match_build": true
+}

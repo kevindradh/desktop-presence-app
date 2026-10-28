@@ -41,8 +41,10 @@ def build_release(installer,artifact,output,*,root=ROOT):
     extras=sorted(set([root/name for name in DOCUMENTS]+list((root/'docs').rglob('*.md'))+
         [root/'packaging/THIRD_PARTY_NOTICES.md']))
     evidence=root/'docs/testing/evidence'
+    logo_evidence='windows-logo-'+version.removesuffix('-research')
     extras+=sorted(path for pattern in ('stage-15-*.xml','stage-15-*.json','stage-16-*.xml',
         'stage-15-final-windows/*.json','stage-15-final-windows/*.txt',
+        logo_evidence+'/*.json',logo_evidence+'/*.txt',logo_evidence+'/*.png',
         'parallels-interactive-20261028/search-scale.json') for path in evidence.glob(pattern))
     if any(not path.is_file() or path.is_symlink() or not path.resolve().is_relative_to(root) for path in extras):
         raise ValueError('Release documents incomplete or linked')

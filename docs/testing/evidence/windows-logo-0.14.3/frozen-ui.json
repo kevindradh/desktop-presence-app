@@ -1,0 +1,18 @@
+{
+  "frozen_ui": "PASS",
+  "mode": "offscreen Windows Qt from installed bundle",
+  "offscreen_font": "Segoe UI",
+  "white_application_icon": true,
+  "icon_sizes": [
+    16,
+    32,
+    48,
+    128,
+    256
+  ],
+  "all_panel_logos_loaded": true,
+  "setup_fits_1000x740": true,
+  "database_connected": false,
+  "camera_opened": false,
+  "manual_login_uat": "not claimed"
+}

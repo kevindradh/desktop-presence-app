@@ -1,0 +1,97 @@
+{
+  "version": "0.14.3-research",
+  "artifact": "dist/windows/StarGate-Research-Windows-x64-0.14.3.exe",
+  "bytes": 484978616,
+  "sha256": "a4085e194f8e7245a5a774b2a00ed5d243389434f827c2901c9b68a159870917",
+  "application_source_commit": "bac91ef",
+  "environment": "Windows 11 ARM64 Parallels running x64 package",
+  "physical_amd_tested": false,
+  "native_file_version": "0.14.3.0            ",
+  "native_product_version": "0.14.3-research                                   ",
+  "authenticode": "NotSigned",
+  "bundle_manifest_sha256": "7c1de13213223185bb404e786acbdd8e99f2575b3d79a75bf3615b1e63c82d83",
+  "bundle_file_count": 6231,
+  "approved_icon_sha256": "6a428aebc191aea82b82927797bc53b4842516c9570fa70c4036084e3f51664e",
+  "embedded_icons": {
+    "application": {
+      "resource_group": "1",
+      "sizes": [
+        [
+          16,
+          16
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          48,
+          48
+        ],
+        [
+          64,
+          64
+        ],
+        [
+          128,
+          128
+        ],
+        [
+          256,
+          256
+        ]
+      ],
+      "checked_size": [
+        256,
+        256
+      ],
+      "white_pixels": 32707,
+      "green_pixels": 15030,
+      "pixels_match_approved_icon": true
+    },
+    "installer": {
+      "resource_group": "MAINICON",
+      "sizes": [
+        [
+          16,
+          16
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          48,
+          48
+        ],
+        [
+          64,
+          64
+        ],
+        [
+          128,
+          128
+        ],
+        [
+          256,
+          256
+        ]
+      ],
+      "checked_size": [
+        256,
+        256
+      ],
+      "white_pixels": 32707,
+      "green_pixels": 15030,
+      "pixels_match_approved_icon": true
+    }
+  }
+}

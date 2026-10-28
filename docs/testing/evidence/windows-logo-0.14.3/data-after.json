@@ -1,0 +1,15 @@
+{
+  "counts": {
+    "members": 80,
+    "users": 4,
+    "attendance": 2467,
+    "face_embeddings": 0
+  },
+  "revision": "0006_search_storage",
+  "config_sha256": {
+    "default": "16332d3a575379f2fb8075e25607365519acff922d953c279f781d732336f705",
+    "test_space": "c52d9a4008c3fd9403e6a0f7f20ba50abdfaadddc5c6e09fe1097cabe909fdf9"
+  },
+  "counts_and_config_unchanged": true,
+  "scope": "Counts of four tables, schema revision and config fingerprints; no full row diff"
+}

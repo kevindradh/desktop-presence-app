@@ -8,7 +8,7 @@ Logo berasal dari PNG transparan yang diberikan pengguna, `Forest Green Archway 
 - Sidebar memakai simbol hijau dengan alas putih kecil supaya terbaca di latar gelap; nama StarGate tetap di sebelahnya.
 - QApplication dan kedua jendela utama memakai ikon yang sama.
 - Spec PyInstaller menyertakan aset dan ikon executable; Inno Setup memakai ikon untuk installer. Source kit menyertakan PNG, ICO, dan ICNS.
-- Versi source installer berikutnya adalah0.14.3-research. Installer dan arsip0.14.2 yang sudah dibuat tetap dipertahankan dan belum memuat perubahan logo ini.
+- Windows0.14.3-research sudah dibangun dan dipasang di Parallels; hasilnya tersedia pada [laporan pembaruan](testing/windows-logo-0.14.3.md). Installer dan arsip0.14.2 yang sudah dibuat tetap dipertahankan dan belum memuat perubahan logo ini.
 
 ## Aset
 

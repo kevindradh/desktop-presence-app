@@ -1,0 +1,9 @@
+{
+  "initial_ui_probe": "UI assertions passed; wrapper exit 1 during QA-helper unlink with WinError 5",
+  "cleanup_recheck": "PASS; helper removed on first subsequent attempt; bounded retry added",
+  "offscreen_font": "First render lacked readable glyphs; probe now explicitly registers system Segoe UI; final render visually checked",
+  "live_ui_control": "Parallels frame remained unchanged after Raise and Alt+Tab; live login/taskbar visual UAT not claimed",
+  "production_code_changed_during_probe": false,
+  "camera_opened": false,
+  "biometric_data_exported": false
+}

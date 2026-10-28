@@ -2,6 +2,12 @@
 
 Tanggal: 28 Oktober 2026. Kandidat ini ditujukan untuk lomba, penelitian dan pengujian internal sesuai pilihan pengguna. Gerbang penerimaan tetap mengikuti [PLAN](../PLAN.md) dan hasil aktual; status paket tidak berarti seluruh target akurasi/SLA telah terbukti.
 
+## Kandidat terbaru0.14.3
+
+Paket Windows0.14.3 memuat logo di panel aplikasi dan sidebar serta ikon berlatar putih pada executable/installer. Installer sudah dipasang pada akun standar Parallels; model, resource UI, schema serta hitungan data/hash konfigurasi lulus pemeriksaan. [Laporan pembaruan](testing/windows-logo-0.14.3.md) membedakan pengujian offscreen dan pemeriksaan live yang belum terkonfirmasi.
+
+Installer berukuran484,978,616byte; SHA256 `a4085e194f8e7245a5a774b2a00ed5d243389434f827c2901c9b68a159870917`. Belum ditandatangani Authenticode. Riwayat0.14.2 di bawah tetap menjadi bukti putaran sebelumnya; metrik performa/biometrik tidak diukur ulang pada pembaruan logo ini.
+
 ## Isi penyerahan
 
 - Installer Windows x64 yang sudah diperiksa beserta hash dan metadata artefaknya.
