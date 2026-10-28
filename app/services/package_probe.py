@@ -41,7 +41,9 @@ def check_package(config, *, verify_models=False):
         os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
         app=QApplication.instance() or QApplication([])
         checks['qt_image_plugins']={b'png',b'jpeg'} <= set(bytes(x) for x in QImageReader.supportedImageFormats())
-        for name in ('resources/sounds/success.wav','resources/samples/profile-removed.svg','models/manifest.json','database/migrations/env.py'):
+        for name in ('resources/sounds/success.wav','resources/samples/profile-removed.svg',
+                     'resources/branding/stargate.png','resources/branding/stargate.ico',
+                     'models/manifest.json','database/migrations/env.py'):
             checks[name]=(config.resource_root/name).is_file()
         # Explicitly import native/report/DB dependencies; never connect to a server here.
         import cv2,numpy,onnxruntime,torch,psycopg,cryptography,keyring,pandas,openpyxl,reportlab

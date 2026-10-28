@@ -8,6 +8,9 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules, copy
 
 root=Path(SPECPATH).parent
 common=[(str(root/'models/manifest.json'),'models'),
+        (str(root/'resources/branding/stargate.png'),'resources/branding'),
+        (str(root/'resources/branding/stargate.ico'),'resources/branding'),
+        (str(root/'resources/branding/stargate.icns'),'resources/branding'),
         (str(root/'resources/sounds/success.wav'),'resources/sounds'),
         (str(root/'resources/samples/profile-removed.svg'),'resources/samples'),
         (str(root/'third_party/minifasnet/MiniFASNet.py'),'third_party/minifasnet'),
@@ -48,6 +51,7 @@ assert {'main','admin_entry'} <= {entry[0] for entry in a.scripts}
 # Keep all runtime hooks, but execute only the entry point belonging to this EXE.
 gui_scripts=[entry for entry in a.scripts if entry[0]!='admin_entry']
 admin_scripts=[entry for entry in a.scripts if entry[0]!='main']
-gui=EXE(pyz,gui_scripts,[],exclude_binaries=True,name='StarGate',console=False,debug=False,upx=False)
+gui=EXE(pyz,gui_scripts,[],exclude_binaries=True,name='StarGate',console=False,debug=False,upx=False,
+        icon=str(root/'resources/branding/stargate.ico'))
 admin=EXE(pyz,admin_scripts,[],exclude_binaries=True,name='StarGateAdmin',console=True,debug=False,upx=False)
 collection=COLLECT(gui,admin,a.binaries,a.datas,strip=False,upx=False,name='StarGate')

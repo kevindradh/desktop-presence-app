@@ -12,6 +12,7 @@ from app.services.diagnostics import run_diagnostic
 from app.services.tasks import TaskController
 from app.widgets.cards import text_label
 from app.widgets.toast import Toast
+from app.ui.branding import application_icon, brand_mark
 
 
 ROUTES = (
@@ -42,6 +43,7 @@ class MainWindow(QMainWindow):
         self.config, self.logger, self.reporter = config, logger, reporter
         self.toast = toast if toast is not None else Toast(self)
         self.setWindowTitle("StarGate")
+        self.setWindowIcon(application_icon(config.resource_root))
         self.resize(1180, 820)
         self.setMinimumSize(1000, 740)
         self._closing = False
@@ -76,9 +78,14 @@ class MainWindow(QMainWindow):
         rail = QVBoxLayout(sidebar)
         rail.setContentsMargins(18, 30, 18, 20)
         rail.setSpacing(12)
+        identity = QHBoxLayout()
+        identity.setSpacing(10)
+        identity.addWidget(brand_mark(self.config.resource_root, 40, on_dark=True))
         brand = text_label("StarGate", wrap=False)
         brand.setObjectName("brand")
-        rail.addWidget(brand)
+        identity.addWidget(brand)
+        identity.addStretch()
+        rail.addLayout(identity)
         hint = text_label("FACE RECOGNITION ATTENDANCE")
         hint.setObjectName("brandHint")
         rail.addWidget(hint)

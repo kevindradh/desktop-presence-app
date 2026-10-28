@@ -1,12 +1,13 @@
 ; Build with Inno Setup 6 on Windows after PyInstaller. No database/data deletion.
 #ifndef AppVersion
-#define AppVersion "0.14.2-research"
+#define AppVersion "0.14.3-research"
 #endif
 [Setup]
 AppId={{14F0FE68-3708-49D3-BA5F-054CBF5146C1}
 AppName=StarGate Research
+SetupIconFile=..\..\resources\branding\stargate.ico
 AppVersion={#AppVersion}
-VersionInfoVersion=0.14.2.0
+VersionInfoVersion=0.14.3.0
 DefaultDirName={localappdata}\Programs\StarGate
 DefaultGroupName=StarGate Research
 PrivilegesRequired=lowest

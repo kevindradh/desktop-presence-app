@@ -42,6 +42,8 @@ def main(argv=None):
     app = QApplication([])
     app.setApplicationName("StarGate")
     app.setOrganizationName("StarGate")
+    from app.ui.branding import application_icon
+    app.setWindowIcon(application_icon(config.resource_root))
     try:
         logger = configure_logging(config.log_dir, config.log_level, config.secrets)
     except OSError:

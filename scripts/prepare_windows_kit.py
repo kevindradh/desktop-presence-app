@@ -17,7 +17,8 @@ def selected_files(root,include_models=False):
         if (root/name).is_file():selected.add(root/name)
     for folder in ('app','ai','database','scripts','tests','packaging'):
         selected.update(p for p in (root/folder).rglob('*') if p.is_file() and (p.suffix in {'.py','.spec','.iss','.ps1','.md','.sql'} or p.name=='.env.example') and '__pycache__' not in p.parts)
-    selected.update(root/p for p in ('models/manifest.json','resources/samples/profile-removed.svg',
+    selected.update(root/p for p in ('models/manifest.json','resources/branding/stargate.png',
+        'resources/branding/stargate.ico','resources/branding/stargate.icns','resources/samples/profile-removed.svg',
         'resources/samples/profile-test.png','resources/sounds/success.wav',
         'third_party/minifasnet/__init__.py','third_party/minifasnet/MiniFASNet.py',
         'third_party/minifasnet/LICENSE','third_party/minifasnet/README.md',

@@ -6,6 +6,7 @@ QWidget { font-size: 13px; color: #243a33; }
 QMainWindow, QWidget#workspace { background: #f5f7f4; }
 QFrame#sidebar { background: #142d25; border: none; }
 QFrame#sidebar QLabel { color: #e6eee8; }
+QLabel#brandMark[onDark="true"] { background: white; border-radius: 8px; padding: 4px; }
 QLabel#brand { font-size: 25px; font-weight: 700; letter-spacing: 1px; }
 QLabel#brandHint { color: #9bb6a7; font-size: 11px; }
 QListWidget#navigation { background: transparent; border: 0; outline: 0; }

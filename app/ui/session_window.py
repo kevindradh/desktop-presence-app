@@ -31,6 +31,7 @@ from app.services.credential_store import CredentialStoreError
 from app.services.database import DataConflict, DataValidationError, DatabaseUnavailable
 from app.services.tasks import TaskController
 from app.ui.main_window import MainWindow
+from app.ui.branding import application_icon, brand_mark
 from app.widgets.cards import text_label
 from app.widgets.toast import Toast
 from app.settings.config import ConfigError
@@ -137,6 +138,7 @@ class SessionWindow(QMainWindow):
         self.jobs = Jobs(reporter, self)
         self.jobs.interaction_busy_changed.connect(self._busy)
         self.setWindowTitle("StarGate")
+        self.setWindowIcon(application_icon(config.resource_root))
         self.resize(1180, 820)
         self.setMinimumSize(1000, 740)
         self.stack = QStackedWidget()
@@ -172,10 +174,16 @@ class SessionWindow(QMainWindow):
         card.setMaximumWidth(540)
         form = QVBoxLayout(card)
         form.setSpacing(18)
+        identity = QWidget()
+        identity_layout = QVBoxLayout(identity)
+        identity_layout.setContentsMargins(0, 0, 0, 24)
+        identity_layout.setSpacing(6)
+        identity_layout.addWidget(brand_mark(self.config.resource_root, 80),
+                                  alignment=Qt.AlignmentFlag.AlignHCenter)
         brand = text_label("StarGate", "pageTitle")
         brand.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        brand.setContentsMargins(0, 0, 0, 24)
-        form.addWidget(brand)
+        identity_layout.addWidget(brand)
+        form.addWidget(identity)
         form.addWidget(text_label(title, "pageTitle"))
         if description:
             form.addWidget(text_label(description))
