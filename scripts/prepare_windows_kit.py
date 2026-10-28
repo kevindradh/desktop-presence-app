@@ -11,7 +11,8 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 
 def selected_files(root,include_models=False):
     root=Path(root).resolve()
-    selected={root/p for p in ('main.py','alembic.ini','requirements.in','pytest.ini','README.md','PLAN.md','.env.example')}
+    selected={root/p for p in ('main.py','alembic.ini','requirements.in','pytest.ini','README.md','PLAN.md','.env.example',
+        'SETUP-WINDOWS.cmd','RUN-WINDOWS.cmd')}
     # Preserve the Windows candidate pins/hashes without treating a macOS lock as portable.
     for name in ('requirements-windows-x64.candidate.txt','requirements-windows-x64.candidate.lock.txt'):
         if (root/name).is_file():selected.add(root/name)

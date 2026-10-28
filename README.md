@@ -412,3 +412,8 @@ Installer pada putaran awal: `dist/windows/StarGate-Research-Windows-x64-0.14.2.
 
 
 Installer terbaru **0.14.3-research**: `dist/windows/StarGate-Research-Windows-x64-0.14.3.exe`. Versi ini memuat logo StarGate dan ikon berlatar putih, sudah dipasang di Parallels dengan pemeriksaan model/schema/data/resource UI. [Hasil pembaruan logo Windows](docs/testing/windows-logo-0.14.3.md).
+
+
+## Menjalankan source di Windows AMD
+
+Paket siap setup: `dist/StarGate-Source-Windows-x64-0.14.3.zip`. Berisi kode,75wheel lokal, model dan PostgreSQL/pgvector. Pasang Python3.11x64 serta Visual C++ Runtime terlebih dahulu, lalu jalankan SETUP-WINDOWS.cmd dan RUN-WINDOWS.cmd. Data memakai `%LOCALAPPDATA%\StarGate-Source`. [Panduan](docs/windows-source-setup.md), [hasil pengujian source](docs/testing/windows-source-0.14.3.md).

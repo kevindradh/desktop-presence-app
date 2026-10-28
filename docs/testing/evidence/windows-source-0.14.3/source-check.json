@@ -1,0 +1,40 @@
+{
+  "schema": {
+    "current_revision": "0006_search_storage",
+    "expected_revision": "0006_search_storage",
+    "at_head": true,
+    "tables": [
+      "alembic_version",
+      "attendance",
+      "audit_logs",
+      "auth_sessions",
+      "calendar_days",
+      "devices",
+      "face_embeddings",
+      "locations",
+      "member_groups",
+      "member_leaves",
+      "members",
+      "settings",
+      "shift_assignments",
+      "shifts",
+      "users"
+    ],
+    "application_table_count": 14,
+    "schema_valid": true,
+    "missing_tables": [],
+    "missing_columns": {}
+  },
+  "counts": {
+    "users": 0,
+    "members": 0,
+    "attendance": 0,
+    "face_embeddings": 0
+  },
+  "source_entry": "main.py",
+  "fresh_venv": true,
+  "offline_wheels": true,
+  "real_faces_used": false,
+  "environment": "Windows11 ARM64 Parallels with x64 CPython3.11.17",
+  "physical_amd_tested": false
+}

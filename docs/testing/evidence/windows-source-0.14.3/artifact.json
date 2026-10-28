@@ -1,0 +1,12 @@
+{
+  "archive": "dist\\StarGate-Source-Windows-x64-0.14.3.zip",
+  "sha256": "8a1dcbc2afd83e124e984195be255de8b9eebc10beefc0c3ecf05ac0e5d32141",
+  "bytes": 605743625,
+  "source_files": 231,
+  "support_files": 1692,
+  "wheels": 75,
+  "contains_user_data": false,
+  "python_included": false,
+  "application_entry": "main.py",
+  "source_only": "No StarGate executable; PostgreSQL tools are native binaries"
+}

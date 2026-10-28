@@ -1,0 +1,40 @@
+    "auth_sessions",
+    "calendar_days",
+    "devices",
+    "face_embeddings",
+    "locations",
+    "member_groups",
+    "member_leaves",
+    "members",
+    "settings",
+    "shift_assignments",
+    "shifts",
+    "users"
+  ],
+  "application_table_count": 14,
+  "schema_valid": true,
+  "missing_tables": [],
+  "missing_columns": {}
+}
+{
+  "package_check": "PASS",
+  "checks": {
+    "qt_image_plugins": true,
+    "resources/sounds/success.wav": true,
+    "resources/samples/profile-removed.svg": true,
+    "resources/branding/stargate.png": true,
+    "resources/branding/stargate.ico": true,
+    "models/manifest.json": true,
+    "database/migrations/env.py": true,
+    "native_libraries": true,
+    "spawn": true,
+    "worker_exit": true,
+    "writable_user_data": true,
+    "pinned_ai_models": true,
+    "ai_worker_blank_frame": true,
+    "ai_worker_exit": true
+  },
+  "ai_worker_event": "ready"
+}
+SETUP SELESAI. Jalankan RUN-WINDOWS.cmd untuk membuka StarGate.
+Setup berhasil.
