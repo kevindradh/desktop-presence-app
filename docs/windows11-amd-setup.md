@@ -2,9 +2,9 @@
 
 Panduan 21 Oktober 2026. Gunakan paket Windows **x64** untuk komputer AMD dengan Windows 11 64-bit. Pengujian sebelumnya dilakukan pada paket x64 di Windows 11 ARM64 Parallels; komputer AMD fisik customer belum diuji.
 
-**Status paket:** installer yang tersedia saat panduan ini dibuat masih versi sebelum revisi terbaru. Bangun ulang dan uji paket dari sumber terbaru sebelum dikirim. Panduan ini mengacu pada CLI dan alur akun versi terbaru, bukan installer lama. Build aplikasi mengikuti [panduan pembuat paket](windows-install.md).
+**Pembaruan 28 Oktober 2026:** installer terbaru dengan database bawaan sudah dibangun. Gunakan [panduan installer otomatis 0.14.1](testing/stage-14-auto-manual.md) untuk pengujian baru. [Laporan Windows](testing/stage-14-auto-20261028.md) mencatat hasil Parallels dan pengujian AMD yang masih terbuka. Langkah manual di bawah dipertahankan untuk paket tanpa runtime PostgreSQL atau instalasi database eksternal.
 
-Pembaruan: [kode installer dengan setup otomatis](windows-auto-setup.md) sudah disiapkan agar customer tidak menjalankan langkah database manual di bawah. Build/UAT Windows untuk mode otomatis masih menunggu; panduan ini tetap menjadi jalur manual sampai paket otomatis dinyatakan lulus.
+Rincian database bawaan dan pemulihan konfigurasi ada di [setup otomatis](windows-auto-setup.md). Konfigurasi database eksternal yang sudah ada tetap dipertahankan oleh installer.
 
 ## 1. Berkas yang diberikan kepada customer
 

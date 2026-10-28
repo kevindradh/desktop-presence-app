@@ -1,0 +1,21 @@
+398 INFO: PyInstaller: 6.22.3, contrib hooks: 2026.8
+398 INFO: Python: 3.11.17
+437 INFO: Platform: Windows-10-10.0.26200-SP0
+438 INFO: Python environment: C:\StarGate-build\.venv-win
+853 INFO: checking PYZ
+1844 INFO: checking PKG
+1849 INFO: Building because C:\StarGate-build\scripts\testing\windows_auto_frozen_uat.py changed
+1849 INFO: Building PKG (CArchive) StarGateAutoUAT.pkg
+2722 INFO: Building PKG (CArchive) StarGateAutoUAT.pkg completed successfully.
+2732 INFO: Bootloader C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+2732 INFO: checking EXE
+2789 INFO: Rebuilding EXE-00.toc because pkg is more recent
+2791 INFO: Building EXE from EXE-00.toc
+2801 INFO: Copying bootloader EXE to C:\StarGate-build\build\StarGateAutoUAT\StarGateAutoUAT.exe
+3056 INFO: Copying icon to EXE
+3167 INFO: Copying 0 resources to EXE
+3167 INFO: Embedding manifest in EXE
+3243 INFO: Appending PKG archive to EXE
+3703 INFO: Fixing EXE headers
+4670 INFO: Building EXE from EXE-00.toc completed successfully.
+4672 INFO: Build complete! The results are available in: C:\StarGate-build\dist

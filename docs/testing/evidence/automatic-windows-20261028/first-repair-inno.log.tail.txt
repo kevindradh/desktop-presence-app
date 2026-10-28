@@ -1,0 +1,65 @@
+2026-10-28 08:11:35.852   Successfully installed the file.
+2026-10-28 08:11:35.852   -- File entry --
+2026-10-28 08:11:35.852   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\StarGateAdmin.exe
+2026-10-28 08:11:35.852   Time stamp of our file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:35.852   Dest file exists.
+2026-10-28 08:11:35.852   Time stamp of existing file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:35.852   Installing the file.
+2026-10-28 08:11:36.851   Successfully installed the file.
+2026-10-28 08:11:36.851   -- File entry --
+2026-10-28 08:11:36.851   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\alembic.ini
+2026-10-28 08:11:36.851   Time stamp of our file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:36.851   Dest file exists.
+2026-10-28 08:11:36.851   Time stamp of existing file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:36.851   Installing the file.
+2026-10-28 08:11:36.853   Successfully installed the file.
+2026-10-28 08:11:36.853   -- File entry --
+2026-10-28 08:11:36.853   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\base_library.zip
+2026-10-28 08:11:36.853   Time stamp of our file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:36.853   Dest file exists.
+2026-10-28 08:11:36.853   Time stamp of existing file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:36.853   Installing the file.
+2026-10-28 08:11:36.885   Successfully installed the file.
+2026-10-28 08:11:36.885   -- File entry --
+2026-10-28 08:11:36.885   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\libcrypto-3.dll
+2026-10-28 08:11:36.885   Time stamp of our file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:36.885   Dest file exists.
+2026-10-28 08:11:36.885   Time stamp of existing file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:36.885   Installing the file.
+2026-10-28 08:11:37.025   Successfully installed the file.
+2026-10-28 08:11:37.025   -- File entry --
+2026-10-28 08:11:37.025   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\libffi-8.dll
+2026-10-28 08:11:37.025   Time stamp of our file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:37.025   Dest file exists.
+2026-10-28 08:11:37.025   Time stamp of existing file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:37.025   Installing the file.
+2026-10-28 08:11:37.025   Successfully installed the file.
+2026-10-28 08:11:37.025   -- File entry --
+2026-10-28 08:11:37.025   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\libssl-3.dll
+2026-10-28 08:11:37.025   Time stamp of our file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:37.025   Dest file exists.
+2026-10-28 08:11:37.025   Time stamp of existing file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:37.025   Installing the file.
+2026-10-28 08:11:37.055   Successfully installed the file.
+2026-10-28 08:11:37.055   -- File entry --
+2026-10-28 08:11:37.055   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\msvcp140.dll
+2026-10-28 08:11:37.055   Time stamp of our file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:37.055   Dest file exists.
+2026-10-28 08:11:37.055   Time stamp of existing file: 2026-10-28 00:14:20.000
+2026-10-28 08:11:37.055   Installing the file.
+2026-10-28 08:11:37.093   DeleteFile: The existing file appears to be in use (5). Retrying.
+2026-10-28 08:11:38.104   DeleteFile: The existing file appears to be in use (5). Retrying.
+2026-10-28 08:11:39.110   DeleteFile: The existing file appears to be in use (5). Retrying.
+2026-10-28 08:11:40.115   DeleteFile: The existing file appears to be in use (5). Retrying.
+2026-10-28 08:11:41.127   Defaulting to Abort for suppressed message box (Abort/Retry/Ignore):
+                          C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\msvcp140.dll
+                          
+                          An error occurred while trying to replace the existing file:
+                          DeleteFile failed; code 5.
+                          Access is denied.
+2026-10-28 08:11:41.129   User canceled the installation process.
+2026-10-28 08:11:41.129   Rolling back changes.
+2026-10-28 08:11:41.133   Starting the uninstallation process.
+2026-10-28 08:11:41.140   Uninstallation process succeeded.
+2026-10-28 08:11:41.147   Deinitializing Setup.
+2026-10-28 08:11:41.171   Log closed.

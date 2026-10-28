@@ -1,10 +1,12 @@
 # Tahap 14 — Packaging dan pengujian Windows
 
+**Pembaruan 28 Oktober 2026:** aplikasi terbaru dan database bawaan telah dibangun pada Windows. [Laporan installer otomatis](stage-14-auto-20261028.md) memuat hasil dan pengujian yang masih terbuka; [panduan uji mandiri terbaru](stage-14-auto-manual.md) memakai paket bernomor versi 0.14.1. Catatan dan hash di bawah adalah riwayat paket 20 Oktober, bukan hash paket baru.
+
 Pembaruan **21 Oktober 2026**. Pengguna meminta kelanjutan setelah ruang disk tersedia dan menghubungkan USB ke Windows. Build dan pengujian teknis di bawah selesai pada Windows11 Pro10.0.26200 ARM64 Parallels, RAM12GB, menjalankan paket **x64**. Tujuan tetap lomba/penelitian/pengujian internal.
 
 **Status: installer siap untuk uji mandiri; gerbang review pengguna belum lulus. Tahap15 belum dimulai.** Uji wajah/alur lengkap secara manual, suara, reader Windows dan offline alur lengkap belum dianggap lulus dari tes otomatis. Windows fisik x64 dan RTSP nyata belum diuji.
 
-Pembaruan setup otomatis: pengguna meminta pemasangan customer lebih sederhana. [Kode installer dengan database bawaan](../windows-auto-setup.md) telah disiapkan, tetapi installer di bawah belum memuat perubahan ini maupun revisi UI terbaru. VM kembali gagal dinyalakan karena Parallels meminta tambahan ruang disk 2.146 MB; pengguna memilih menyiapkan kode dahulu dan menguji Windows nanti. Status pengujian installer lama tidak berlaku sebagai hasil uji mode otomatis.
+Riwayat persiapan 21 Oktober: pengguna meminta pemasangan customer lebih sederhana. [Setup database bawaan](../windows-auto-setup.md) disiapkan ketika VM belum dapat dinyalakan karena ruang disk. Installer lama di bawah belum memuat mode tersebut atau revisi UI terbaru. Build dan hasil mode otomatis pada 28 Oktober berada pada laporan terbaru di atas; status pengujian paket lama tetap dipisahkan.
 
 - [Panduan uji mandiri](stage-14-manual.md)
 - [Instalasi/build dan pemulihan](../windows-install.md)

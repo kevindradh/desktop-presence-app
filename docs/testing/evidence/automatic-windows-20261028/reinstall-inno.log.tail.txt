@@ -1,0 +1,65 @@
+2026-10-28 08:21:56.271   -- File entry --
+2026-10-28 08:21:56.271   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\tzdata\zoneinfo\US\Hawaii
+2026-10-28 08:21:56.271   Time stamp of our file: 2026-10-28 00:14:24.000
+2026-10-28 08:21:56.271   Installing the file.
+2026-10-28 08:21:56.271   Successfully installed the file.
+2026-10-28 08:21:56.271   -- File entry --
+2026-10-28 08:21:56.271   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\tzdata\zoneinfo\US\Indiana-Starke
+2026-10-28 08:21:56.271   Time stamp of our file: 2026-10-28 00:14:24.000
+2026-10-28 08:21:56.271   Installing the file.
+2026-10-28 08:21:56.271   Successfully installed the file.
+2026-10-28 08:21:56.273   -- File entry --
+2026-10-28 08:21:56.273   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\tzdata\zoneinfo\US\Michigan
+2026-10-28 08:21:56.273   Time stamp of our file: 2026-10-28 00:14:24.000
+2026-10-28 08:21:56.273   Installing the file.
+2026-10-28 08:21:56.273   Successfully installed the file.
+2026-10-28 08:21:56.273   -- File entry --
+2026-10-28 08:21:56.273   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\tzdata\zoneinfo\US\Mountain
+2026-10-28 08:21:56.273   Time stamp of our file: 2026-10-28 00:14:24.000
+2026-10-28 08:21:56.273   Installing the file.
+2026-10-28 08:21:56.273   Successfully installed the file.
+2026-10-28 08:21:56.273   -- File entry --
+2026-10-28 08:21:56.273   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\tzdata\zoneinfo\US\Pacific
+2026-10-28 08:21:56.273   Time stamp of our file: 2026-10-28 00:14:24.000
+2026-10-28 08:21:56.273   Installing the file.
+2026-10-28 08:21:56.275   Successfully installed the file.
+2026-10-28 08:21:56.275   -- File entry --
+2026-10-28 08:21:56.275   Dest filename: C:\Users\SGAuto28\AppData\Local\Programs\StarGate\_internal\tzdata\zoneinfo\US\Samoa
+2026-10-28 08:21:56.275   Time stamp of our file: 2026-10-28 00:14:24.000
+2026-10-28 08:21:56.275   Installing the file.
+2026-10-28 08:21:56.275   Successfully installed the file.
+2026-10-28 08:21:56.277   -- Icon entry --
+2026-10-28 08:21:56.279   Dest filename: C:\Users\SGAuto28\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\StarGate Research\StarGate.lnk
+2026-10-28 08:21:56.279   Creating directory: C:\Users\SGAuto28\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\StarGate Research
+2026-10-28 08:21:56.281   Creating the icon.
+2026-10-28 08:21:56.376   Successfully created the icon.
+2026-10-28 08:21:56.376   Saving uninstall information.
+2026-10-28 08:21:56.376   Creating new uninstall key: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall\{14F0FE68-3708-49D3-BA5F-054CBF5146C1}_is1
+2026-10-28 08:21:56.376   Writing uninstall key values.
+2026-10-28 08:21:56.376   Detected previous administrative 64-bit install? No
+2026-10-28 08:21:56.376   Detected previous administrative 32-bit install? No
+2026-10-28 08:21:56.397   Installation process succeeded.
+2026-10-28 08:22:03.866   {"mode": "managed_local", "changed": true, "port": 55435}
+2026-10-28 08:22:03.989   StarGate database setup result: 0
+2026-10-28 08:22:15.365   {
+2026-10-28 08:22:15.365     "package_check": "PASS",
+2026-10-28 08:22:15.365     "checks": {
+2026-10-28 08:22:15.365       "qt_image_plugins": true,
+2026-10-28 08:22:15.365       "resources/sounds/success.wav": true,
+2026-10-28 08:22:15.365       "resources/samples/profile-removed.svg": true,
+2026-10-28 08:22:15.365       "models/manifest.json": true,
+2026-10-28 08:22:15.365       "database/migrations/env.py": true,
+2026-10-28 08:22:15.365       "native_libraries": true,
+2026-10-28 08:22:15.365       "spawn": true,
+2026-10-28 08:22:15.365       "worker_exit": true,
+2026-10-28 08:22:15.365       "writable_user_data": true,
+2026-10-28 08:22:15.365       "pinned_ai_models": true,
+2026-10-28 08:22:15.365       "ai_worker_blank_frame": true,
+2026-10-28 08:22:15.365       "ai_worker_exit": true
+2026-10-28 08:22:15.365     },
+2026-10-28 08:22:15.365     "ai_worker_event": "ready"
+2026-10-28 08:22:15.365   }
+2026-10-28 08:22:15.895   StarGate package check result: 0
+2026-10-28 08:22:15.895   Need to restart Windows? No
+2026-10-28 08:22:15.908   Deinitializing Setup.
+2026-10-28 08:22:15.923   Log closed.

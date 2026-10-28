@@ -1,0 +1,35 @@
+361876 INFO: Building PKG (CArchive) StarGate.pkg
+362014 INFO: Building PKG (CArchive) StarGate.pkg completed successfully.
+362016 INFO: Bootloader C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+362016 INFO: checking EXE
+362016 INFO: Building EXE because EXE-00.toc is non existent
+362016 INFO: Building EXE from EXE-00.toc
+362016 INFO: Copying bootloader EXE to C:\StarGate-build\build\StarGate\StarGate.exe
+362140 INFO: Copying icon to EXE
+362193 INFO: Copying 0 resources to EXE
+362193 INFO: Embedding manifest in EXE
+362227 INFO: Appending PKG archive to EXE
+362348 INFO: Fixing EXE headers
+363016 INFO: Building EXE from EXE-00.toc completed successfully.
+363020 INFO: checking PKG
+363020 INFO: Building PKG because PKG-01.toc is non existent
+363020 INFO: Building PKG (CArchive) StarGateAdmin.pkg
+363085 INFO: Building PKG (CArchive) StarGateAdmin.pkg completed successfully.
+363085 INFO: Bootloader C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+363085 INFO: checking EXE
+363085 INFO: Building EXE because EXE-01.toc is non existent
+363085 INFO: Building EXE from EXE-01.toc
+363085 INFO: Copying bootloader EXE to C:\StarGate-build\build\StarGate\StarGateAdmin.exe
+363163 INFO: Copying icon to EXE
+363212 INFO: Copying 0 resources to EXE
+363214 INFO: Embedding manifest in EXE
+363248 INFO: Appending PKG archive to EXE
+363339 INFO: Fixing EXE headers
+363847 INFO: Building EXE from EXE-01.toc completed successfully.
+363910 INFO: checking COLLECT
+363910 INFO: Building COLLECT because COLLECT-00.toc is non existent
+363910 INFO: Removing dir C:\StarGate-build\dist\StarGate
+364806 INFO: Building COLLECT COLLECT-00.toc
+370545 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+370674 INFO: Build complete! The results are available in: C:\StarGate-build\dist
+Paket dibuat; lakukan package-check dan UAT pada OS target sebelum distribusi.

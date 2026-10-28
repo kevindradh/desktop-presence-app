@@ -1,6 +1,8 @@
 # Installer Windows dengan setup otomatis
 
-Status 21 Oktober 2026: **kode telah disiapkan; installer baru belum dibangun dan belum diuji di Windows**. Parallels menolak menyalakan VM karena perlu tambahan ruang sedikitnya 2.146 MB. Pengguna memilih menyiapkan kode dahulu dan menguji Windows nanti. Installer lama pada `dist/windows` belum memuat fitur ini.
+Status 28 Oktober 2026: **installer 0.14.1-research sudah dibangun di Windows** dengan aplikasi terbaru, PostgreSQL dan pgvector bawaan. Pemasangan dari data kosong pada akun standar, pemeriksaan model, login/dashboard, credential native, repair dan uninstall/reinstall lulus pada Windows11 ARM64 Parallels yang menjalankan paket x64. Pengujian komputer AMD customer dan gerbang review Tahap14 masih terbuka. Rincian: [laporan terbaru](testing/stage-14-auto-20261028.md); [uji mandiri](testing/stage-14-auto-manual.md).
+
+Paket terbaru: `dist/windows/StarGate-Research-Windows-x64-0.14.1.exe`. Identitas/hash dicatat di [artifact.json](testing/evidence/automatic-windows-20261028/artifact.json). Berkas tanpa nomor versi adalah installer lama.
 
 ## Alur customer setelah paket baru lolos pengujian
 
@@ -39,7 +41,7 @@ Contoh PowerShell pada mesin build, dengan lokasi lisensi disesuaikan ke berkas 
 
 Lokasi `C:\StarGate-sources\...` adalah contoh lokasi berkas sumber/lisensi, bukan berkas yang disediakan otomatis. Folder output runtime harus baru dan di luar folder sumber PostgreSQL. Runtime packer memeriksa header PE x64 PostgreSQL dan vector DLL, seri PostgreSQL melalui executable saat CLI dijalankan, control pgvector, serta keberadaan lisensi. Packer hanya menyalin bin/lib/share/doc dan berkas lisensi, lalu membuat manifest SHA256. Folder data/konfigurasi PostgreSQL tidak ikut disalin. Manifest runtime diverifikasi sebelum setup/start; berkas kurang, berubah, tambahan, atau tautan ditolak.
 
-Kebutuhan DLL C/C++/OpenSSL/ICU dan lisensi vendor tetap harus tersedia di hasil paket. Proses PostgreSQL mendapat PATH terbatas yang mencakup bin runtime, `_internal` aplikasi dan direktori sistem; variabel PG bawaan shell tidak diwariskan ke alat PostgreSQL. Jalur ini belum merupakan bukti seluruh dependensi berjalan di Windows bersih.
+Kebutuhan DLL C/C++/OpenSSL/ICU dan lisensi vendor tetap harus tersedia di hasil paket. Proses PostgreSQL mendapat PATH terbatas yang mencakup bin runtime, `_internal` aplikasi dan direktori sistem; variabel PG bawaan shell tidak diwariskan ke alat PostgreSQL. Probe executable terbaru lulus pada VM dengan PATH proses terbatas. VM sudah memiliki lingkungan build; hasil ini belum membuktikan seluruh dependensi pada mesin AMD baru.
 
 Opsi `-PostgresRuntime` bersifat eksplisit. Build tanpa opsi tersebut masih menghasilkan paket yang memerlukan setup database manual, sehingga jangan menyerahkan paket itu sebagai installer otomatis.
 
@@ -58,21 +60,24 @@ $StarGateAdmin = Join-Path $env:LOCALAPPDATA 'Programs\StarGate\StarGateAdmin.ex
 
 ## Pengujian sebelum customer menerima paket
 
-- [ ] Build Windows dari source terbaru dengan runtime dan model yang sesuai cakupan penggunaan.
-- [ ] Jalankan installer sebagai pengguna standar di akun Windows bersih tanpa Python, PostgreSQL sistem, compiler atau PATH pengembangan.
-- [ ] Buktikan tidak ada unduhan dan setup selesai tanpa langkah database manual; pemeriksaan native/model lulus.
-- [ ] Periksa database baru/tabel/extension/ACL, listener loopback, role minimal dan password privat.
+- [x] Build Windows dari source terbaru dengan runtime dan model untuk penggunaan penelitian.
+- [x] Jalankan installer pada akun Windows standar baru; proses executable memakai PATH sistem tanpa PATH/PYTHONPATH pengembangan.
+- [x] Setup selesai tanpa langkah database manual; pemeriksaan native/model lulus memakai berkas lokal paket.
+- [x] Periksa database baru/tabel/extension/ACL, listener loopback, role minimal dan password privat melalui tes komponen serta probe database.
+- [ ] Buktikan instalasi pada mesin AMD yang belum memiliki lingkungan pengembangan dan uji alur tanpa internet.
 - [ ] Buat Super Admin, login dan uji kamera/registrasi/absensi nyata pada komputer AMD customer.
-- [ ] Tutup/buka dan restart Windows; aplikasi dapat menyalakan database kelolaannya kembali.
-- [ ] Ulangi installer dan setup; akun/data/sentinel tetap, tidak ada inisialisasi ulang.
+- [x] Stop/start database dan proses aplikasi baru mempertahankan akun/data.
+- [ ] Restart Windows; aplikasi dapat menyalakan database kelolaannya kembali.
+- [x] Ulangi installer/setup melalui repair; konfigurasi tetap, akun/data diperiksa sesudahnya.
 - [ ] Uji port terpakai, ruang disk kurang, native DLL hilang, runtime berubah, serta penghentian setup di tengah proses. Tidak boleh ada sukses palsu atau penghapusan data.
-- [ ] Uji repair/upgrade saat cluster masih hidup, uninstall/reinstall dan penghentian cluster. Pastikan executable yang sedang digunakan tidak menyebabkan kegagalan penggantian runtime. Upgrade PostgreSQL lintas versi mayor belum didukung otomatis.
-- [ ] Uji konfigurasi eksternal yang sudah ada: tidak ditimpa atau dimigrasi otomatis.
+- [x] Repair versi sama saat cluster hidup, penghentian cluster dan uninstall/reinstall. Konfigurasi serta 80 anggota/5 akun/2.467 catatan sintetis tetap utuh. Penggantian DLL yang sebelumnya gagal kini lulus.
+- [ ] Upgrade lintas rilis aplikasi pada perangkat customer. Upgrade PostgreSQL lintas versi mayor belum didukung otomatis.
+- [x] Tes komponen konfigurasi eksternal: tidak ditimpa atau dimigrasi otomatis. Upgrade installer lama pada komputer customer masih perlu pemeriksaan tersendiri.
 
 Pengujian komponen di Mac memakai executable/worker bootstrap simulasi untuk memeriksa orkestrasi dan pengaman. Uji tambahan menjalankan **PostgreSQL 17 native macOS pada cluster sementara yang terpisah** untuk membuktikan provisioning SQL, extension vector 0.8.7, migrasi, data dasar, pembuatan Super Admin, setup ulang tanpa kehilangan akun, dan stop/start dengan akun tetap ada. Uji tersebut memetakan alat native macOS sebagai adaptor pengujian; tidak menjalankan executable Windows, memvalidasi DLL Windows, atau membuktikan installer Windows berhasil.
 
-Bukti: `testing/evidence/automatic-setup-core.xml`, `testing/evidence/automatic-setup-session.xml`, dan `testing/evidence/automatic-setup-native-posix.xml`. Sampai checklist Windows lulus, fitur ini merupakan kode persiapan, bukan installer siap kirim.
+Bukti persiapan Mac: `testing/evidence/automatic-setup-core.xml`, `testing/evidence/automatic-setup-session.xml`, dan `testing/evidence/automatic-setup-native-posix.xml`. Bukti kelanjutan Windows ada di `testing/evidence/automatic-windows-20261028/`. Paket merupakan kandidat uji penelitian; checklist perangkat customer dan review pengguna masih perlu diselesaikan.
 
-Hasil persiapan: 33 tes komponen/packaging/bootstrap/SQL native dan 20 regresi startup/login lulus (53 total); satu tes model nyata dilewati karena di luar cakupan setup ini. Bukti native POSIX terarah juga lulus dan merupakan bagian dari cakupan yang sama, bukan tambahan jumlah kasus unik. Diff diperiksa tanpa galat whitespace. Kode installer dan pencarian DLL/ACL Windows masih memerlukan compiler/UAT Windows; tidak ditandai lulus dari pengujian Mac.
+Hasil persiapan 21 Oktober: 33 tes komponen/packaging/bootstrap/SQL native dan 20 regresi startup/login lulus (53 total); satu tes model nyata dilewati karena di luar cakupan setup tersebut. Bukti native POSIX terarah merupakan bagian cakupan yang sama, bukan tambahan kasus unik. Pada 28 Oktober, tes terarah Windows dan Mac masing-masing 29 PASS/3 SKIP; hasil native/installer ditulis terpisah pada laporan Windows agar angka tes tidak dijumlahkan sebagai kasus unik.
 
-Pemeriksaan copy installer: dua status menyebut langkah yang sedang berjalan (menyiapkan database/memeriksa aplikasi), dan kegagalan meminta pendampingan tanpa menampilkan rahasia atau exception mentah. Tidak menambah aset, dekorasi, atau mengubah tampilan halaman aplikasi. Pemeriksaan sumber/copy selesai; gerbang distribusi installer tetap terbuka sesuai pilihan pengguna menunda Windows.
+Pemeriksaan copy installer: dua status menyebut langkah yang sedang berjalan (menyiapkan database/memeriksa aplikasi), dan kegagalan meminta pendampingan tanpa menampilkan rahasia atau exception mentah. Tidak menambah aset, dekorasi, atau mengubah tampilan halaman aplikasi. Pemeriksaan sumber/copy selesai; gerbang penggunaan pada perangkat customer tetap mengikuti checklist Windows di atas.

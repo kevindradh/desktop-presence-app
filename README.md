@@ -363,12 +363,12 @@ memuat metadata teknis tersanitasi. Tidak ada klaim akurasi/liveness/SLA dari sm
 
 ## Windows
 
-Siapkan Python 3.11 x64, PostgreSQL 17 beserta extension pgvector, lalu virtual
-environment. Script cluster/provisioning saat ini ditujukan untuk macOS dengan
-Unix socket/peer authentication; jangan menjalankannya sebagai setup Windows.
-Prosedur Windows, pin platform dan installer akan diverifikasi pada Tahap 14.
-Script smoke Python dapat dipakai setelah koneksi `.env` dan model tersedia;
-pengujian Windows tetap tertunda sampai ada lingkungan Windows nyata.
+Untuk pengujian dari installer terbaru, ikuti [panduan setup otomatis Windows](docs/testing/stage-14-auto-manual.md).
+Paket menyertakan Python, PostgreSQL17/pgvector dan model penelitian.
+Pengembangan/build dari source mengikuti [panduan Windows](docs/windows-install.md).
+Script cluster macOS yang memakai Unix socket/peer authentication tidak digunakan
+untuk setup Windows. Hasil Parallels dan pengujian AMD yang masih terbuka dicatat
+di [laporan installer 28 Oktober](docs/testing/stage-14-auto-20261028.md).
 
 ## Troubleshooting
 
@@ -401,6 +401,6 @@ Verifikasi final: **442 regresi PASS/90,64% coverage dan 69 native macOS PASS**.
 
 ## Persiapan Windows / Parallels Tahap14
 
-[Petunjuk build dan instalasi Windows](docs/windows-install.md) dan [checklist UAT](docs/testing/stage-14.md). Kit sumber dibuat dengan `scripts/prepare_windows_kit.py`; ini bukan executable Windows. Model penelitian hanya masuk melalui flag eksplisit. Folder data pengguna terpisah dari binary dan tidak dihapus saat uninstall recipe. Windows harus dibangun/diuji di Windows; gate tahap ini tetap terbuka hingga hasil guest tersedia.
+[Petunjuk build dan instalasi Windows](docs/windows-install.md) dan [checklist UAT](docs/testing/stage-14.md). Kit sumber dibuat dengan `scripts/prepare_windows_kit.py`; ini bukan executable Windows. Model penelitian hanya masuk melalui flag eksplisit. Folder data pengguna terpisah dari binary dan dipertahankan saat uninstall. Build dan pengujian teknis Parallels telah berjalan; gerbang tahap tetap menunggu uji mandiri/review.
 
-Verifikasi persiapan Tahap14 di macOS: **452 regresi PASS/89,97% coverage**, **69 native PASS**, probe worker model lokal dan 8 tes codec portabilitas PASS. Windows/Parallels belum dibangun/diuji karena VM gagal start akibat kapasitas disk dan pengguna memilih mengujinya kemudian. Status ini tidak menyatakan gerbang Tahap14 lulus.
+Verifikasi awal Tahap14 di macOS: **452 regresi PASS/89,97% coverage**, **69 native PASS**, probe worker model lokal dan 8 tes codec portabilitas PASS. Pembaruan28 Oktober2026: paket terbaru **0.14.1-research** telah dibangun di Windows dengan database otomatis; setup, model, akun standar, dashboard, native credential dan repair lulus. [Laporan terbaru](docs/testing/stage-14-auto-20261028.md) memuat hasil siklus pemasangan serta batas pengujian. Tahap15 belum dimulai.

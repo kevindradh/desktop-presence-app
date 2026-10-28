@@ -1,0 +1,26 @@
+{
+  "version": "0.14.1-research",
+  "artifact": "dist\\windows\\StarGate-Research-Windows-x64-0.14.1.exe",
+  "bytes": 483998882,
+  "sha256": "cc8b433dccabeb0124d83271e72ed70e58852984c94bb6d3a1a31a9a2627658a",
+  "environment": "Windows 11 ARM64 Parallels running x64 package",
+  "physical_amd_tested": false,
+  "synthetic_data_only": true,
+  "bundle_file_count": 6226,
+  "bundle_manifest_sha256": "a8cb0af2e65fd33c17bf364fdb542846d3d5e7a39359e7c7c2a3cc125ed3005a",
+  "installer_definition_sha256": "84db2b8ae6634dbb716daf7c23f41894b53844df4c1540a72ae806eb20ec346e",
+  "installer_definition_matches_build": true,
+  "verified_source_sha256": {
+    "app/services/local_database.py": "9b018e00c07ce3e94ea7ec1ec93084d68924484961b60bffb50a518084366289",
+    "app/ui/session_window.py": "6b351444c869450c4847ac0ad2af5f272544260c22f57d24e6ffd1887de67d0b",
+    "app/pages/dashboard.py": "8c224f03aab02d916e5bdc2604e8e6c2d94b01646b1bceea92e0b641e9727794",
+    "app/pages/attendance.py": "b4bf8e823c22019d876ece28b4b6fa3b8a111577e871d6eafcbadd2bfe94319b",
+    "app/widgets/toast.py": "3c4c8cced8cffc94cdee8a492b38a807c6bb4b2395b65a4db7a4e91175a5ef88",
+    "scripts/setup_local_windows.py": "6f0a88a4b308e3784bce41630b879c47fe699efa70915231d97acaaf3c131d1c",
+    "packaging/StarGate.spec": "3a2a4af55820c6036a7273d7ae75e0c27cd5f8fd10e5cd3c280df8e7165b87c3"
+  },
+  "authenticode": {
+    "status_code": 2,
+    "status": "NotSigned"
+  }
+}

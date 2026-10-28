@@ -1,0 +1,7 @@
+{
+  "phase": "reinstall",
+  "standard_user": true,
+  "fresh_configuration": false,
+  "automatic_database_created": true,
+  "existing_config_preserved": true
+}

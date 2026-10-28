@@ -47,8 +47,7 @@ def setup_lock(folder):
     path = checked_path(folder/'setup.lock')
     with path.open('a+b') as stream:
         restrict_path(path)
-        stream.seek(0)
-        if not stream.read(1):
+        if os.fstat(stream.fileno()).st_size == 0:
             stream.write(b'0'); stream.flush()
         stream.seek(0)
         try:

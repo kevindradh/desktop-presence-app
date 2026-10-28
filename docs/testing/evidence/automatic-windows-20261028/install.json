@@ -1,0 +1,7 @@
+{
+  "phase": "install",
+  "standard_user": true,
+  "fresh_configuration": true,
+  "automatic_database_created": true,
+  "existing_config_preserved": true
+}

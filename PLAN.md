@@ -265,19 +265,22 @@ Dependensi: Tahap 12. Cakupan: US-029, 030, 031. Status: Review pengguna diterim
 
 ### Tahap 14 - Packaging, instalasi bersih, dan pemulihan operasional
 
-Dependensi: Tahap13. Status21 Oktober2026: installer x64 aktual456.709.976byte dibuat dan dipasang pada Windows11 Pro10.0.26200 ARM64 Parallels. CPython3.11.17/75komponen, PostgreSQL17.11/pgvector0.8.7 dan migrasi0004 terverifikasi. Akun standar, native credential, ekspor/backup/restore sintetis, kamera frozen7/7, probe offline serta repair/uninstall/reinstall PASS. Regresi Windows455PASS/2timeout/1SKIP; kedua kasus timeout lulus terpisah3/3, symlink berhak SYSTEM1/1. Bukan klaim satu run penuh hijau. Review/uji mandiri Windows masih terbuka. Bukti: `docs/testing/stage-14.md`; panduan: `docs/testing/stage-14-manual.md`.
+Dependensi: Tahap13. Status28 Oktober2026: installer terbaru **0.14.1-research**, aplikasi x64 dengan PostgreSQL17.11/pgvector0.8.7 bawaan, berhasil dibangun dan diuji pada Windows11 ARM64 Parallels. Setup data kosong, model, migrasi0005, bootstrap/login, dashboard, native credential, repair ketika database hidup dan uninstall/reinstall mempertahankan data lulus. Tes terarah Windows29PASS/3SKIP dan Mac29PASS/3SKIP; bukan run regresi penuh baru. Bukti terbaru: `docs/testing/stage-14-auto-20261028.md`; uji mandiri: `docs/testing/stage-14-auto-manual.md`. Hasil paket lama dan regresi455PASS/2timeout/1SKIP tetap tercatat pada `docs/testing/stage-14.md`. Uji AMD fisik/perangkat/alur lengkap serta review gerbang belum selesai; Tahap15 belum dimulai.
 
 - [x] Paket/installer Windows dengan PyQt6/plugin/runtime AI/model/resource, manifest4615file dan hash output; NotSigned, cakupan penelitian/internal.
 - [x] Pisahkan bundle dari data/config/log per-user; DACL privat Windows diuji, file .env/data privat ditolak dari paket.
 - [x] PostgreSQL lokal/vector, role minimal, konfigurasi privat, upgrade/seed/check aktual pada instance uji Windows.
 - [x] Prosedur upgrade/migrasi eksplisit/pengaman/recovery; repair versi sama dan pemulihan transaksi diuji. Upgrade/rollback lintas rilis belum dapat diuji pada rilis Windows pertama.
-- [x] Akun Windows standar baru: login/ganti wajib/native credential restart, runtime model/DB, ekspor, backup/restore sintetis, uninstall/reinstall mempertahankan data; PATH tanpa Python pengembangan.
+- [x] Akun Windows standar baru: bootstrap/login, native credential lintas proses, runtime model/DB, ekspor/backup/restore sintetis dan uninstall/reinstall mempertahankan data. Paket terbaru mengikuti alur ganti password opsional; PATH proses tanpa Python pengembangan.
 - [x] Kamera laptop/USB dan simultan melalui runtime frozen lulus setelah USB dihubungkan kembali; tanpa menyimpan gambar.
 - [x] Adaptor jaringan diputus: probe worker AI dan PostgreSQL lokal PASS, jaringan dikembalikan Up.
 - [ ] Uji mandiri Windows: registrasi wajah/IN-OUT, cabut USB fisik, audio, Excel/reader dan alur lengkap tanpa internet.
 - [ ] Gerbang: pengguna memasang/menjalankan berdasarkan panduan dan menyetujui review hasil Windows; Tahap15 belum dimulai.
 - [x] Siapkan kode installer opsional dengan PostgreSQL17/pgvector bawaan, provisioning/config/password otomatis, migrasi/data dasar, pemeriksaan runtime dan start cluster saat aplikasi dibuka. Pengaman serta SQL/lifecycle cluster terpisah diuji di Mac; lihat `docs/windows-auto-setup.md`.
-- [ ] Build dan UAT installer otomatis terbaru di Windows bersih/AMD, termasuk dependensi native, port, restart, repair/upgrade dan uninstall/reinstall. VM belum bisa dinyalakan karena ruang disk; pengguna memilih kode dahulu dan uji Windows nanti. Installer lama belum memuat mode otomatis.
+- [x] Build ulang aplikasi terbaru dengan PostgreSQL17/pgvector dan model penelitian pada Windows11 ARM64 Parallels, paket x64 versi0.14.1. Setup dari data kosong pada akun standar, model, migrasi0005, bootstrap/login, dashboard, toast dan credential native lintas proses lulus. Lock Windows diperbaiki. Bukti: `docs/testing/stage-14-auto-20261028.md`.
+- [x] Perbaiki dan uji ulang repair saat database kelolaan hidup: hentikan cluster sebelum mengganti DLL, lanjutkan setup/pemeriksaan, pertahankan konfigurasi dan data.
+- [x] Uninstall/reinstall installer otomatis: database dihentikan, konfigurasi tetap, 80 anggota/5 akun/2.467 catatan sintetis tetap utuh setelah pemasangan ulang.
+- [ ] Uji mesin AMD customer, restart Windows, perangkat nyata dan alur offline lengkap. Panduan: `docs/testing/stage-14-auto-manual.md`. Installer lama tanpa nomor versi tetap merupakan artefak historis.
 
 ### Tahap 15 - Validasi performa, keamanan, regresi, dan UAT
 

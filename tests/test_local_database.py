@@ -3,6 +3,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from tests.permissions import assert_private_path
 
 from app.services import local_database as local
 from app.settings.config import load_config
@@ -67,7 +68,7 @@ def test_new_setup_is_private_idempotent_and_restarts_own_cluster(runtime,tmp_pa
     serialized=str(simulated.calls)
     assert all(password not in serialized for password in passwords.values())
     assert '--auth=scram-sha-256' in serialized and '-h 127.0.0.1 -p' in serialized
-    assert (root/'.env').stat().st_mode & 0o777==0o600
+    assert_private_path(root/'.env')
     local.setup_local(root,runtime)
     assert (root/'.env').read_bytes()==env
     assert sum(name=='initdb' for name,args in simulated.calls)==1
@@ -120,7 +121,9 @@ def test_runtime_tampering_rejected_before_creating_customer_data(runtime,tmp_pa
     elif attack=='version':manifest['major']=18
     elif attack=='missing':manifest['files'].pop('lib/vector.dll')
     elif attack=='symlink':
-        original=folder/'bin/pg_ctl.exe';original.unlink();original.symlink_to(tmp_path/'outside')
+        original=folder/'bin/pg_ctl.exe';original.unlink()
+        try:original.symlink_to(tmp_path/'outside')
+        except OSError:pytest.skip('Creating symlinks is not permitted by this Windows token')
     else:(folder/'bin/unexpected.dll').write_bytes(b'unverified')
     file.write_text(json.dumps(manifest))
     root=tmp_path/'customer'

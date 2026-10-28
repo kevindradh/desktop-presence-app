@@ -1,5 +1,7 @@
 # Windows / Parallels — build dan instalasi paket penelitian
 
+Pembaruan 28 Oktober 2026: build aplikasi terbaru dengan PostgreSQL bawaan sudah dibuat. Pengujian installer otomatis, termasuk perbaikan repair ketika database hidup, dicatat terpisah pada [laporan terbaru](testing/stage-14-auto-20261028.md). Untuk pengujian customer gunakan [panduan installer otomatis](testing/stage-14-auto-manual.md). Bagian database manual di bawah tetap berlaku untuk paket yang dibangun tanpa runtime PostgreSQL.
+
 20 Oktober 2026. Pemilik menetapkan penggunaan lomba/penelitian/pengujian internal dahulu. Setelah penundaan awal karena ruang disk, pengguna menyatakan komputer siap; VM berjalan dan build/UAT Windows dilanjutkan. Pembaruan21 Oktober2026: executable dan installer x64 sudah dibangun dan dipasang pada Windows11 ARM64 Parallels. Probe model, akun standar, backup/restore sintetis, offline probe dan uninstall/reinstall lulus. Review/uji perangkat akhir tetap terbuka; rincian ada di [hasil Tahap14](testing/stage-14.md).
 
 ## Arsitektur dan prasyarat
@@ -8,7 +10,7 @@ Host pengembangan macOS arm64. Inspeksi ulang setelah pengguna menyatakan siap p
 
 Siapkan ruang disk yang cukup untuk VM, wheel AI, lingkungan build dan output. Angka 15–20 GB adalah anggaran kerja awal, bukan minimum resmi atau jaminan ukuran build. Cadangkan VM bila perlu. Jangan menghapus database/data kerja untuk memberi ruang.
 
-Kebutuhan di Windows: Python 3.11 x64, Visual Studio C++ Build Tools untuk paket yang memerlukan kompilasi (termasuk InsightFace bila wheel tidak tersedia), PostgreSQL 17 x64, pgvector 0.8.7 yang dibangun terhadap instalasi PostgreSQL yang sama, dan Inno Setup **6.3+** untuk compiler installer. Jangan menyalin .venv atau lockfile macOS sebagai lingkungan Windows. Tidak ada pemasangan otomatis melalui internet saat aplikasi berjalan.
+Kebutuhan pada mesin pembuat paket Windows: Python 3.11 x64, Visual Studio C++ Build Tools untuk paket yang memerlukan kompilasi (termasuk InsightFace bila wheel tidak tersedia), PostgreSQL 17 x64, pgvector 0.8.7 yang dibangun terhadap instalasi PostgreSQL yang sama, dan Inno Setup **6.7.3** yang digunakan untuk menguji compiler installer otomatis. Jangan menyalin .venv atau lockfile macOS sebagai lingkungan Windows. Customer yang menerima installer otomatis tidak perlu memasang alat build tersebut. Tidak ada pemasangan otomatis melalui internet saat aplikasi berjalan.
 
 ## 1. Transfer sumber yang bersih
 

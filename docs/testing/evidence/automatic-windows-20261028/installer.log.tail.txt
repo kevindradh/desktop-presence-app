@@ -1,0 +1,35 @@
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Pago_Pago
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Palau
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Pitcairn
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Pohnpei
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Ponape
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Port_Moresby
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Rarotonga
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Saipan
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Samoa
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Tahiti
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Tarawa
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Tongatapu
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Truk
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Wake
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Wallis
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\Pacific\Yap
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Alaska
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Aleutian
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Arizona
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Central
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\East-Indiana
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Eastern
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Hawaii
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Indiana-Starke
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Michigan
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Mountain
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Pacific
+   Compressing: C:\StarGate-build\packaging\windows\..\..\dist\StarGate\_internal\tzdata\zoneinfo\US\Samoa
+   Compressing Setup program executable
+   Updating version info (Setup.exe)
+   Updating manifest (Setup.exe)
+
+
+Successful compile (344.203 sec). Resulting Setup program filename is:
+C:\StarGate-build\dist\installer\StarGate-Research-Windows-x64.exe

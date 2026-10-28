@@ -1,0 +1,31 @@
+{
+  "frozen_gui_bootstrap_login": true,
+  "password_change_optional": true,
+  "school_seed": {
+    "date": "2026-10-28",
+    "days": 30,
+    "zone": "Asia/Jakarta",
+    "staff": 2,
+    "start": "2026-09-29",
+    "cutoff": "2026-10-28T01:10:55.683366+00:00",
+    "groups": 8,
+    "leaves": 12,
+    "shifts": 4,
+    "devices": 3,
+    "holiday": "2026-10-16",
+    "members": 80,
+    "version": "smp-v2",
+    "students": 72,
+    "teachers": 6,
+    "upgraded": false,
+    "assignments": 74,
+    "calendar_days": 9,
+    "active_members": 74,
+    "already_seeded": true,
+    "accounts_created": [],
+    "ended_assignment": "2026-10-21",
+    "attendance_events": 2467
+  },
+  "toast_expired": true,
+  "native_credential_written": true
+}

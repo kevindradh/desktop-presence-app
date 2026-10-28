@@ -1,0 +1,37 @@
+{
+  "mode": "source Windows x64",
+  "setup": {
+    "mode": "managed_local",
+    "changed": true,
+    "port": 55435
+  },
+  "schema": {
+    "current_revision": "0005_optional_password",
+    "expected_revision": "0005_optional_password",
+    "at_head": true,
+    "tables": [
+      "alembic_version",
+      "attendance",
+      "audit_logs",
+      "auth_sessions",
+      "calendar_days",
+      "devices",
+      "face_embeddings",
+      "locations",
+      "member_groups",
+      "member_leaves",
+      "members",
+      "settings",
+      "shift_assignments",
+      "shifts",
+      "users"
+    ],
+    "application_table_count": 14,
+    "schema_valid": true,
+    "missing_tables": [],
+    "missing_columns": {}
+  },
+  "app_role_minimal": true,
+  "setup_repeat_preserves_account_and_config": true,
+  "stop_start_preserves_account": true
+}

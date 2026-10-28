@@ -1,0 +1,4 @@
+# Keep native Windows evidence bytes while accepting CRLF in whitespace checks.
+automatic-windows-20261028/* whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# The verbatim installer error contains an indented empty line.
+automatic-windows-20261028/first-repair-inno.log.tail.txt whitespace=blank-at-eof,space-before-tab,cr-at-eol,-blank-at-eol

@@ -1,0 +1,5 @@
+{
+  "phase": "uninstall",
+  "data_and_config_preserved": true,
+  "owned_database_stopped": true
+}

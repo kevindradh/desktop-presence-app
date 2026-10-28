@@ -1,0 +1,11 @@
+{
+  "account": "SGAuto28",
+  "account_disabled": true,
+  "on_demand_task_removed": true,
+  "data_deleted": false,
+  "postmaster_pid_present": {
+    "StarGate": false,
+    "StarGate-UAT28/first-attempt-data": false,
+    "StarGate-UAT28/fresh-admin-data": false
+  }
+}
