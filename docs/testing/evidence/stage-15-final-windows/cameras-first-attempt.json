@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "case": "preview-0",
+      "passed": false,
+      "released": true,
+      "seconds": 18.03,
+      "devices": [
+        {
+          "index": 0,
+          "state": "failed",
+          "frames": 0,
+          "size": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "case": "unavailable-index",
+      "passed": true,
+      "released": true,
+      "seconds": 1.11,
+      "devices": [
+        {
+          "index": 15,
+          "state": "failed",
+          "frames": 0,
+          "size": [
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "images_saved": false,
+  "embeddings_saved": false,
+  "requested_indices": [
+    0
+  ],
+  "other_cameras": "deferred by user",
+  "physical_unplug": "not tested",
+  "real_rtsp": "not available"
+}

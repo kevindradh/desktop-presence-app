@@ -1,0 +1,12 @@
+{
+  "actual_database_counts": {
+    "members": 80,
+    "users": 4,
+    "attendance": 2467,
+    "face_embeddings": 0
+  },
+  "revision": "0006_search_storage",
+  "original_seed_baseline_present": true,
+  "comparison": "at least 80 members, 4 seeded roles, 2467 seeded attendance events; not a full before/after user-data diff",
+  "biometric_content_exported": false
+}

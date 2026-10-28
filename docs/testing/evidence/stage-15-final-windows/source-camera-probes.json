@@ -1,0 +1,25 @@
+{
+  "origin": "captured Windows source OpenCV CLI output",
+  "backend": "CAP_DSHOW",
+  "camera_index": 0,
+  "probes": [
+    {
+      "requested": "default",
+      "opened": true,
+      "frame_read": true,
+      "height": 480,
+      "width": 640,
+      "seconds": 1.297
+    },
+    {
+      "requested": "1280x720 at 30 FPS",
+      "opened": true,
+      "frame_read": true,
+      "height": 720,
+      "width": 1280,
+      "seconds": 3.282
+    }
+  ],
+  "images_saved": false,
+  "note": "Diagnostic observations; not a fix or replacement for frozen tests"
+}

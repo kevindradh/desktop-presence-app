@@ -1,0 +1,6 @@
+{
+  "native_windows_readonly_recovery": true,
+  "scope": "owned build output only",
+  "user_data_modified": false,
+  "build_script_sha256": "cf6cb56dbac9cedeee01db324837bbcf95ffcaaa889d95459aeb66404b02d845"
+}

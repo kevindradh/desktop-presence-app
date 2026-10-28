@@ -1,10 +1,10 @@
-# Arsitektur StarGate - fondasi, data dan autentikasi
+# Arsitektur StarGate
 
-Tanggal: 18 Oktober 2026. Platform development: macOS; target Windows tetap diuji pada Tahap 14.
+Pembaruan28 Oktober2026. Pengembangan macOS; executable x64 diuji pada Windows11 ARM64 Parallels. Struktur berikut mengikuti implementasi saat ini. Bagian bertanda tahap menjelaskan evolusi sistem, bukan status menu yang masih kosong.
 
 ## Jalur startup
 
-`main.py` -> `app.bootstrap.main` -> validasi `app.settings.config` -> logger diagnostik -> ErrorReporter -> theme -> SessionWindow -> login/forced change -> MainWindow sesuai role -> event loop Qt.
+`main.py` -> `app.bootstrap.main` -> validasi `app.settings.config` -> logger diagnostik -> ErrorReporter -> theme -> SessionWindow -> bootstrap/login -> MainWindow sesuai role -> event loop Qt.
 
 - Startup menyiapkan engine tanpa koneksi langsung. Restore remember (jika ada marker) dan login mengakses DB di worker. Kamera/AI belum dimuat. Koneksi DB gagal menolak autentikasi dengan pesan aman.
 - Default config sesuai PRD; dotenv dibaca tanpa interpolasi/global environment mutation. Override hanya key STARGATE_*; konfigurasi invalid tidak mencetak input. File default hilang boleh memakai baseline; file eksplisit hilang adalah error.
@@ -20,13 +20,31 @@ Tanggal: 18 Oktober 2026. Platform development: macOS; target Windows tetap diuj
 | app/settings | Config immutable dan validasi |
 | app/services | Autentikasi/otorisasi, worker, error, logging; batas transaksi layanan |
 | app/repositories, app/models | Model ORM dan repository Tahap 3; otorisasi dipanggil di service |
-| app/reports, app/exports | Tempat laporan/ekspor Tahap 12; belum berisi implementasi |
+| app/services/reports.py, app/exports | Snapshot laporan terikat sesi, ekspor seluruh hasil filter ke XLSX/PDF |
 | ai/detector, recognizer, liveness, embedding | Tempat adapter AI Tahap 7; tidak dimuat oleh shell |
 | database/migrations, schema, seed | Tempat evolusi schema/seed Tahap 3 |
 | resources, logs | Resource lokal dan log diagnostik; bobot/log diabaikan Git |
 | tests, scripts | Test otomatis dan pemeriksaan lingkungan/fondasi |
 
-Member/group/shift memiliki formulir administratif dan data nyata sejak Tahap 5. Device memiliki pengelolaan dan preview sejak Tahap 6; attendance/report/setting masih placeholder berlabel pratinjau. Dashboard belum menghitung attendance. Users memiliki formulir/list/create/edit/nonaktif/reset nyata. Menu pemeriksaan adalah fasilitas review pembangunan. Login dan role membatasi menu dan aksi layanan sejak Tahap 4.
+Seluruh halaman anggota, grup, shift, perangkat, kehadiran, dashboard, laporan, pengaturan, pengguna, audit dan cadangan telah diimplementasikan. Hak akses diperiksa pada service. Super Admin pertama dibuat melalui halaman bootstrap ketika akun pengelola belum ada; ganti password bersifat opsional.
+
+Resource binary/model/lisensi berada di bundle yang dibaca saja. Config, foto kelolaan, log dan database berada di folder data per pengguna. Installer otomatis menyiapkan PostgreSQL17/pgvector pada koneksi loopback dengan role owner, migrator dan app terpisah. Startup menjalankan pemeriksaan/penyalaan cluster kelolaan melalui worker. Konfigurasi database eksternal tetap memakai pemeliharaan eksplisit.
+
+```mermaid
+flowchart LR
+    UI[Halaman PyQt6] --> Service[Auth dan service transaksi]
+    Service --> ORM[Repository SQLAlchemy]
+    ORM --> DB[(PostgreSQL dan pgvector)]
+    UI --> Capture[Proses capture kamera]
+    Capture --> Memory[Frame terbaru di memori]
+    Memory --> AI[Worker RetinaFace ArcFace MiniFASNet]
+    AI --> Packet[Probe bertanda tangan]
+    Packet --> Service
+    Service --> Audit[Audit dan feedback setelah commit]
+```
+
+CameraManager dan worker AI terpisah dari thread GUI. Antrean menyimpan frame terbaru dan backpressure membatasi permintaan. Probe berisi binding sesi/perangkat/revision, sequence, freshness dan signature; service memeriksa kembali otorisasi serta kebijakan sebelum commit. Preview mirror hanya untuk tampilan; jangan menjadikan perubahan preview sebagai perubahan data model.
+
 
 ## Worker lifecycle
 

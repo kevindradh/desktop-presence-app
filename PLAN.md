@@ -1,9 +1,9 @@
 # PLAN - Pembangunan StarGate
 
 Tanggal dibuat: 18 Oktober 2026; pembaruan tahap aktif: 20 Oktober 2026  
-Status: Tahap 0–13 telah direview/disetujui pengguna pada cakupan tersedia; RTSP positif tetap tertunda. Tahap14: installer Windows x64 sudah dibangun dan dipasang di Windows11 ARM64 Parallels; uji akun standar, model, database, kedua kamera, backup/restore sintetis, probe offline dan repair/uninstall/reinstall lulus. Review/uji mandiri Windows masih terbuka; Tahap15 belum dimulai. Rincian jumlah uji wajah nyata tidak disimpulkan dari persetujuan review.
+Status28 Oktober2026: Tahap0–13 direview pengguna pada cakupan yang tersedia. Windows x64 diuji di Parallels; pengguna mengonfirmasi dashboard dan mengizinkan kelanjutan bersyarat ke Tahap15 (D-29). Regresi akhir538PASS/1SKIP, coverage gabungan89,73%; kandidat0.14.2 terpasang dan p95 exact search50,92ms, tetapi3dari1.000query masih>100ms. Dokumentasi Tahap16 disiapkan. RTSP positif, AMD fisik, statistik biometrik, SLA lengkap, soak, availability dan syarat coverage unit masih terbuka.
 
-Revisi pengguna 21 Oktober 2026: penyiapan Super Admin otomatis sebelum login dan penggantian password opsional untuk seluruh akun, termasuk hasil reset. Migrasi0005 mempertahankan akun, password dan riwayat; Tahap15 tetap belum dimulai.
+Revisi pengguna 21 Oktober 2026: penyiapan Super Admin otomatis sebelum login dan penggantian password opsional untuk seluruh akun, termasuk hasil reset. Migrasi0005 mempertahankan akun, password dan riwayat. Tahap15 kemudian dimulai bersyarat28 Oktober2026.
 
 ## 1. Acuan dan tujuan
 
@@ -284,15 +284,17 @@ Dependensi: Tahap13. Status28 Oktober2026: installer terbaru **0.14.1-research**
 
 ### Tahap 15 - Validasi performa, keamanan, regresi, dan UAT
 
-Dependensi: Tahap14 dengan pengecualian D-29. Status28 Oktober2026: sedang dikerjakan. Pengujian AMD fisik/kamera kedua ditunda atas pilihan pengguna; hasil Parallels dipisahkan. Regresi penuh536PASS/1SKIP dan coverage gabungan89,70% selesai. Baseline pencarian Windows10.000anggota/50.000vektor/1.000probe menghasilkan p95=364,83ms; target100ms belum tercapai (PERF-B001 OPEN). Akurasi wajah, liveness, soak dan availability belum tersertifikasi. Laporan: `docs/testing/stage-15.md`.
+Dependensi: Tahap14 dengan pengecualian D-29. Status28 Oktober2026: sedang dikerjakan. Pengujian AMD fisik/kamera kedua ditunda atas pilihan pengguna; hasil Parallels dipisahkan. Regresi akhir538PASS/1SKIP dan coverage gabungan89,73% selesai. Baseline p95 pencarian364,83ms diperbaiki menjadi50,92ms pada paket0.14.2 dengan10.000anggota/50.000vektor/1.000probe. Masih3query>100ms (maks228,82ms), sehingga PERF-B001 tetap OPEN untuk batas seluruh query. Akurasi wajah, liveness, soak dan availability belum tersertifikasi. Laporan: `docs/testing/stage-15.md`.
 
 - [x] Petakan seluruh31 user story ke bukti otomatis dan pengujian nyata yang masih terbuka: `docs/testing/stage-15-acceptance-map.md`.
 - [ ] Selesaikan seluruh acceptance criteria US-001 sampai US-031 serta kebutuhan PRD tambahan, termasuk uji nyata yang belum tersedia.
-- [x] Regresi penuh sumber: 536PASS/1SKIP, PostgreSQL dan model nyata, native credential, 629,48detik. Coverage gabungan unit/integrasi/UI pada app/database/ai89,70% (7.941/8.853 statement), tanpa exclusion; Windows DACL SKIP pada Mac ditopang bukti Windows terpisah.
-- [ ] Pisahkan penilaian unit-only bila dipersyaratkan pada interpretasi akhir D-20; angka89,70% adalah coverage gabungan proses utama, bukan coverage executable/child Windows.
+- [x] Regresi akhir sumber:538PASS/1SKIP, PostgreSQL dan model nyata, native credential,610,67detik. Coverage gabungan89,73% (7.959/8.870 statement), tanpa exclusion; Windows DACL SKIP pada Mac ditopang bukti Windows terpisah.
+- [x] Ukur subset tanpa database/model secara terpisah:207PASS/1SKIP, coverage43,56%; subset masih mencakup UI/native credential dan bukan klasifikasi unit murni.
+- [ ] Penuhi dan buktikan syarat unit test coverage≥80% sesuai DoD; coverage gabungan89,73% tidak menggantikannya.
 - [ ] Ukur face detection <300 ms, recognition <500 ms, attendance save <200 ms, startup <5 detik.
 - [x] Ukur baseline pencarian pada runtime Windows terpasang:10.000anggota/50.000embedding512D,1.000probe; p50=305,32ms,p95=364,83ms,max=957,27ms. Semua ID fiktif benar dan schema sementara dihapus; bukan ukuran akurasi wajah.
-- [ ] Penuhi target pencarian <=100ms (PERF-B001) dan ukur absensi end-to-end <=2detik; startup/deteksi/recognition/save tetap terpisah.
+- [x] Terapkan dan verifikasi optimasi exact search di paket0.14.2: p95=50,92ms,1.000hasil sintetis benar, schema uji dibuang.
+- [ ] Penuhi batas100ms pada seluruh query/query pertama (PERF-B001 masih3lonjakan) dan ukur absensi end-to-end <=2detik; startup/deteksi/recognition/save tetap terpisah.
 - [ ] Ukur recognition accuracy >=98% dengan protokol yang disepakati; laporkan false accept/false reject dan kondisi pengujian.
 - [ ] Ukur spoof detection >=95% dengan serangan foto/video dan kamera target; sertakan penolakan pengguna asli.
 - [ ] Jalankan pengujian durasi panjang/multi-camera: memori, antrean frame, respons UI, stream putus, restart database, dan pemulihan aplikasi.
@@ -303,13 +305,14 @@ Dependensi: Tahap14 dengan pengecualian D-29. Status28 Oktober2026: sedang diker
 
 ### Tahap 16 - Dokumentasi final dan rilis V1
 
-Dependensi: Tahap 15. Status: Belum dimulai.
+Dependensi penerimaan: Tahap15. Dokumentasi dan kandidat penyerahan disiapkan paralel; gerbang V1 menunggu bukti Tahap15.
 
-- [ ] Lengkapi panduan instalasi, operasional per role, registrasi wajah, kamera/RTSP, shift, laporan, backup/restore, dan troubleshooting.
-- [ ] Lengkapi dokumentasi arsitektur, ERD, migrasi, konfigurasi, versi dependensi/model, dan catatan lisensi.
+- [x] Lengkapi panduan instalasi, operasional per role, registrasi wajah, kamera/RTSP, shift, laporan, backup/restore, dan troubleshooting: `docs/operations.md`.
+- [x] Perbarui arsitektur, ERD, migrasi, konfigurasi, manifest dependensi/model dan notice lisensi; penetapan lisensi kode pengguna/distribusi tetap pada pemilik.
 - [ ] Lengkapi laporan UAT, pengukuran SLA, daftar bug, batasan, serta release notes.
-- [ ] Siapkan paket rilis terverifikasi dan prosedur pemulihan.
-- [ ] Tinjau Definition of Done kedua PDF dan checklist penutupan tahap.
+- [x] Siapkan installer kandidat0.14.2 terverifikasi (SHA256/manifest6227berkas) dan prosedur pemulihan; bukan penerimaan V1 penuh.
+- [x] Arsip kandidat `dist/releases/StarGate-Research-Windows-x64-0.14.2.zip` dibuat dan seluruh89berkas/217source diverifikasi melalui SHA256; bukti `docs/testing/evidence/stage-16-release.json`. Snapshot PLAN dalam source kit dibuat sebelum penandaan hasil arsip ini.
+- [x] Tinjau Definition of Done kedua PDF dan checklist penutupan tahap: `docs/testing/stage-16.md`; persyaratan tanpa bukti tetap terbuka.
 - [ ] Gerbang: pengguna menerima hasil V1; distribusi/pemasangan produksi dilakukan sebagai langkah yang disepakati secara terpisah.
 
 ## 6. Pemetaan user story ke tahap
@@ -413,4 +416,7 @@ Fondasi UI dan persistensi database tersedia. Pengguna menyetujui Tahap 3 dan me
 
 - [x] Tahap 13: inspeksi/filter audit SA/Admin; backup AES-GCM/Scrypt, retensi 7 hari dan restore SuperAdmin dengan pengaman/lock/transaksi. Seluruh biometrik/sesi dilewati sesuai persetujuan pengguna, akun/riwayat/settings/audit pulih. 442 regresi PASS/90,64% coverage, 69 native PASS; demo terpisah tersedia. Review pengguna diterima 20 Oktober 2026; lanjut Tahap 14 diizinkan.
 
-- [x] Tahap14: installer Windows x64 dibangun/dipasang; akun standar/ACL, native credential, model, DB, kedua kamera, ekspor/backup/restore sintetis, probe offline dan repair/uninstall/reinstall PASS. Bukti dan kegagalan/recheck dicatat di docs/testing/stage-14.md. Uji mandiri/review Windows masih terbuka; Tahap15 belum dimulai.
+- [x] Tahap14: installer Windows x64 dibangun/dipasang; akun standar/ACL, native credential, model, DB, kedua kamera, ekspor/backup/restore sintetis, probe offline dan repair/uninstall/reinstall PASS. Bukti dan kegagalan/recheck dicatat di docs/testing/stage-14.md. Pengguna kemudian mengonfirmasi dashboard Parallels dan mengizinkan Tahap15 bersyarat sesuai D-29; UAT/perangkat yang belum diuji tetap terbuka.
+
+
+Pembaruan28 Oktober2026: paket0.14.2 dipasang pada akun pengguna Parallels; model/schema0006 lulus, baseline80anggota/4akun/2.467kehadiran masih ada. Pencarian p95=50,92ms tetapi3/1.000query>100ms, sehingga PERF-B001 masih OPEN. Kamera0 gagal pertama lalu preview/reopen ulang lulus; CAM-B004 masih OPEN untuk isolasi penyebab. Dokumentasi operasi/arsitektur/ERD/notice/DoD dan daftar gerbang tersisa disiapkan. Bukti: `docs/testing/stage-15.md`, `docs/testing/stage-16.md`, `docs/testing/remaining-acceptance.md`. Tidak ada penerimaan V1 penuh.

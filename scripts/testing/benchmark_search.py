@@ -13,10 +13,12 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data-dir',type=Path)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--samples',type=int,default=1000)
     args=parser.parse_args()
+    assert 1<=args.samples<=1000
     if not getattr(sys,'frozen',False):sys.path.insert(0,str(Path(__file__).resolve().parents[2]))
     import numpy as np
-    from sqlalchemy import DDL,func,insert,select,text
+    from sqlalchemy import DDL,event,func,insert,select,text
     from sqlalchemy.orm import Session
     from sqlalchemy.schema import CreateSchema,DropSchema
     from app.services.database import create_database_engine
@@ -42,7 +44,7 @@ def main():
     writer=reader=None
     created=False
     report={'schema':schema,'members':10000,'embeddings_per_member':5,'embedding_count':50000,
-        'dimensions':512,'samples':1000,'synthetic_vectors':True,'real_faces':False,
+        'dimensions':512,'samples':args.samples,'variant':'production','synthetic_vectors':True,'real_faces':False,
         'platform':platform.platform(),'python_architecture':platform.machine(),
         'method':'production identify / exact cosine / best angle per active member',
         'first_query_is_os_cold':False,'formal_sla_certification':False}
@@ -82,11 +84,21 @@ def main():
         with writer.begin() as connection:
             connection.execute(text('ANALYZE '+schema+'.members'))
             connection.execute(text('ANALYZE '+schema+'.face_embeddings'))
+            report['storage']=dict(connection.execute(text(
+                "SELECT a.attstorage AS policy, pg_relation_size(c.oid) AS heap_bytes, "
+                "pg_table_size(c.oid) AS table_bytes FROM pg_attribute a JOIN pg_class c ON c.oid=a.attrelid "
+                "JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname=:schema "
+                "AND c.relname='face_embeddings' AND a.attname='embedding'"),{'schema':schema}).mappings().one())
         durations=[]
+        captured={}
+        def capture(connection,cursor,statement,parameters,context,many):
+            if statement.lstrip().startswith('SELECT') and 'face_embeddings.embedding' in statement:
+                captured.update(statement=statement,parameters=parameters)
+        event.listen(reader,'before_cursor_execute',capture)
         with Session(reader) as session:
             assert session.scalar(select(func.count()).select_from(Member))==10000
             assert session.scalar(select(func.count()).select_from(FaceEmbedding))==50000
-            for index,(identifier,vector) in enumerate(probes[:5]+probes):
+            for index,(identifier,vector) in enumerate(probes[:5]+probes[:args.samples]):
                 began=time.perf_counter_ns()
                 decision=identify(session,vector,model_version=version)
                 elapsed=(time.perf_counter_ns()-began)/1e6
@@ -94,10 +106,25 @@ def main():
                 if index==0:report['first_query_ms']=elapsed
                 if index>=5:durations.append(elapsed)
                 if index in (4,254,504,754,1004):print('Measured queries: '+str(max(0,index-4)),flush=True)
-        assert len(durations)==1000
+            if captured:
+                with session.connection().connection.driver_connection.cursor() as cursor:
+                    cursor.execute('EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) '+captured['statement'],captured['parameters'])
+                    plan=cursor.fetchone()[0]
+                allowed={'Plan','Plans','Node Type','Join Type','Strategy','Actual Startup Time',
+                    'Actual Total Time','Actual Rows','Actual Loops','Workers Planned','Workers Launched',
+                    'Shared Hit Blocks','Shared Read Blocks','Temp Read Blocks','Temp Written Blocks',
+                    'Sort Method','Peak Memory Usage','Planning Time','Execution Time'}
+                def safe(value):
+                    if isinstance(value,dict):return {key:safe(item) for key,item in value.items() if key in allowed}
+                    if isinstance(value,list):return [safe(item) for item in value]
+                    return value
+                report['query_plan']=safe(plan)
+        assert len(durations)==args.samples
         report.update(p50_ms=float(np.percentile(durations,50)),p95_ms=float(np.percentile(durations,95)),
-            max_ms=max(durations),all_queries_correct=True,latencies_ms=durations)
+            p99_ms=float(np.percentile(durations,99)),max_ms=max(durations),all_queries_correct=True,
+            queries_over_100ms=sum(value>100 for value in durations),latencies_ms=durations)
         report['observed_p95_at_most_100ms']=report['p95_ms']<=100
+        report['all_observed_queries_at_most_100ms']=max(durations)<=100
     finally:
         if reader:reader.dispose()
         if writer:writer.dispose()

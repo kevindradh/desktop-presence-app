@@ -83,3 +83,45 @@ Tahap15 belum dinyatakan selesai. Kelanjutan karena deadline tidak mengubah hasi
 - PASS: tujuan dokumen adalah membedakan hasil aktual, pengujian sintetis dan hal yang ditunda.
 - PASS: tidak mengubah desain antarmuka atau menambah klaim akurasi dari data fiktif.
 - PASS: istilah statistik dibatasi pada hasil terukur; protokol dan sumber resmi disebutkan.
+
+## Regresi akhir kandidat0.14.2
+
+Setelah jalur exact top-one dan migrasi penyimpanan diterapkan, regresi sumber menghasilkan **538 PASS,1 SKIP,0 failure/error** dalam610,67detik. Coverage gabungan **89,73%**,7.959 dari8.870 statement,911 belum tercakup dan0 exclusion. SKIP tetap tes DACL native Windows pada Mac; FutureWarning upstream tetap satu. Dua tes database tambahan memeriksa kesetaraan hasil top-one dan pelestarian data lama saat migrasi. [JUnit akhir](evidence/stage-15-final-regression.xml) dan [coverage akhir](evidence/stage-15-final-summary.json) mempertahankan angka aktual terpisah dari baseline.
+
+Tes paket penyerahan dijalankan terpisah dari regresi aplikasi:5 PASS. Tes tersebut memeriksa hash seluruh isi, penolakan installer berubah, penolakan `.env` privat/tautan, dan perlindungan arsip lama. [JUnit assembler](evidence/stage-16-release-assembler.xml).
+
+Penyimpanan vektor inline saja masih memindahkan metadata kecil ke TOAST. Perbaikan menambahkan target tuple4096 dan menulis ulang nilai lama, lalu mempertahankan pencarian exact. Dasar teknis diperiksa melalui dokumentasi resmi pgvector dan PostgreSQL menggunakan Context7: [pgvector](https://github.com/pgvector/pgvector#troubleshooting), [parameter tabel PostgreSQL17](https://www.postgresql.org/docs/17/sql-createtable.html), [TOAST](https://www.postgresql.org/docs/17/storage-toast.html). Percobaan100probe memberi p95 sekitar35ms; angka ini hanya diagnosis dan belum menutup PERF-B001 sebelum pengukuran produksi1.000probe.
+
+## Pemisahan coverage
+
+Pemilihan `not database and not models` menghasilkan207PASS,1SKIP dan336deselected dalam33,21detik. Coverage pada scope terukur adalah **43,56%** (3.794/8.710 statement), tanpa exclusion. Pemilihan ini masih mencakup UI dan native credential sehingga bukan klasifikasi unit murni. Tidak mengklaim target unit-only80% terpenuhi atau mengganti denominator dengan hanya berkas yang mudah diuji. [Ringkasan subset](evidence/stage-15-unit-summary.json), [JUnit subset](evidence/stage-15-unit-regression.xml). Pemetaan suite unit murni dan penambahan pengujian perilaku yang diperlukan tetap menjadi pekerjaan penerimaan; tidak menambah tes yang hanya menyalin implementasi untuk menaikkan angka.
+
+## Paket Windows0.14.2 dan pengukuran produksi akhir
+
+Installer baru berhasil dibangun dan dipasang pada akun Windows standar. Hash salinan Mac cocok. Konfigurasi lama dipertahankan; ruang uji terpisah dimigrasikan ke `0006_search_storage`. Pemeriksaan SQL aktual menemukan80anggota,4akun,2.467peristiwa kehadiran dan0embedding. Ini cocok dengan baseline seeder; bukan perbandingan menyeluruh seluruh data pengguna sebelum/sesudah. Tes data embedding lama berada pada47tes terarah migrasi, menggunakan fixture terisolasi.
+
+Model/Qt/plugin/native library/spawn serta worker AI pada frame kosong lulus dari executable terpasang. Pemeriksaan ini tidak menguji wajah asli atau spoof. Bobot dan runtime database berasal dari bundle; tidak mengandalkan Python proyek untuk menjalankan aplikasi.
+
+Benchmark akhir memakai helper yang memuat PYZ/modul produksi dari hasil build0.14.2. Tidak ada monkeypatch query atau perubahan storage eksperimental pada run ini. Dataset/RNG/jumlah probe tetap sama dengan baseline:10.000anggota,50.000vektor512D,1.000probe setelah5pemanasan. Build/kompresi dan tes model tidak berjalan bersamaan dengan benchmark. Jendela aplikasi ditutup pada run akhir, sedangkan baseline terdahulu mencatat UI tetap terbuka; perbandingan ini belum menjadi eksperimen perangkat yang terkontrol penuh.
+
+| Pengukuran produksi0.14.2 | Hasil |
+|---|---|
+| Query pertama, bukan OS dingin | 132,26ms |
+| p50 | 39,90ms |
+| p95 | 50,92ms |
+| p99 | 76,27ms |
+| Maksimum | 228,82ms |
+| Query terukur >100ms | 3dari1.000 |
+| ID sintetis sesuai expected | 1.000dari1.000 |
+| Schema sementara | Berhasil dibuang |
+| Kebijakan storage | PLAIN; heap136.536.064byte, total136.609.792byte |
+
+**p95 sudah di bawah100ms, tetapi seluruh query belum memenuhi batas100ms. PERF-B001 tetap OPEN untuk ekor latency dan query pertama.** Tidak menutup target PRD dengan menghapus tiga hasil lambat atau mengulang sampai mendapatkan run yang terlihat lulus. Profil akhir menunjukkan pembacaan519blok pada query EXPLAIN; cache/I/O dan penjadwalan VM perlu diperiksa bersama pengujian perangkat target. Tidak menyimpulkan tiga lonjakan pasti berasal dari salah satu penyebab tersebut.
+
+Angka ini bukan akurasi wajah100% dan tidak mengukur capture/detection/embedding/save/feedback. Hasil Parallels x64 emulasi tetap terpisah dari AMD fisik. [Bukti akhir Windows](evidence/stage-15-final-windows/) memuat identitas installer, schema, model, hitungan data serta seluruh latency. Installer berukuran484.054.536byte, manifest6227berkas, belum ditandatangani Authenticode. Daftar pekerjaan berikutnya ada pada [gerbang penerimaan](remaining-acceptance.md).
+
+### Kamera pada kandidat0.14.2
+
+Percobaan pertama kamera0 gagal dengan0frame, tetapi shutdown bersih. Inventaris FaceTime HD Camera tetap OK. Probe OpenCV source kemudian dapat membaca frame640x480 dan1280x720. Pengulangan helper frozen, dengan trace metadata tambahan dan kode capture produksi yang sama, lulus preview30frame1280x720 (6,36detik), reopen30frame1280x720 (4,83detik) dan error indeks tak tersedia dengan pelepasan bersih. Tidak menyimpan frame/foto/embedding. [Percobaan pertama](evidence/stage-15-final-windows/cameras-first-attempt.json) dipertahankan di samping [hasil ulang](evidence/stage-15-final-windows/cameras.json). CAM-B004 tetap OPEN karena penyebab kegagalan awal belum terisolasi; uji ulang tidak menghapus kejadian tersebut.
+
+Setelah benchmark, SQL aktual kembali menunjukkan80anggota/4akun/2.467kehadiran/0embedding pada ruang uji. Schema benchmark telah dibuang dan helper executable uji dihapus dari folder aplikasi. Aplikasi produksi dibuka kembali dengan pintasan ruang simulasi yang sama. Konfirmasi login/dashboard pengguna sebelumnya berasal dari0.14.1; tidak mengubahnya menjadi UAT lengkap0.14.2.

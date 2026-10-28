@@ -2,6 +2,29 @@
 
 Tanggal: 18 Oktober 2026. Revision awal: `0001_stargate`.
 
+Pembaruan28 Oktober2026: schema produksi kandidat0.14.2 adalah `0006_search_storage`; penggantian password opsional sudah diterapkan melalui0005. Catatan per tahap di bawah adalah riwayat implementasi. Foto/embedding yang dihapus tidak dikembalikan saat restore; akun dan riwayat dipulihkan sesuai kebijakan cadangan7hari. Setup database otomatis dijelaskan pada [panduan Windows](windows-auto-setup.md).
+
+## Relasi aktual
+
+Diagram berikut diperiksa terhadap foreign key model ORM. `settings` berdiri sendiri; audit boleh mempunyai aktor kosong untuk kegiatan sistem.
+
+```mermaid
+erDiagram
+    member_groups ||--o{ members : group_id
+    members ||--o{ face_embeddings : member_id
+    members ||--o{ shift_assignments : member_id
+    shifts ||--o{ shift_assignments : shift_id
+    members ||--o{ member_leaves : member_id
+    locations ||--o{ calendar_days : location_id
+    locations ||--o{ devices : location_id
+    users ||--o{ auth_sessions : user_id
+    users |o--o{ audit_logs : actor_id
+    members ||--o{ attendance : member_id
+    devices ||--o{ attendance : device_id
+    shifts ||--o{ attendance : shift_id
+    member_groups ||--o{ attendance : group_id
+```
+
 ## Delapan tabel inti sesuai PRD
 
 Kolom PRD dipertahankan. Tipe/constraint dan kolom pendukung menjadikan relasi dan riwayat konsisten.
@@ -75,7 +98,7 @@ Sumber: [SQLAlchemy sessions](https://docs.sqlalchemy.org/en/20/orm/session_basi
 
 Migrasi baru menambahkan users.failed_attempts dan locked_until, serta auth_sessions (14 tabel aplikasi total). Kolom sesi: user_id, token_hash unik SHA-256, is_remember, last_activity, expires_at, revoked, id/created_at. Aplikasi hanya SELECT/INSERT/UPDATE pada tabel token; migrator tetap terpisah. Revision 0001 tidak diedit.
 
-Login benar memperbarui last_login; gagal memperbarui counter dan audit dalam transaksi yang tetap dikomit. Akun bootstrap/baru/reset wajib mengganti password; reset/change/nonaktif/perubahan peran mencabut sesi. Histori akun dipertahankan. Pengaturan auth yang disemai tetap 15 menit idle, 5 kegagalan, 15 menit lockout.
+Login benar memperbarui last_login; gagal memperbarui counter dan audit dalam transaksi yang tetap dikomit. Pada implementasi Tahap4, akun bootstrap/baru/reset diwajibkan mengganti password. Revisi pengguna dan migrasi0005 membatalkan kewajiban tersebut untuk seluruh akun; reset/change/nonaktif/perubahan peran tetap mencabut sesi. Histori akun dipertahankan. Pengaturan auth yang disemai tetap 15 menit idle, 5 kegagalan, 15 menit lockout.
 
 Tabel sesi menyimpan hash, bukan password/token mentah. Rows yang dicabut tetap tersedia untuk diagnosa tahap ini; pembersihan/retensi ditetapkan sebelum operasi data nyata. Audit event auth menggunakan entity_type=user dan user ID jika diketahui. UI Users hanya Super Admin melalui AuthService, repository internal bukan API untuk dipanggil langsung oleh UI.
 
@@ -114,3 +137,9 @@ Settings policy fingerprint menambah updated_at pada pembacaan runtime, bukan ko
 ## Pemulihan data Tahap 13
 
 Tidak ada migrasi schema baru. Backup menyimpan data logis tabel aplikasi dan aset foto kelolaan dalam bundel terenkripsi, tanpa sesi dan referensi rahasia RTSP. Restore memakai akun owner melalui helper administrasi yang memvalidasi target, lock advisory+tabel, backup pengaman, DELETE/INSERT berparameter dan restart identity transaksional. Akun runtime tetap tidak berhak mengubah/menghapus audit atau melakukan DDL. Metadata/schema harus cocok; arsip tidak membawa SQL yang dijalankan. Sesuai persetujuan pengguna, foto menjadi placeholder dan embedding/sesi tidak dipulihkan. Audit sebelum snapshot pulih, event restore ditambah; audit sesudah snapshot tersedia di pengaman. [Prosedur, retensi 7 hari dan batas](testing/stage-13.md).
+
+## Penyimpanan exact search (0006)
+
+Migrasi `0006_search_storage` mempertahankan embedding512D bertipe float32 dan query cosine exact. Kolom embedding memakai STORAGE PLAIN dengan `toast_tuple_target=4096`; migrasi menulis ulang nilai lama agar embedding dan metadata kecil tidak dibaca melalui TOAST per baris. Transaksi memakai advisory lock dan batas waktu120detik. Tes migrasi memeriksa byte vektor, pose, model dan status aktif sebelum/sesudah. Sediakan ruang disk untuk penulisan ulang dan jalankan saat pemeliharaan.
+
+Pencarian satu hasil mengambil sampel aktif terdekat dengan tie-break ID anggota, yang setara dengan mengambil anggota dengan jarak minimum terbaik. Pencarian banyak hasil tetap mengelompokkan setiap anggota. Tidak ada indeks approximate baru atau perubahan ambang similarity.

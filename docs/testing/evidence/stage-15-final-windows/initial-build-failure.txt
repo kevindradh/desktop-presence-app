@@ -1,0 +1,25 @@
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\building\api.py", line 1150, in __init__
+    self.__postinit__()
+  File "C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\building\datastruct.py", line 184, in __postinit__
+    self.assemble()
+  File "C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\building\api.py", line 1162, in assemble
+    _make_clean_directory(self.name)
+  File "C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\building\utils.py", line 395, in _make_clean_directory
+    _rmtree(path)
+  File "C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\building\utils.py", line 420, in _rmtree
+    shutil.rmtree(path)
+  File "C:\StarGate-build\prerequisites\Python-3.11.17\Lib\shutil.py", line 787, in rmtree
+    return _rmtree_unsafe(path, onerror)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\StarGate-build\prerequisites\Python-3.11.17\Lib\shutil.py", line 629, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\StarGate-build\prerequisites\Python-3.11.17\Lib\shutil.py", line 629, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\StarGate-build\prerequisites\Python-3.11.17\Lib\shutil.py", line 629, in _rmtree_unsafe
+    _rmtree_unsafe(fullname, onerror)
+  File "C:\StarGate-build\prerequisites\Python-3.11.17\Lib\shutil.py", line 634, in _rmtree_unsafe
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "C:\StarGate-build\prerequisites\Python-3.11.17\Lib\shutil.py", line 632, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 5] Access is denied: 'C:\\StarGate-build\\dist\\StarGate\\_internal\\postgresql\\licenses\\PostgreSQL.txt'

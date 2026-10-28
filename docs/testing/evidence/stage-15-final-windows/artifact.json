@@ -1,0 +1,24 @@
+{
+  "version": "0.14.2-research",
+  "artifact": "dist/windows/StarGate-Research-Windows-x64-0.14.2.exe",
+  "bytes": 484054536,
+  "sha256": "89277805552ba765accff229722d2c662849a795729700280bc23b470ae1b946",
+  "environment": "Windows 11 ARM64 Parallels running x64 package",
+  "physical_amd_tested": false,
+  "synthetic_data_only": true,
+  "production_source_commit": "5de31fb",
+  "verified_source_sha256": {
+    "app/repositories/core.py": "f7c7f7c87181d92a1c648910a2adfd58bce71f9a4b57384b1eed6776e06a3276",
+    "database/migrations/versions/0006_exact_search_storage.py": "96634a4e8f7e8477904c81ef6a924db67c659af0af82927334bda46a41f8cf92",
+    "packaging/windows/StarGate.iss": "29b59eba6064a5dadf669bf06241d4df0738ee41c0b650cd838d53922e747195",
+    "packaging/StarGate.spec": "3a2a4af55820c6036a7273d7ae75e0c27cd5f8fd10e5cd3c280df8e7165b87c3",
+    "packaging/THIRD_PARTY_NOTICES.md": "b95b2dd961371b25c11cf7356cbca79ade3af9e3512077e4172b91bcb76c496d",
+    "scripts/build_package.py": "cf6cb56dbac9cedeee01db324837bbcf95ffcaaa889d95459aeb66404b02d845"
+  },
+  "bundle_manifest_sha256": "9a2dfb3328c7d9dacc5c298ea4bb80bed8bcc610fea1bb5aa1294c57ff513624",
+  "bundle_file_count": 6227,
+  "authenticode": {
+    "status_code": 2,
+    "status": "NotSigned"
+  }
+}

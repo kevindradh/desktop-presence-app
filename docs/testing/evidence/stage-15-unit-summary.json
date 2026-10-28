@@ -1,0 +1,970 @@
+{
+  "selection": "not database and not models",
+  "passed": 207,
+  "skipped": 1,
+  "deselected": 336,
+  "seconds": 33.21,
+  "scope": "subset includes UI and native credential tests; not a certified pure-unit classification",
+  "coverage_totals": {
+    "covered_lines": 3794,
+    "num_statements": 8710,
+    "percent_covered": 43.559127439724456,
+    "percent_covered_display": "44",
+    "missing_lines": 4916,
+    "excluded_lines": 0,
+    "percent_statements_covered": 43.559127439724456,
+    "percent_statements_covered_display": "44"
+  },
+  "files": {
+    "ai/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "ai/attendance_process.py": {
+      "covered_lines": 15,
+      "num_statements": 67,
+      "percent_covered": 22.388059701492537,
+      "percent_covered_display": "22",
+      "missing_lines": 52,
+      "excluded_lines": 0,
+      "percent_statements_covered": 22.388059701492537,
+      "percent_statements_covered_display": "22"
+    },
+    "ai/contracts.py": {
+      "covered_lines": 56,
+      "num_statements": 56,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "ai/detector/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "ai/detector/retinaface.py": {
+      "covered_lines": 6,
+      "num_statements": 32,
+      "percent_covered": 18.75,
+      "percent_covered_display": "19",
+      "missing_lines": 26,
+      "excluded_lines": 0,
+      "percent_statements_covered": 18.75,
+      "percent_statements_covered_display": "19"
+    },
+    "ai/embedding/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "ai/embedding/search.py": {
+      "covered_lines": 11,
+      "num_statements": 19,
+      "percent_covered": 57.89473684210526,
+      "percent_covered_display": "58",
+      "missing_lines": 8,
+      "excluded_lines": 0,
+      "percent_statements_covered": 57.89473684210526,
+      "percent_statements_covered_display": "58"
+    },
+    "ai/engine.py": {
+      "covered_lines": 73,
+      "num_statements": 83,
+      "percent_covered": 87.95180722891567,
+      "percent_covered_display": "88",
+      "missing_lines": 10,
+      "excluded_lines": 0,
+      "percent_statements_covered": 87.95180722891567,
+      "percent_statements_covered_display": "88"
+    },
+    "ai/enrollment.py": {
+      "covered_lines": 138,
+      "num_statements": 145,
+      "percent_covered": 95.17241379310344,
+      "percent_covered_display": "95",
+      "missing_lines": 7,
+      "excluded_lines": 0,
+      "percent_statements_covered": 95.17241379310344,
+      "percent_statements_covered_display": "95"
+    },
+    "ai/enrollment_process.py": {
+      "covered_lines": 11,
+      "num_statements": 78,
+      "percent_covered": 14.102564102564102,
+      "percent_covered_display": "14",
+      "missing_lines": 67,
+      "excluded_lines": 0,
+      "percent_statements_covered": 14.102564102564102,
+      "percent_statements_covered_display": "14"
+    },
+    "ai/liveness/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "ai/liveness/minifasnet.py": {
+      "covered_lines": 20,
+      "num_statements": 39,
+      "percent_covered": 51.282051282051285,
+      "percent_covered_display": "51",
+      "missing_lines": 19,
+      "excluded_lines": 0,
+      "percent_statements_covered": 51.282051282051285,
+      "percent_statements_covered_display": "51"
+    },
+    "ai/models.py": {
+      "covered_lines": 23,
+      "num_statements": 23,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "ai/process.py": {
+      "covered_lines": 4,
+      "num_statements": 62,
+      "percent_covered": 6.451612903225806,
+      "percent_covered_display": "6",
+      "missing_lines": 58,
+      "excluded_lines": 0,
+      "percent_statements_covered": 6.451612903225806,
+      "percent_statements_covered_display": "6"
+    },
+    "ai/recognizer/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "ai/recognizer/arcface.py": {
+      "covered_lines": 31,
+      "num_statements": 53,
+      "percent_covered": 58.490566037735846,
+      "percent_covered_display": "58",
+      "missing_lines": 22,
+      "excluded_lines": 0,
+      "percent_statements_covered": 58.490566037735846,
+      "percent_statements_covered_display": "58"
+    },
+    "app/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/bootstrap.py": {
+      "covered_lines": 0,
+      "num_statements": 64,
+      "percent_covered": 0.0,
+      "percent_covered_display": "0",
+      "missing_lines": 64,
+      "excluded_lines": 0,
+      "percent_statements_covered": 0.0,
+      "percent_statements_covered_display": "0"
+    },
+    "app/exports/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/exports/attendance.py": {
+      "covered_lines": 25,
+      "num_statements": 173,
+      "percent_covered": 14.45086705202312,
+      "percent_covered_display": "14",
+      "missing_lines": 148,
+      "excluded_lines": 0,
+      "percent_statements_covered": 14.45086705202312,
+      "percent_statements_covered_display": "14"
+    },
+    "app/models/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/models/entities.py": {
+      "covered_lines": 162,
+      "num_statements": 162,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/pages/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/pages/administration.py": {
+      "covered_lines": 63,
+      "num_statements": 559,
+      "percent_covered": 11.270125223613595,
+      "percent_covered_display": "11",
+      "missing_lines": 496,
+      "excluded_lines": 0,
+      "percent_statements_covered": 11.270125223613595,
+      "percent_statements_covered_display": "11"
+    },
+    "app/pages/attendance.py": {
+      "covered_lines": 176,
+      "num_statements": 361,
+      "percent_covered": 48.75346260387812,
+      "percent_covered_display": "49",
+      "missing_lines": 185,
+      "excluded_lines": 0,
+      "percent_statements_covered": 48.75346260387812,
+      "percent_statements_covered_display": "49"
+    },
+    "app/pages/audit.py": {
+      "covered_lines": 16,
+      "num_statements": 58,
+      "percent_covered": 27.586206896551722,
+      "percent_covered_display": "28",
+      "missing_lines": 42,
+      "excluded_lines": 0,
+      "percent_statements_covered": 27.586206896551722,
+      "percent_statements_covered_display": "28"
+    },
+    "app/pages/backups.py": {
+      "covered_lines": 32,
+      "num_statements": 117,
+      "percent_covered": 27.35042735042735,
+      "percent_covered_display": "27",
+      "missing_lines": 85,
+      "excluded_lines": 0,
+      "percent_statements_covered": 27.35042735042735,
+      "percent_statements_covered_display": "27"
+    },
+    "app/pages/dashboard.py": {
+      "covered_lines": 126,
+      "num_statements": 213,
+      "percent_covered": 59.15492957746479,
+      "percent_covered_display": "59",
+      "missing_lines": 87,
+      "excluded_lines": 0,
+      "percent_statements_covered": 59.15492957746479,
+      "percent_statements_covered_display": "59"
+    },
+    "app/pages/devices.py": {
+      "covered_lines": 24,
+      "num_statements": 213,
+      "percent_covered": 11.267605633802816,
+      "percent_covered_display": "11",
+      "missing_lines": 189,
+      "excluded_lines": 0,
+      "percent_statements_covered": 11.267605633802816,
+      "percent_statements_covered_display": "11"
+    },
+    "app/pages/diagnostics.py": {
+      "covered_lines": 62,
+      "num_statements": 63,
+      "percent_covered": 98.41269841269842,
+      "percent_covered_display": "98",
+      "missing_lines": 1,
+      "excluded_lines": 0,
+      "percent_statements_covered": 98.41269841269842,
+      "percent_statements_covered_display": "98"
+    },
+    "app/pages/overview.py": {
+      "covered_lines": 52,
+      "num_statements": 52,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/pages/reports.py": {
+      "covered_lines": 38,
+      "num_statements": 176,
+      "percent_covered": 21.59090909090909,
+      "percent_covered_display": "22",
+      "missing_lines": 138,
+      "excluded_lines": 0,
+      "percent_statements_covered": 21.59090909090909,
+      "percent_statements_covered_display": "22"
+    },
+    "app/pages/settings.py": {
+      "covered_lines": 13,
+      "num_statements": 111,
+      "percent_covered": 11.711711711711711,
+      "percent_covered_display": "12",
+      "missing_lines": 98,
+      "excluded_lines": 0,
+      "percent_statements_covered": 11.711711711711711,
+      "percent_statements_covered_display": "12"
+    },
+    "app/pages/users.py": {
+      "covered_lines": 11,
+      "num_statements": 109,
+      "percent_covered": 10.091743119266056,
+      "percent_covered_display": "10",
+      "missing_lines": 98,
+      "excluded_lines": 0,
+      "percent_statements_covered": 10.091743119266056,
+      "percent_statements_covered_display": "10"
+    },
+    "app/reports/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/repositories/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/repositories/core.py": {
+      "covered_lines": 60,
+      "num_statements": 183,
+      "percent_covered": 32.78688524590164,
+      "percent_covered_display": "33",
+      "missing_lines": 123,
+      "excluded_lines": 0,
+      "percent_statements_covered": 32.78688524590164,
+      "percent_statements_covered_display": "33"
+    },
+    "app/services/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/services/administration.py": {
+      "covered_lines": 129,
+      "num_statements": 301,
+      "percent_covered": 42.857142857142854,
+      "percent_covered_display": "43",
+      "missing_lines": 172,
+      "excluded_lines": 0,
+      "percent_statements_covered": 42.857142857142854,
+      "percent_statements_covered_display": "43"
+    },
+    "app/services/attendance.py": {
+      "covered_lines": 74,
+      "num_statements": 272,
+      "percent_covered": 27.205882352941178,
+      "percent_covered_display": "27",
+      "missing_lines": 198,
+      "excluded_lines": 0,
+      "percent_statements_covered": 27.205882352941178,
+      "percent_statements_covered_display": "27"
+    },
+    "app/services/audit.py": {
+      "covered_lines": 16,
+      "num_statements": 26,
+      "percent_covered": 61.53846153846154,
+      "percent_covered_display": "62",
+      "missing_lines": 10,
+      "excluded_lines": 0,
+      "percent_statements_covered": 61.53846153846154,
+      "percent_statements_covered_display": "62"
+    },
+    "app/services/auth.py": {
+      "covered_lines": 59,
+      "num_statements": 213,
+      "percent_covered": 27.699530516431924,
+      "percent_covered_display": "28",
+      "missing_lines": 154,
+      "excluded_lines": 0,
+      "percent_statements_covered": 27.699530516431924,
+      "percent_statements_covered_display": "28"
+    },
+    "app/services/backup_codec.py": {
+      "covered_lines": 61,
+      "num_statements": 65,
+      "percent_covered": 93.84615384615384,
+      "percent_covered_display": "94",
+      "missing_lines": 4,
+      "excluded_lines": 0,
+      "percent_statements_covered": 93.84615384615384,
+      "percent_statements_covered_display": "94"
+    },
+    "app/services/backups.py": {
+      "covered_lines": 36,
+      "num_statements": 239,
+      "percent_covered": 15.06276150627615,
+      "percent_covered_display": "15",
+      "missing_lines": 203,
+      "excluded_lines": 0,
+      "percent_statements_covered": 15.06276150627615,
+      "percent_statements_covered_display": "15"
+    },
+    "app/services/bootstrap_admin.py": {
+      "covered_lines": 6,
+      "num_statements": 16,
+      "percent_covered": 37.5,
+      "percent_covered_display": "38",
+      "missing_lines": 10,
+      "excluded_lines": 0,
+      "percent_statements_covered": 37.5,
+      "percent_statements_covered_display": "38"
+    },
+    "app/services/camera_capture.py": {
+      "covered_lines": 23,
+      "num_statements": 76,
+      "percent_covered": 30.263157894736842,
+      "percent_covered_display": "30",
+      "missing_lines": 53,
+      "excluded_lines": 0,
+      "percent_statements_covered": 30.263157894736842,
+      "percent_statements_covered_display": "30"
+    },
+    "app/services/cameras.py": {
+      "covered_lines": 206,
+      "num_statements": 227,
+      "percent_covered": 90.7488986784141,
+      "percent_covered_display": "91",
+      "missing_lines": 21,
+      "excluded_lines": 0,
+      "percent_statements_covered": 90.7488986784141,
+      "percent_statements_covered_display": "91"
+    },
+    "app/services/credential_store.py": {
+      "covered_lines": 45,
+      "num_statements": 48,
+      "percent_covered": 93.75,
+      "percent_covered_display": "94",
+      "missing_lines": 3,
+      "excluded_lines": 0,
+      "percent_statements_covered": 93.75,
+      "percent_statements_covered_display": "94"
+    },
+    "app/services/dashboard.py": {
+      "covered_lines": 42,
+      "num_statements": 78,
+      "percent_covered": 53.84615384615385,
+      "percent_covered_display": "54",
+      "missing_lines": 36,
+      "excluded_lines": 0,
+      "percent_statements_covered": 53.84615384615385,
+      "percent_statements_covered_display": "54"
+    },
+    "app/services/database.py": {
+      "covered_lines": 25,
+      "num_statements": 40,
+      "percent_covered": 62.5,
+      "percent_covered_display": "62",
+      "missing_lines": 15,
+      "excluded_lines": 0,
+      "percent_statements_covered": 62.5,
+      "percent_statements_covered_display": "62"
+    },
+    "app/services/device_secrets.py": {
+      "covered_lines": 37,
+      "num_statements": 37,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/services/devices.py": {
+      "covered_lines": 60,
+      "num_statements": 163,
+      "percent_covered": 36.809815950920246,
+      "percent_covered_display": "37",
+      "missing_lines": 103,
+      "excluded_lines": 0,
+      "percent_statements_covered": 36.809815950920246,
+      "percent_statements_covered_display": "37"
+    },
+    "app/services/diagnostic_logging.py": {
+      "covered_lines": 51,
+      "num_statements": 54,
+      "percent_covered": 94.44444444444444,
+      "percent_covered_display": "94",
+      "missing_lines": 3,
+      "excluded_lines": 0,
+      "percent_statements_covered": 94.44444444444444,
+      "percent_statements_covered_display": "94"
+    },
+    "app/services/diagnostics.py": {
+      "covered_lines": 2,
+      "num_statements": 9,
+      "percent_covered": 22.22222222222222,
+      "percent_covered_display": "22",
+      "missing_lines": 7,
+      "excluded_lines": 0,
+      "percent_statements_covered": 22.22222222222222,
+      "percent_statements_covered_display": "22"
+    },
+    "app/services/enrollment.py": {
+      "covered_lines": 26,
+      "num_statements": 170,
+      "percent_covered": 15.294117647058824,
+      "percent_covered_display": "15",
+      "missing_lines": 144,
+      "excluded_lines": 0,
+      "percent_statements_covered": 15.294117647058824,
+      "percent_statements_covered_display": "15"
+    },
+    "app/services/errors.py": {
+      "covered_lines": 19,
+      "num_statements": 19,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/services/inference.py": {
+      "covered_lines": 134,
+      "num_statements": 159,
+      "percent_covered": 84.27672955974843,
+      "percent_covered_display": "84",
+      "missing_lines": 25,
+      "excluded_lines": 0,
+      "percent_statements_covered": 84.27672955974843,
+      "percent_statements_covered_display": "84"
+    },
+    "app/services/local_database.py": {
+      "covered_lines": 181,
+      "num_statements": 232,
+      "percent_covered": 78.01724137931035,
+      "percent_covered_display": "78",
+      "missing_lines": 51,
+      "excluded_lines": 0,
+      "percent_statements_covered": 78.01724137931035,
+      "percent_statements_covered_display": "78"
+    },
+    "app/services/member_photos.py": {
+      "covered_lines": 50,
+      "num_statements": 71,
+      "percent_covered": 70.4225352112676,
+      "percent_covered_display": "70",
+      "missing_lines": 21,
+      "excluded_lines": 0,
+      "percent_statements_covered": 70.4225352112676,
+      "percent_statements_covered_display": "70"
+    },
+    "app/services/package_probe.py": {
+      "covered_lines": 15,
+      "num_statements": 89,
+      "percent_covered": 16.853932584269664,
+      "percent_covered_display": "17",
+      "missing_lines": 74,
+      "excluded_lines": 0,
+      "percent_statements_covered": 16.853932584269664,
+      "percent_statements_covered_display": "17"
+    },
+    "app/services/private_files.py": {
+      "covered_lines": 8,
+      "num_statements": 51,
+      "percent_covered": 15.686274509803921,
+      "percent_covered_display": "16",
+      "missing_lines": 43,
+      "excluded_lines": 0,
+      "percent_statements_covered": 15.686274509803921,
+      "percent_statements_covered_display": "16"
+    },
+    "app/services/reports.py": {
+      "covered_lines": 73,
+      "num_statements": 173,
+      "percent_covered": 42.19653179190752,
+      "percent_covered_display": "42",
+      "missing_lines": 100,
+      "excluded_lines": 0,
+      "percent_statements_covered": 42.19653179190752,
+      "percent_statements_covered_display": "42"
+    },
+    "app/services/settings.py": {
+      "covered_lines": 16,
+      "num_statements": 46,
+      "percent_covered": 34.78260869565217,
+      "percent_covered_display": "35",
+      "missing_lines": 30,
+      "excluded_lines": 0,
+      "percent_statements_covered": 34.78260869565217,
+      "percent_statements_covered_display": "35"
+    },
+    "app/services/tasks.py": {
+      "covered_lines": 84,
+      "num_statements": 104,
+      "percent_covered": 80.76923076923077,
+      "percent_covered_display": "81",
+      "missing_lines": 20,
+      "excluded_lines": 0,
+      "percent_statements_covered": 80.76923076923077,
+      "percent_statements_covered_display": "81"
+    },
+    "app/settings/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/settings/config.py": {
+      "covered_lines": 96,
+      "num_statements": 96,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/settings/defaults.py": {
+      "covered_lines": 25,
+      "num_statements": 25,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/settings/paths.py": {
+      "covered_lines": 24,
+      "num_statements": 27,
+      "percent_covered": 88.88888888888889,
+      "percent_covered_display": "89",
+      "missing_lines": 3,
+      "excluded_lines": 0,
+      "percent_statements_covered": 88.88888888888889,
+      "percent_statements_covered_display": "89"
+    },
+    "app/ui/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/ui/ai_lab.py": {
+      "covered_lines": 219,
+      "num_statements": 231,
+      "percent_covered": 94.8051948051948,
+      "percent_covered_display": "95",
+      "missing_lines": 12,
+      "excluded_lines": 0,
+      "percent_statements_covered": 94.8051948051948,
+      "percent_statements_covered_display": "95"
+    },
+    "app/ui/attendance_demo.py": {
+      "covered_lines": 26,
+      "num_statements": 181,
+      "percent_covered": 14.3646408839779,
+      "percent_covered_display": "14",
+      "missing_lines": 155,
+      "excluded_lines": 0,
+      "percent_statements_covered": 14.3646408839779,
+      "percent_statements_covered_display": "14"
+    },
+    "app/ui/backups_demo.py": {
+      "covered_lines": 0,
+      "num_statements": 35,
+      "percent_covered": 0.0,
+      "percent_covered_display": "0",
+      "missing_lines": 35,
+      "excluded_lines": 0,
+      "percent_statements_covered": 0.0,
+      "percent_statements_covered_display": "0"
+    },
+    "app/ui/dashboard_demo.py": {
+      "covered_lines": 0,
+      "num_statements": 59,
+      "percent_covered": 0.0,
+      "percent_covered_display": "0",
+      "missing_lines": 59,
+      "excluded_lines": 0,
+      "percent_statements_covered": 0.0,
+      "percent_statements_covered_display": "0"
+    },
+    "app/ui/enrollment.py": {
+      "covered_lines": 135,
+      "num_statements": 261,
+      "percent_covered": 51.724137931034484,
+      "percent_covered_display": "52",
+      "missing_lines": 126,
+      "excluded_lines": 0,
+      "percent_statements_covered": 51.724137931034484,
+      "percent_statements_covered_display": "52"
+    },
+    "app/ui/main_window.py": {
+      "covered_lines": 162,
+      "num_statements": 167,
+      "percent_covered": 97.0059880239521,
+      "percent_covered_display": "97",
+      "missing_lines": 5,
+      "excluded_lines": 0,
+      "percent_statements_covered": 97.0059880239521,
+      "percent_statements_covered_display": "97"
+    },
+    "app/ui/reports_demo.py": {
+      "covered_lines": 7,
+      "num_statements": 22,
+      "percent_covered": 31.818181818181817,
+      "percent_covered_display": "32",
+      "missing_lines": 15,
+      "excluded_lines": 0,
+      "percent_statements_covered": 31.818181818181817,
+      "percent_statements_covered_display": "32"
+    },
+    "app/ui/session_window.py": {
+      "covered_lines": 83,
+      "num_statements": 622,
+      "percent_covered": 13.344051446945338,
+      "percent_covered_display": "13",
+      "missing_lines": 539,
+      "excluded_lines": 0,
+      "percent_statements_covered": 13.344051446945338,
+      "percent_statements_covered_display": "13"
+    },
+    "app/ui/theme.py": {
+      "covered_lines": 9,
+      "num_statements": 9,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/widgets/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/widgets/attendance_chart.py": {
+      "covered_lines": 61,
+      "num_statements": 77,
+      "percent_covered": 79.22077922077922,
+      "percent_covered_display": "79",
+      "missing_lines": 16,
+      "excluded_lines": 0,
+      "percent_statements_covered": 79.22077922077922,
+      "percent_statements_covered_display": "79"
+    },
+    "app/widgets/cards.py": {
+      "covered_lines": 25,
+      "num_statements": 25,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "app/widgets/toast.py": {
+      "covered_lines": 55,
+      "num_statements": 56,
+      "percent_covered": 98.21428571428571,
+      "percent_covered_display": "98",
+      "missing_lines": 1,
+      "excluded_lines": 0,
+      "percent_statements_covered": 98.21428571428571,
+      "percent_statements_covered_display": "98"
+    },
+    "database/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "database/attendance_demo.py": {
+      "covered_lines": 49,
+      "num_statements": 199,
+      "percent_covered": 24.623115577889447,
+      "percent_covered_display": "25",
+      "missing_lines": 150,
+      "excluded_lines": 0,
+      "percent_statements_covered": 24.623115577889447,
+      "percent_statements_covered_display": "25"
+    },
+    "database/dashboard_demo.py": {
+      "covered_lines": 6,
+      "num_statements": 22,
+      "percent_covered": 27.272727272727273,
+      "percent_covered_display": "27",
+      "missing_lines": 16,
+      "excluded_lines": 0,
+      "percent_statements_covered": 27.272727272727273,
+      "percent_statements_covered_display": "27"
+    },
+    "database/demo.py": {
+      "covered_lines": 18,
+      "num_statements": 67,
+      "percent_covered": 26.865671641791046,
+      "percent_covered_display": "27",
+      "missing_lines": 49,
+      "excluded_lines": 0,
+      "percent_statements_covered": 26.865671641791046,
+      "percent_statements_covered_display": "27"
+    },
+    "database/maintenance.py": {
+      "covered_lines": 0,
+      "num_statements": 16,
+      "percent_covered": 0.0,
+      "percent_covered_display": "0",
+      "missing_lines": 16,
+      "excluded_lines": 0,
+      "percent_statements_covered": 0.0,
+      "percent_statements_covered_display": "0"
+    },
+    "database/migrations/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "database/migrations/env.py": {
+      "covered_lines": 0,
+      "num_statements": 9,
+      "percent_covered": 0.0,
+      "percent_covered_display": "0",
+      "missing_lines": 9,
+      "excluded_lines": 0,
+      "percent_statements_covered": 0.0,
+      "percent_statements_covered_display": "0"
+    },
+    "database/reports_demo.py": {
+      "covered_lines": 7,
+      "num_statements": 26,
+      "percent_covered": 26.923076923076923,
+      "percent_covered_display": "27",
+      "missing_lines": 19,
+      "excluded_lines": 0,
+      "percent_statements_covered": 26.923076923076923,
+      "percent_statements_covered_display": "27"
+    },
+    "database/runtime.py": {
+      "covered_lines": 32,
+      "num_statements": 83,
+      "percent_covered": 38.55421686746988,
+      "percent_covered_display": "39",
+      "missing_lines": 51,
+      "excluded_lines": 0,
+      "percent_statements_covered": 38.55421686746988,
+      "percent_statements_covered_display": "39"
+    },
+    "database/schema/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "database/seed/__init__.py": {
+      "covered_lines": 0,
+      "num_statements": 0,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "database/seed/defaults.py": {
+      "covered_lines": 5,
+      "num_statements": 10,
+      "percent_covered": 50.0,
+      "percent_covered_display": "50",
+      "missing_lines": 5,
+      "excluded_lines": 0,
+      "percent_statements_covered": 50.0,
+      "percent_statements_covered_display": "50"
+    },
+    "database/seed/school.py": {
+      "covered_lines": 24,
+      "num_statements": 136,
+      "percent_covered": 17.647058823529413,
+      "percent_covered_display": "18",
+      "missing_lines": 112,
+      "excluded_lines": 0,
+      "percent_statements_covered": 17.647058823529413,
+      "percent_statements_covered_display": "18"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "archive": "dist/releases/StarGate-Research-Windows-x64-0.14.2.zip",
+  "sha256": "608a00129a57045875ecd6f6e6e0a576685df53f1e7bad45e8b7497cb13223c3",
+  "version": "0.14.2-research",
+  "files": 89,
+  "source_files_verified": 217,
+  "source_plan_snapshot_sha256": "257842290216bc0ae1d742af994b160eb6ab6f5a4778273ebcbe05dee5a0bd8d",
+  "archive_bytes": 484687661,
+  "release_files_verified": 89,
+  "all_hashes_verified": true,
+  "private_source_excluded": true,
+  "research_weights_in_source": false,
+  "status": "internal research candidate; V1 acceptance remains open"
+}

@@ -1,0 +1,35 @@
+300293 WARNING: Library not found: could not resolve 'icuuc.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Core.dll'.
+300293 WARNING: Library not found: could not resolve 'MPR.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Core.dll'.
+300293 WARNING: Library not found: could not resolve 'ntdll.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Core.dll'.
+300309 WARNING: Library not found: could not resolve 'USERENV.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Core.dll'.
+300309 WARNING: Library not found: could not resolve 'AUTHZ.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Core.dll'.
+300309 WARNING: Library not found: could not resolve 'NETAPI32.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Core.dll'.
+300309 WARNING: Library not found: could not resolve 'VERSION.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Core.dll'.
+300309 WARNING: Library not found: could not resolve 'WINMM.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Core.dll'.
+300309 WARNING: Library not found: could not resolve 'Secur32.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Network.dll'.
+300309 WARNING: Library not found: could not resolve 'DNSAPI.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Network.dll'.
+300309 WARNING: Library not found: could not resolve 'IPHLPAPI.DLL', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Network.dll'.
+300309 WARNING: Library not found: could not resolve 'WINHTTP.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Network.dll'.
+300309 WARNING: Library not found: could not resolve 'PROPSYS.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Multimedia.dll'.
+300309 WARNING: Library not found: could not resolve 'AVRT.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Multimedia.dll'.
+300309 WARNING: Library not found: could not resolve 'bcrypt.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\avutil-59.dll'.
+300309 WARNING: Library not found: could not resolve 'Secur32.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\avformat-61.dll'.
+300309 WARNING: Library not found: could not resolve 'UxTheme.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Widgets.dll'.
+300309 WARNING: Library not found: could not resolve 'dwmapi.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\PyQt6\\Qt6\\bin\\Qt6Widgets.dll'.
+300322 WARNING: Library not found: could not resolve 'bcrypt.dll', dependency of 'C:\\StarGate-build\\prerequisites\\Python-3.11.17\\PCbuild\\amd64\\libcrypto-3.dll'.
+300322 WARNING: Library not found: could not resolve 'Secur32.dll', dependency of 'C:\\StarGate-build\\.venv-win\\Lib\\site-packages\\psycopg_binary.libs\\libpq-13526ef5f50b591fb6c9294c99c1b82d.dll'.
+300733 INFO: Warnings written to C:\StarGate-build\build\StarGate\warn-StarGate.txt
+301977 INFO: Graph cross-reference written to C:\StarGate-build\build\StarGate\xref-StarGate.html
+302373 INFO: checking PYZ
+302852 INFO: checking PKG
+302875 INFO: Bootloader C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+302875 INFO: checking EXE
+302903 INFO: checking PKG
+302920 INFO: Bootloader C:\StarGate-build\.venv-win\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+302920 INFO: checking EXE
+302980 INFO: checking COLLECT
+302980 INFO: Building COLLECT because COLLECT-00.toc is non existent
+302980 INFO: Removing dir C:\StarGate-build\dist\StarGate
+304398 INFO: Building COLLECT COLLECT-00.toc
+374709 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+374988 INFO: Build complete! The results are available in: C:\StarGate-build\dist

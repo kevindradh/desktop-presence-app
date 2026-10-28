@@ -8,6 +8,7 @@ import subprocess
 import sys
 import sysconfig
 import shutil
+import stat
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
@@ -47,6 +48,19 @@ def finalize_output(output, include_models):
       'research_models':include_models,'windows_uat':'required separately','files':files},indent=2)+'\n')
 
 
+def prepare_previous_output(output):
+    output=Path(output)
+    if platform.system()!='Windows' or not output.exists():return
+    if output.is_symlink() or output.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+        raise ValueError('Folder keluaran build tidak boleh berupa tautan.')
+    for path in output.rglob('*'):
+        if (path.is_symlink() or path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT
+                or not path.resolve().is_relative_to(output.resolve())):
+            raise ValueError('Keluaran build lama berisi tautan di luar folder.')
+        if path.is_file() and path.stat().st_file_attributes & stat.FILE_ATTRIBUTE_READONLY:
+            path.chmod(stat.S_IREAD | stat.S_IWRITE)
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target',choices=['windows','macos'],required=True)
@@ -64,6 +78,7 @@ def main(argv=None):
         if args.check_only:print('Prasyarat build PASS; executable belum dibuat.');return 0
         import os
         env=dict(os.environ);env['STARGATE_BUILD_RESEARCH_MODELS']='1' if args.include_research_models else '0'
+        prepare_previous_output(ROOT/'dist/StarGate')
         result=subprocess.run([sys.executable,'-m','PyInstaller','--noconfirm','--clean',str(ROOT/'packaging/StarGate.spec')],cwd=ROOT,env=env)
         if result.returncode:return result.returncode
         output=ROOT/'dist/StarGate'
