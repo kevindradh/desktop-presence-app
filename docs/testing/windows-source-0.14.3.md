@@ -24,3 +24,11 @@ Bukti: [schema dan hitungan](evidence/windows-source-0.14.3/source-check.json), 
 Preflight pertama berhenti sebelum membuat venv/database: dua aset deklaratif, `third_party/minifasnet/LICENSE` dan `MiniFASNet.py`, sudah di-hash tetapi belum dihitung dalam himpunan berkas pendukung karena berada di luar tiga folder binary. Pemeriksaan diperbaiki untuk turut menghitung aset deklaratif tersebut; verifikasi hash seluruh aset dipertahankan. Arsip percobaan pertama disimpan terpisah dan tidak menjadi paket unduhan final. Pengujian diulang sebelum venv/data dibuat dan berhasil. Tidak menghapus pengaman untuk meloloskan paket.
 
 [Petunjuk pemasangan laptop](../windows-source-setup.md). Berkas tersebut juga disertakan sebagai `SOURCE-README.md` di dalam paket, dengan referensi notice relatif terhadap root paket. Python3.11x64 serta Visual C++ Runtime resmi dipasang terlebih dahulu; setelah itu gunakan SETUP-WINDOWS.cmd dan RUN-WINDOWS.cmd.
+
+## Startup setelah proses database/model berhenti
+
+Uji tambahan menggunakan source kit dan venv baru yang sama. Cluster uji dihentikan terlebih dahulu; `pg_ctl status` memastikan tidak berjalan. `SessionWindow` produksi dibuat dengan AuthService/database sebenarnya. Alur `_initialize` berhasil menyalakan cluster otomatis dan mencapai halaman pembuatan Super Admin. Tidak menjalankan `setup-local` sebagai langkah penyalaan dalam uji ini.
+
+`InferenceController` produksi kemudian dimulai dari keadaan berhenti, memuat model dari folder source dan mencapai `ready` dalam12,172detik pada Parallels, di bawah batas pemuatan30detik. Proses AI dihentikan kembali dan cluster uji dibersihkan secara normal. Kamera tidak dibuka dan tidak ada wajah yang diproses. [Bukti startup](evidence/windows-source-0.14.3/restart-check.json).
+
+Windows tidak direboot pada pengujian ini. Hasil membuktikan startup aplikasi saat proses database mati dan pemuatan proses model baru; reboot OS penuh dan laptop AMD fisik tetap memerlukan pengujian perangkat. Pada penggunaan normal, RUN-WINDOWS.cmd menunjuk profil `%LOCALAPPDATA%\StarGate-Source`, sehingga database kelolaan diperiksa/dinyalakan sebelum login. Model dimuat ketika fitur registrasi/absensi dimulai. Tidak ada proses model terpisah yang perlu dinyalakan pengguna lewat terminal.

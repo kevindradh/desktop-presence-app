@@ -1,0 +1,14 @@
+{
+  "database_before": "stopped",
+  "startup_path": "production SessionWindow._initialize",
+  "database_auto_started": true,
+  "bootstrap_page_reached": true,
+  "model_path": "C:\\StarGate-source-0143\\resources\\models",
+  "production_inference_controller": "ready",
+  "model_load_seconds": 12.172,
+  "model_load_timeout_seconds": 30,
+  "camera_opened": false,
+  "faces_processed": false,
+  "windows_rebooted": false,
+  "environment": "Windows11 ARM64 Parallels, CPython3.11.17 x64, source kit"
+}
