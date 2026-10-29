@@ -3,11 +3,11 @@ from dataclasses import dataclass, field
 import hashlib
 import hmac
 import json
-import os
 import time
 import numpy as np
 from ai.contracts import InferenceTimeout
 from ai.enrollment import CapturePacket
+from app.services.worker_output import silence_worker_output
 
 
 def signed_packet(key, binding, sequence, created, *, analysis=None):
@@ -26,8 +26,7 @@ class AttendanceTarget:
     binding: dict = field(repr=False)
 
     def __call__(self, root, model_dir, options, pixels, shape, lock, connection):
-        null = os.open(os.devnull, os.O_WRONLY)
-        os.dup2(null, 1); os.dup2(null, 2); os.close(null)
+        silence_worker_output()
         try:
             from ai.engine import FaceEngine
             engine = FaceEngine(root, model_dir, options)

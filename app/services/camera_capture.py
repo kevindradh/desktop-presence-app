@@ -4,6 +4,7 @@ import hashlib
 import os
 import sys
 import time
+from app.services.worker_output import silence_worker_output
 
 PREVIEW_WIDTH, PREVIEW_HEIGHT = 960, 540
 FRAME_BYTES = PREVIEW_WIDTH * PREVIEW_HEIGHT * 3
@@ -30,10 +31,7 @@ class CaptureSpec:
 def capture_process(spec, pixels, metadata, lock, messages, stop, open_timeout, read_timeout):
     # Native FFmpeg/OpenCV diagnostics can contain credential-bearing URLs.
     # Redirect before importing the capture runtime; parent receives fixed codes only.
-    null = os.open(os.devnull, os.O_WRONLY)
-    os.dup2(null, 1)
-    os.dup2(null, 2)
-    os.close(null)
+    silence_worker_output()
     os.environ["OPENCV_LOG_LEVEL"] = "SILENT"
     os.environ["OPENCV_FFMPEG_LOGLEVEL"] = "-8"
     import cv2

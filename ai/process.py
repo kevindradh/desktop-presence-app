@@ -1,14 +1,11 @@
 """Memory-only model worker: no Qt, database, enrollment files or face-bearing output."""
-import os
 import numpy as np
 from ai.contracts import InferenceTimeout
+from app.services.worker_output import silence_worker_output
 
 
 def inference_process(root,model_dir,options,pixels,shape,lock,connection):
-    null=os.open(os.devnull,os.O_WRONLY)
-    os.dup2(null,1)
-    os.dup2(null,2)
-    os.close(null)
+    silence_worker_output()
     reference=None
     stopped=False
     try:

@@ -1,10 +1,10 @@
 """Private capture worker. Complete bundles cross IPC only after five validated poses."""
 from dataclasses import dataclass,field,replace
-import os
 import hashlib,hmac,json,time
 import numpy as np
 from ai.enrollment import AutoCapture,CaptureDraft,CaptureError,CapturePacket
 from ai.contracts import InferenceTimeout
+from app.services.worker_output import silence_worker_output
 
 
 @dataclass(repr=False)
@@ -13,8 +13,7 @@ class EnrollmentTarget:
     binding: dict=field(repr=False)
 
     def __call__(self,root,model_dir,options,pixels,shape,lock,connection):
-        null=os.open(os.devnull,os.O_WRONLY)
-        os.dup2(null,1);os.dup2(null,2);os.close(null)
+        silence_worker_output()
         draft=None
         automatic=None
         try:

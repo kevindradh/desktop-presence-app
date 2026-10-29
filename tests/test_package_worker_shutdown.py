@@ -15,13 +15,15 @@ def probe_worker(connection,pixels,shape,behavior):
         shape[:]=(0,0)
     if behavior not in {'no_ack','no_ack_exit'}:connection.send({'event':'stopped'})
     if behavior=='crash':os._exit(7)
+    if behavior=='flush_failure':os._exit(120)
     if behavior in {'hang','dirty','no_ack'}:time.sleep(60)
     connection.close()
 
 
 @pytest.mark.parametrize('behavior,expected,forced',[
     ('normal',True,False),('hang',True,True),('dirty',False,True),
-    ('no_ack',False,True),('crash',False,False),('missing_ack',False,False)])
+    ('no_ack',False,True),('crash',False,False),('missing_ack',False,False),
+    ('flush_failure',False,False)])
 def test_shutdown_requires_acknowledgement_wiped_memory_and_known_exit(behavior,expected,forced):
     ctx=mp.get_context('spawn')
     pixels=ctx.RawArray('B',64)
@@ -38,6 +40,7 @@ def test_shutdown_requires_acknowledgement_wiped_memory_and_known_exit(behavior,
         assert details['forced_termination'] is forced
         assert details['reaped'] and not process.is_alive()
         if behavior=='crash':assert details['exit_code']==7
+        if behavior=='flush_failure':assert details['exit_code']==120
         if expected:assert details['buffers_cleared'] and details['stop_acknowledged']
     finally:
         parent.close()
