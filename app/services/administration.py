@@ -354,7 +354,7 @@ class AdministrationService:
             if ends is not None:
                 overlap = overlap.where(ShiftAssignment.starts_on <= ends)
             if session.scalar(overlap.limit(1)) is not None:
-                raise DataValidationError("Tanggal penugasan bertumpang tindih. Akhiri penugasan lama terlebih dahulu.")
+                raise DataValidationError("Tanggal penugasan bertumpang tindih. Atur tanggal terakhir sebelum shift baru, atau batalkan penugasan yang salah input.")
             row = ShiftRepository(session).assign(member.id, shift_id, starts, ends)
             member.revision += 1
             self._audit(session, actor, "schedule.created", "schedule", row, ["member_id", "shift_id", "starts_on", "ends_on"])
@@ -367,10 +367,7 @@ class AdministrationService:
             row = self._row(session, ShiftAssignment, assignment_id)
             if row.member_id != member.id or type(ends) is not date or ends < row.starts_on:
                 raise DataValidationError("Tanggal akhir penugasan tidak valid.")
-            latest = session.scalar(select(func.max(Attendance.work_date)).where(
-                Attendance.member_id == member.id, Attendance.shift_id == row.shift_id,
-                Attendance.work_date >= row.starts_on,
-                Attendance.work_date <= row.ends_on if row.ends_on else True))
+            latest = self._latest_assignment_attendance(session, row)
             if latest and ends < latest:
                 raise DataValidationError("Tanggal akhir tidak boleh mengeluarkan riwayat kehadiran yang sudah tercatat.")
             if row.ends_on is not None and ends > row.ends_on:
@@ -379,6 +376,30 @@ class AdministrationService:
                 row.ends_on = ends
                 member.revision += 1
                 self._audit(session, actor, "schedule.ended", "schedule", row, ["ends_on"])
+        return self._run(token, "shifts", operation)
+
+    @staticmethod
+    def _latest_assignment_attendance(session, assignment):
+        statement = select(func.max(Attendance.work_date)).where(
+            Attendance.member_id == assignment.member_id,
+            Attendance.shift_id == assignment.shift_id,
+            Attendance.work_date >= assignment.starts_on,
+        )
+        if assignment.ends_on is not None:
+            statement = statement.where(Attendance.work_date <= assignment.ends_on)
+        return session.scalar(statement)
+
+    def cancel_assignment(self, token, member_id, revision, assignment_id):
+        def operation(session, actor):
+            member = self._row(session, Member, member_id, identifier(revision))
+            assignment = self._row(session, ShiftAssignment, assignment_id)
+            if assignment.member_id != member.id:
+                raise DataValidationError("Penugasan tidak sesuai dengan anggota yang dipilih.")
+            if self._latest_assignment_attendance(session, assignment) is not None:
+                raise DataValidationError("Penugasan sudah punya riwayat kehadiran dan tidak bisa dibatalkan.")
+            self._audit(session, actor, "schedule.cancelled", "schedule", assignment)
+            session.delete(assignment)
+            member.revision += 1
         return self._run(token, "shifts", operation)
 
     def register_member(self, token, **fields):

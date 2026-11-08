@@ -171,6 +171,34 @@ def test_assignments_nonoverlap_inclusive_boundary_end_and_history(administratio
         service.end_assignment(login.token, member.id, detail.member.revision, assignment, date(2026, 11, 1))
 
 
+def test_cancel_unused_assignment_allows_same_day_correction_and_keeps_history(administration, data, store):
+    service, login, _ = administration
+    member_id, _, _, shift_id, _, event_id = data
+    past = date(2026, 10, 18)
+    correction = date(2026, 10, 21)
+    member = service.member(login.token, member_id).member
+    used = service.assign_shift(login.token, member_id, member.revision, shift_id, past, past)
+    member = service.member(login.token, member_id).member
+    with pytest.raises(DataValidationError, match="riwayat kehadiran"):
+        service.cancel_assignment(login.token, member_id, member.revision, used)
+
+    wrong = service.assign_shift(login.token, member_id, member.revision, shift_id, correction, correction)
+    member = service.member(login.token, member_id).member
+    right = service.save_shift(login.token, "Shift Pengganti", time(8), time(16), 5)
+    with pytest.raises(DataValidationError, match="tumpang tindih"):
+        service.assign_shift(login.token, member_id, member.revision, right.id, correction)
+    service.cancel_assignment(login.token, member_id, member.revision, wrong)
+    member = service.member(login.token, member_id).member
+    replacement = service.assign_shift(login.token, member_id, member.revision, right.id, correction)
+    with store.db.transaction() as session:
+        assert session.get(ShiftAssignment, wrong) is None
+        assert session.get(ShiftAssignment, replacement).starts_on == correction
+        assert session.get(ShiftAssignment, used).shift_id == shift_id
+        assert session.get(Attendance, event_id).work_date == past
+        cancelled = session.scalar(select(AuditLog).where(AuditLog.action == "schedule.cancelled"))
+        assert cancelled.entity_id == wrong and cancelled.actor_id == login.principal.id
+
+
 def test_parallel_assignments_and_edits_do_not_overwrite(administration, data):
     service, login, _ = administration
     member = service.member(login.token, data[0]).member

@@ -88,6 +88,7 @@ class AdminPage(QWidget):
     def confirm(self, title, text, action):
         dialog = QMessageBox(QMessageBox.Icon.Question, title, text,
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, self)
+        dialog.setTextFormat(Qt.TextFormat.PlainText)
         dialog.setDefaultButton(QMessageBox.StandardButton.No)
         def done(result):
             if result == QMessageBox.StandardButton.Yes.value:
@@ -467,25 +468,29 @@ class MembersPage(AdminPage):
         self.existing_assignment = QComboBox()
         self.end_assignment_button = QPushButton("Akhiri penugasan")
         self.end_assignment_button.clicked.connect(self.end_assignment)
+        self.cancel_assignment_button = QPushButton("Batalkan penugasan")
+        self.cancel_assignment_button.clicked.connect(self.cancel_assignment)
         self.shift.currentIndexChanged.connect(self.controls)
         self.existing_assignment.currentIndexChanged.connect(self.controls)
         for row, column, title, field in (
                 (0, 0, 'Shift', self.shift), (0, 2, 'Tanggal mulai', self.starts),
                 (1, 0, 'Tanggal akhir', self.ends),
-                (3, 0, 'Penugasan yang diakhiri', self.existing_assignment),
-                (3, 2, 'Tanggal akhir berlaku', self.end_existing_date)):
+                (3, 0, 'Penugasan', self.existing_assignment),
+                (3, 2, 'Hari terakhir bertugas', self.end_existing_date)):
             label = text_label(title, wrap=False)
             label.setBuddy(field)
             form.addWidget(label, row, column)
             form.addWidget(field, row, column+1)
         form.addWidget(self.unlimited, 1, 2, 1, 2)
         form.addWidget(self.assign_button, 2, 0, 1, 4)
-        form.addWidget(self.end_assignment_button, 4, 0, 1, 4)
+        form.addWidget(self.end_assignment_button, 4, 0, 1, 2)
+        form.addWidget(self.cancel_assignment_button, 4, 2, 1, 2)
         tab_fields = (self.shift, self.starts, self.ends, self.unlimited, self.assign_button,
-                      self.existing_assignment, self.end_existing_date, self.end_assignment_button)
+                      self.existing_assignment, self.end_existing_date, self.end_assignment_button,
+                      self.cancel_assignment_button)
         for previous, current in zip(tab_fields, tab_fields[1:]):
             QWidget.setTabOrder(previous, current)
-        self.buttons.extend((self.assign_button, self.end_assignment_button))
+        self.buttons.extend((self.assign_button, self.end_assignment_button, self.cancel_assignment_button))
         self.shift_body.addWidget(self.assignment_widget)
         self.shift_body.addStretch()
 
@@ -502,7 +507,9 @@ class MembersPage(AdminPage):
         self.assignment_message.setVisible(self.selected is None)
         self.assignment_widget.setVisible(bool(self.detail and self.detail.can_assign))
         self.assign_button.setEnabled(not self.pending and can_assign and self.shift.currentData() is not None)
-        self.end_assignment_button.setEnabled(not self.pending and can_assign and self.existing_assignment.currentData() is not None)
+        has_assignment = not self.pending and can_assign and self.existing_assignment.currentData() is not None
+        self.end_assignment_button.setEnabled(has_assignment)
+        self.cancel_assignment_button.setEnabled(has_assignment)
 
     def clear_form(self):
         self.selected = self.detail = None
@@ -642,3 +649,13 @@ class MembersPage(AdminPage):
             return
         arguments = (self.selected.id, self.selected.revision, self.existing_assignment.currentData(), self.end_existing_date.date().toPyDate())
         self.run(lambda service, token: service.end_assignment(token, *arguments), self.refresh_detail)
+
+    def cancel_assignment(self):
+        assignment_id = self.existing_assignment.currentData()
+        if not self.selected or assignment_id is None:
+            return
+        arguments = (self.selected.id, self.selected.revision, assignment_id)
+        label = self.existing_assignment.currentText()
+        self.confirm("Batalkan penugasan", f"Batalkan penugasan {label} untuk {self.selected.name}?",
+                     lambda: self.run(lambda service, token: service.cancel_assignment(token, *arguments),
+                                      self.refresh_detail))

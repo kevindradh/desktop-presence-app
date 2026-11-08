@@ -254,6 +254,37 @@ def test_member_shift_assignment_open_end_and_next_day(auth, data, views, wait_u
     snapshot(view,'members-shift-tab.png')
 
 
+def test_member_cancels_wrong_assignment_and_reuses_start_date(auth, data, views, wait_until):
+    service, _, _ = auth
+    view = views(service)
+    sign_in(view, "root", NEW, wait_until)
+    page = open_page(view, "members", wait_until)
+    page.table.selectRow(0)
+    settled(view, wait_until)
+    page.member_tabs.setCurrentWidget(page.shift_tab)
+    assert not page.cancel_assignment_button.isEnabled()
+    page.shift.setCurrentIndex(page.shift.findData(data[3]))
+    start = QDate(2026, 10, 21)
+    page.starts.setDate(start)
+    page.assign_button.click()
+    settled(view, wait_until)
+    assert page.assignment_table.rowCount() == 1
+    page.existing_assignment.setCurrentIndex(1)
+    assert page.cancel_assignment_button.isEnabled()
+    page.cancel_assignment_button.click()
+    answer(page, QMessageBox.StandardButton.No, wait_until)
+    assert page.assignment_table.rowCount() == 1
+    page.cancel_assignment_button.click()
+    answer(page, QMessageBox.StandardButton.Yes, wait_until)
+    settled(view, wait_until)
+    assert page.assignment_table.rowCount() == 0
+    assert not page.cancel_assignment_button.isEnabled()
+    assert page.starts.date() == start
+    page.assign_button.click()
+    settled(view, wait_until)
+    assert page.assignment_table.item(0, 1).text() == "2026-10-21"
+
+
 def test_operator_can_edit_members_but_cannot_assign_shift(auth, data, views, wait_until):
     service, admin, _ = auth
     _, login = add_role(service, admin, Role.OPERATOR)
