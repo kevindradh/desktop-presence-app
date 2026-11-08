@@ -75,7 +75,9 @@ def check_package(config, *, verify_models=False):
         app=QApplication.instance() or QApplication([])
         checks['qt_image_plugins']={b'png',b'jpeg'} <= set(bytes(x) for x in QImageReader.supportedImageFormats())
         for name in ('resources/sounds/success.wav','resources/samples/profile-removed.svg',
-                     'resources/branding/stargate.png','resources/branding/stargate.ico',
+                     'resources/icons/checkbox-check.svg',
+                     'resources/branding/stargate.png','resources/branding/stargate-white.png',
+                     'resources/branding/stargate.ico',
                      'models/manifest.json','database/migrations/env.py'):
             checks[name]=(config.resource_root/name).is_file()
         # Explicitly import native/report/DB dependencies; never connect to a server here.

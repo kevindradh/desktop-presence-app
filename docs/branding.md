@@ -1,29 +1,13 @@
 # Logo StarGate
 
-Logo berasal dari PNG transparan yang diberikan pengguna, `Forest Green Archway Star Emblem.png`. Berkas PNG disalin tanpa mengubah bentuk, warna, atau proporsinya. Sesuai revisi pengguna, ikon sistem operasi memakai alas putih bersudut membulat agar terlihat pada Dock/taskbar gelap. Logo di dalam aplikasi tetap memakai PNG transparan asli.
+PNG logo tersimpan di `resources/branding/`. Logo hijau dipakai di panel masuk, pembuatan Super Admin, ganti password, dan persiapan aplikasi. Logo putih dipakai langsung pada sidebar gelap.
 
-## Penerapan
+| Aset dalam `resources/branding/` | Penggunaan |
+| --- | --- |
+| `stargate.png` | PNG hijau asli untuk panel terang |
+| `stargate-white.png` | PNG putih asli untuk sidebar |
+| `stargate-app.png` | Ikon 1024 × 1024 dengan alas putih dan sudut transparan |
+| `stargate.ico` | Ikon Windows, termasuk executable dan installer |
+| `stargate.icns` | Ikon aplikasi macOS |
 
-- Logo dan nama StarGate berada di tengah panel masuk, pembuatan Super Admin, ganti password, dan persiapan aplikasi.
-- Sidebar memakai simbol hijau dengan alas putih kecil supaya terbaca di latar gelap; nama StarGate tetap di sebelahnya.
-- QApplication dan kedua jendela utama memakai ikon yang sama.
-- Spec PyInstaller menyertakan aset dan ikon executable; Inno Setup memakai ikon untuk installer. Source kit menyertakan PNG, ICO, dan ICNS.
-- Windows0.14.3-research sudah dibangun dan dipasang di Parallels; hasilnya tersedia pada [laporan pembaruan](testing/windows-logo-0.14.3.md). Installer dan arsip0.14.2 yang sudah dibuat tetap dipertahankan dan belum memuat perubahan logo ini.
-
-## Aset
-
-`resources/branding/stargate.png`: PNG asli1254×1254, transparan. `stargate-app.png`: ikon1024×1024 dengan alas putih dan sudut luar transparan. `stargate.ico`: ukuran16,24,32,48,64,128,256piksel. `stargate.icns`: format ikon macOS. Pembacaan UI memakai resource bundle, terpisah dari folder data pengguna.
-
-Jalankan `.venv/bin/python scripts/prepare_brand_icons.py` untuk merender ulang ikon. Skrip menempatkan PNG asli pada alas putih melalui QPainter lalu mengekspor PNG/ICO/ICNS; tidak menggambar ulang atau mewarnai ulang simbol. Ikon baru memerlukan restart aplikasi; binary Windows lama tetap memerlukan build ulang.
-
-## Pemeriksaan
-
-- PASS: PNG di proyek identik dengan berkas yang diberikan pengguna.
-- PASS: preview panel masuk, pembuatan Super Admin pada1000×740 dan sidebar diperiksa; tombol tetap terlihat dan tidak ada overflow horizontal pada navigasi.
-- PASS:31tes packaging/session (PostgreSQL nyata),1SKIP tes model yang tidak diaktifkan pada run ini;9tes shell/bootstrap tambahan lulus.
-- PASS: source package-check untuk Qt/plugin/native/spawn dan keberadaan logo; tidak mengklaim uji executable Windows baru.
-- PASS: aset berada dalam allowlist source kit dan konfigurasi bundle/installer.
-
-## Pemeriksaan desain
-
-Arah mengikuti logo pilihan pengguna dan antarmuka hijau yang sudah ada. ENERGY1/RHYTHM1/MOTION1: identitas bertambah melalui simbol, tanpa animasi atau perubahan layout halaman lain. Alas putih menjaga kontras simbol hijau pada sidebar. Posisi merek di panel masuk tetap terpisah dari judul formulir. Ikon tidak menerima fokus keyboard dan memiliki nama aksesibel. Tidak ada aset ilustrasi atau klaim produk tambahan.
+Setelah mengganti PNG hijau, jalankan `.venv/bin/python scripts/prepare_brand_icons.py` untuk menghasilkan ulang ikon. Aplikasi yang dijalankan dari source memuat logo baru saat dibuka kembali. Untuk memperbarui ikon di Dock, taskbar, dan installer, build ulang paket pada sistem operasi tujuan.

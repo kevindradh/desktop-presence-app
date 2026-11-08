@@ -1,12 +1,13 @@
 from PyQt6.QtGui import QColor, QFontDatabase, QPalette
 
+from app.settings.paths import runtime_paths
+
 
 STYLESHEET = """
 QWidget { font-size: 13px; color: #243a33; }
 QMainWindow, QWidget#workspace { background: #f5f7f4; }
 QFrame#sidebar { background: #142d25; border: none; }
 QFrame#sidebar QLabel { color: #e6eee8; }
-QLabel#brandMark[onDark="true"] { background: white; border-radius: 8px; padding: 4px; }
 QLabel#brand { font-size: 25px; font-weight: 700; letter-spacing: 1px; }
 QLabel#brandHint { color: #9bb6a7; font-size: 11px; }
 QListWidget#navigation { background: transparent; border: 0; outline: 0; }
@@ -41,7 +42,9 @@ QLineEdit, QComboBox, QAbstractSpinBox { background: #fff; border: 1px solid #cb
 QLineEdit:focus, QComboBox:focus { border-color: #649372; }
 QLineEdit:disabled { background: #edf0eb; color: #7b8e80; }
 QCheckBox::indicator { width: 18px; height: 18px; background: #fff; border: 1px solid #8ba693; border-radius: 3px; }
-QCheckBox::indicator:checked { background: #2d6240; border-color: #2d6240; }
+QCheckBox::indicator:checked { background: #2d6240; border-color: #2d6240; image: url("__CHECKBOX_CHECK__"); }
+QCheckBox::indicator:disabled { background: #edf0eb; }
+QCheckBox::indicator:checked:disabled { background: #657b6b; border-color: #657b6b; }
 QTableWidget { background: #fff; border: 1px solid #d3ded4; gridline-color: #e0e7df; selection-background-color: #2d6240; selection-color: #fff; }
 QHeaderView::section { background: #edf1eb; padding: 8px; border: 0; border-bottom: 1px solid #d3ded4; font-weight: 600; }
 QProgressBar { border: 1px solid #dbe5db; background: #f0f4ee; border-radius: 7px; height: 22px; text-align: center; }
@@ -65,4 +68,5 @@ def apply_theme(application):
         palette.setColor(role, QColor(color))
     application.setPalette(palette)
     application.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.GeneralFont))
-    application.setStyleSheet(STYLESHEET)
+    check_icon = runtime_paths().resources / 'resources/icons/checkbox-check.svg'
+    application.setStyleSheet(STYLESHEET.replace('__CHECKBOX_CHECK__', check_icon.as_posix()))

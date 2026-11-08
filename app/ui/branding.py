@@ -17,9 +17,9 @@ def brand_mark(resource_root, size, *, on_dark=False):
     label.setObjectName('brandMark')
     label.setAccessibleName('Logo StarGate')
     label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-    label.setProperty('onDark', on_dark)
     label.setFixedSize(size + 8 if on_dark else size, size + 8 if on_dark else size)
-    pixmap = QPixmap(str(Path(resource_root) / 'resources/branding/stargate.png'))
+    filename = 'stargate-white.png' if on_dark else 'stargate.png'
+    pixmap = QPixmap(str(Path(resource_root) / 'resources/branding' / filename))
     if pixmap.isNull():
         return label
     pixmap = pixmap.scaled(size * 2, size * 2, Qt.AspectRatioMode.KeepAspectRatio,

@@ -9,11 +9,13 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules, copy
 root=Path(SPECPATH).parent
 common=[(str(root/'models/manifest.json'),'models'),
         (str(root/'resources/branding/stargate.png'),'resources/branding'),
+        (str(root/'resources/branding/stargate-white.png'),'resources/branding'),
         (str(root/'resources/branding/stargate-app.png'),'resources/branding'),
         (str(root/'resources/branding/stargate.ico'),'resources/branding'),
         (str(root/'resources/branding/stargate.icns'),'resources/branding'),
         (str(root/'resources/sounds/success.wav'),'resources/sounds'),
         (str(root/'resources/samples/profile-removed.svg'),'resources/samples'),
+        (str(root/'resources/icons/checkbox-check.svg'),'resources/icons'),
         (str(root/'third_party/minifasnet/MiniFASNet.py'),'third_party/minifasnet'),
         (str(root/'third_party/minifasnet/LICENSE'),'third_party/minifasnet'),
         (str(root/'packaging/THIRD_PARTY_NOTICES.md'),'.'),
