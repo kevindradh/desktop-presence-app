@@ -137,6 +137,18 @@ def test_spoof_never_reaches_storage_and_error_never_plays_success(attendance, s
     page.analyzed=observed
     page.start_button.click()
     wait_until(lambda:any(r.get('status')=='spoof' for r in responses),timeout=10000)
+    node = next(iter(page.nodes.values()))
+    def preview_color(x):
+        image = node.preview.pixmap().toImage()
+        return image.pixelColor(round(image.width()*x), image.height()//2).name() if not image.isNull() else None
+    mirrored_left = 1-80/96
+    wait_until(lambda:preview_color(mirrored_left)=='#f5bd42')
+    assert preview_color(10/96)=='#14643c'
+    page.timer.stop()
+    wait_until(lambda:node.inference.state=='ready')
+    page.analyzed(node.entry.spec.device_id, dict(event='result', status='no_face', box=None))
+    wait_until(lambda:preview_color(mirrored_left)=='#14643c')
+    page.timer.start()
     assert not page.message.isVisible()
     assert all(not n.preview.notice.isVisible() for n in page.nodes.values())
     assert not rows(store) and page.sound.plays==0

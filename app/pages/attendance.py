@@ -4,8 +4,8 @@ import time
 from zoneinfo import ZoneInfo
 import numpy as np
 from PyQt6 import sip
-from PyQt6.QtCore import QTimer, Qt, QUrl
-from PyQt6.QtGui import QPixmap, QTransform
+from PyQt6.QtCore import QRectF, QTimer, Qt, QUrl
+from PyQt6.QtGui import QColor, QPainter, QPen, QPixmap, QTransform
 from PyQt6.QtMultimedia import QSoundEffect
 from PyQt6.QtWidgets import (QComboBox, QGridLayout, QHBoxLayout, QLabel,
     QPushButton, QVBoxLayout, QWidget)
@@ -71,6 +71,9 @@ class ScanNode:
     preview: object
     latest: object = field(default=None, repr=False)
     latest_at: float = 0
+    submitted_size: tuple[int, int] | None = None
+    face_box: QRectF | None = None
+    face_box_at: float = 0
     packet: object = field(default=None, repr=False)
     closing: bool = False
     notified_member: int | None = None
@@ -297,6 +300,8 @@ class AttendancePage(QWidget):
             if node.latest is not None:
                 node.latest.fill(0)
             node.latest = None
+            node.submitted_size = None
+            node.face_box = None
             node.preview.clear()
             node.preview.clear_notice()
             return
@@ -305,8 +310,19 @@ class AttendancePage(QWidget):
         rgb = rgb.reshape(image.height(), image.width(), 3)
         node.latest = np.ascontiguousarray(rgb[:, :, ::-1])
         node.latest_at = time.monotonic()
-        node.preview.setPixmap(QPixmap.fromImage(image).transformed(QTransform().scale(-1, 1)).scaled(
-            node.preview.size(), Qt.AspectRatioMode.KeepAspectRatio))
+        pixmap = QPixmap.fromImage(image).transformed(QTransform().scale(-1, 1)).scaled(
+            node.preview.size(), Qt.AspectRatioMode.KeepAspectRatio)
+        box = node.face_box
+        if box is not None and node.latest_at - node.face_box_at < 1:
+            width, height = pixmap.width(), pixmap.height()
+            rect = QRectF(box.x()*width, box.y()*height, box.width()*width, box.height()*height)
+            painter = QPainter(pixmap)
+            painter.setPen(QPen(QColor('#142d25'), 5))
+            painter.drawRect(rect)
+            painter.setPen(QPen(QColor('#f5bd42'), 3))
+            painter.drawRect(rect)
+            painter.end()
+        node.preview.setPixmap(pixmap)
 
     def engine_changed(self, device, state):
         node = self.nodes.get(device)
@@ -328,6 +344,12 @@ class AttendancePage(QWidget):
         if node is None or node.closing or response['event'] != 'result':
             return
         node.packet = response.get('packet')
+        node.face_box = None
+        if response.get('box') and node.submitted_size is not None:
+            x1, y1, x2, y2 = response['box']
+            width, height = node.submitted_size
+            node.face_box = QRectF(1-x2/width, y1/height, (x2-x1)/width, (y2-y1)/height)
+            node.face_box_at = time.monotonic()
 
     def notify_result(self, node, result):
         if result.reason == 'absence':
@@ -373,7 +395,9 @@ class AttendancePage(QWidget):
                 self.run(lambda token, value=packet: self.controller.attendance_service.submit(token, value), accepted)
                 break
             if node.inference.state == 'ready' and node.latest is not None and time.monotonic()-node.latest_at < 1:
-                node.inference.submit(node.latest)
+                if node.inference.submit(node.latest):
+                    height, width = node.latest.shape[:2]
+                    node.submitted_size = (width, height)
         self.controls()
 
     def stop(self):
