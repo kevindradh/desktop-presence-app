@@ -4,10 +4,10 @@ from datetime import date
 from pathlib import Path
 
 from PyQt6.QtCore import QDate
-from PyQt6.QtWidgets import (QComboBox,QDateEdit,QFileDialog,QFormLayout,QHBoxLayout,QLineEdit,
-    QProgressBar,QPushButton,QVBoxLayout,QWidget)
+from PyQt6.QtWidgets import (QComboBox,QDateEdit,QFileDialog,QGridLayout,QHBoxLayout,QLineEdit,
+    QProgressBar,QPushButton,QSizePolicy,QVBoxLayout,QWidget)
 
-from app.exports.attendance import HEADERS,display_row,export_report,metadata
+from app.exports.attendance import HEADERS,display_row,export_report
 from app.pages.administration import fill_table,table
 from app.services.auth import AuthError
 from app.services.database import DataValidationError,DatabaseUnavailable
@@ -38,9 +38,8 @@ class ReportsPage(QWidget):
         self.tasks.cancelled.connect(self.cancelled)
         layout=QVBoxLayout(self)
         layout.setContentsMargins(0,0,0,0)
-        layout.addWidget(text_label('Laporan berdasarkan tanggal kerja. Ekspor memuat seluruh hasil filter yang sudah ditampilkan, termasuk halaman berikutnya.','muted'))
         self.period=QComboBox()
-        for label,key in (('Harian','DAILY'),('Mingguan (Senin sampai Minggu)','WEEKLY'),('Bulanan','MONTHLY'),('Rentang khusus','CUSTOM')):
+        for label,key in (('Harian','DAILY'),('Mingguan','WEEKLY'),('Bulanan','MONTHLY'),('Rentang khusus','CUSTOM')):
             self.period.addItem(label,key)
         self.start=QDateEdit();self.end=QDateEdit()
         today=controller.reports_service.clock().astimezone(controller.reports_service.zone).date()
@@ -53,20 +52,31 @@ class ReportsPage(QWidget):
         self.status_filter=QComboBox();self.status_filter.addItem('Semua status','ALL')
         self.status_filter.addItem('Hadir (termasuk terlambat)','ATTENDED')
         for key,label in STATUS.items():self.status_filter.addItem(label,key)
-        forms=QHBoxLayout()
-        for entries in ((('Periode',self.period),('Dari',self.start),('Sampai',self.end),('Anggota',self.member)),
-                        (('Grup',self.group),('Shift',self.shift),('Status',self.status_filter))):
-            form=QFormLayout()
-            for label,field in entries:form.addRow(label,field)
-            forms.addLayout(form,1)
-        layout.addLayout(forms)
+        filters = (
+            (('Periode', self.period), ('Dari', self.start), ('Sampai', self.end), ('Anggota', self.member)),
+            (('Grup', self.group), ('Shift', self.shift), ('Status', self.status_filter)),
+        )
+        form = QGridLayout()
+        form.setHorizontalSpacing(12)
+        minimum_width = max(field.minimumSizeHint().width() for entries in filters for _, field in entries)
+        for column, entries in enumerate(filters):
+            label_column = column * 2
+            field_column = label_column + 1
+            form.setColumnStretch(field_column, 1)
+            form.setColumnMinimumWidth(field_column, minimum_width)
+            for row, (title, field) in enumerate(entries):
+                label = text_label(title, wrap=False)
+                label.setBuddy(field)
+                field.setSizePolicy(QSizePolicy.Policy.Ignored, field.sizePolicy().verticalPolicy())
+                form.addWidget(label, row, label_column)
+                form.addWidget(field, row, field_column)
+        layout.addLayout(form)
         buttons=QHBoxLayout()
         self.load_button=QPushButton('Tampilkan laporan');self.load_button.setProperty('variant','primary')
         self.xlsx_button=QPushButton('Ekspor Excel');self.pdf_button=QPushButton('Ekspor PDF');self.cancel_button=QPushButton('Batalkan proses')
         for button in (self.load_button,self.xlsx_button,self.pdf_button,self.cancel_button):buttons.addWidget(button)
         layout.addLayout(buttons)
-        self.message=text_label('Pilih filter, lalu tampilkan laporan.');layout.addWidget(self.message)
-        self.summary=text_label('','muted');layout.addWidget(self.summary)
+        self.message=text_label('');layout.addWidget(self.message)
         self.progress=QProgressBar();self.progress.setRange(0,100);self.progress.setValue(0);layout.addWidget(self.progress)
         self.tasks.progress.connect(self.progress.setValue)
         self.table=table(HEADERS);layout.addWidget(self.table)
@@ -94,6 +104,8 @@ class ReportsPage(QWidget):
 
     def controls(self):
         ready=self.snapshot is not None and not self.busy
+        self.message.setVisible(bool(self.message.text()))
+        self.progress.setVisible(self.busy)
         self.load_button.setEnabled(not self.busy)
         self.xlsx_button.setEnabled(ready);self.pdf_button.setEnabled(ready)
         self.cancel_button.setEnabled(self.busy)
@@ -106,8 +118,8 @@ class ReportsPage(QWidget):
     def changed(self):
         self.generation+=1
         self.snapshot=None
-        self.table.setRowCount(0);self.summary.clear();self.page_label.setText('Filter berubah. Tampilkan laporan kembali.')
-        self.message.setText('Filter berubah. Tampilkan laporan kembali sebelum ekspor.')
+        self.table.setRowCount(0);self.page_label.setText('Filter berubah')
+        self.message.clear()
         if self.busy:self.tasks.cancel()
         self.controls()
 
@@ -157,8 +169,7 @@ class ReportsPage(QWidget):
         filters=self.filters()
         def loaded(snapshot):
             self.snapshot=snapshot;self.offset=0
-            self.message.setText('Laporan ditampilkan. Ekspor menggunakan seluruh hasil ini sampai laporan dimuat ulang.')
-            self.summary.setText('\n'.join(metadata(snapshot)))
+            self.message.clear()
             self.render()
         self.run(lambda token,context:self.controller.reports_service.build(token,filters,context),loaded)
 
@@ -169,7 +180,8 @@ class ReportsPage(QWidget):
         for col in range(self.table.columnCount()):self.table.setColumnWidth(col,min(260,max(110,self.table.columnWidth(col))))
         for row in range(self.table.rowCount()):
             for col in range(self.table.columnCount()):self.table.item(row,col).setToolTip(self.table.item(row,col).text())
-        self.page_label.setText(f'{self.offset+1 if total else 0}–{min(self.offset+self.PAGE_SIZE,total)} dari {total} baris')
+        self.page_label.setText(f'{self.offset+1}–{min(self.offset+self.PAGE_SIZE,total)} dari {total} baris'
+                                if total else 'Tidak ada hasil')
         self.controls()
 
     def move(self,amount):
@@ -186,12 +198,12 @@ class ReportsPage(QWidget):
         key=self.snapshot.id
         overwrite=Path(path).exists()  # Native save dialog confirms overwrite first.
         def saved(result):
-            self.message.setText(f'Ekspor selesai: {result.rows} baris. File: {Path(result.path).name}')
+            self.message.setText(f'Ekspor selesai. {result.rows} baris.')
             self.message.setToolTip(result.path)
         self.run(lambda token,context:export_report(self.controller.reports_service,token,key,path,kind,context,overwrite=overwrite),saved,exporting=True)
 
     def cancelled(self):
-        self.message.setText('Ekspor dibatalkan. File akhir tidak dibuat.' if self.exporting else 'Pemuatan laporan dibatalkan.')
+        self.message.setText('Ekspor dibatalkan.' if self.exporting else 'Pemuatan dibatalkan.')
 
     def on_leave(self):
         self.generation+=1
