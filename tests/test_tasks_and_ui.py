@@ -84,9 +84,9 @@ def test_navigation_buttons_and_keyboard(window, wait_until):
         window.navigate(key)
         assert window.pages.currentIndex() == index and window.heading.text() == title
     window.navigation.setFocus()
-    window.navigate("members")
+    window.navigate("dashboard")
     QTest.keyClick(window.navigation, Qt.Key.Key_Down)
-    assert window.heading.text() == "Grup"
+    assert window.heading.text() == "Kehadiran"
     window.navigate("dashboard")
     from PyQt6.QtWidgets import QPushButton
     button = next(b for b in window.pages.currentWidget().findChildren(QPushButton)

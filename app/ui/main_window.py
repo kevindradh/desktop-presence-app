@@ -17,18 +17,19 @@ from app.ui.branding import application_icon, brand_mark
 
 ROUTES = (
     ("dashboard", "Dashboard", "Ringkasan ruang kerja"),
+    ("attendance", "Kehadiran", "Pencatatan masuk, keluar, dan istirahat menggunakan wajah."),
     ("members", "Anggota", "Registrasi, data anggota, dan riwayat kehadiran."),
+    ("reports", "Laporan", "Rekap kehadiran dan ekspor Excel maupun PDF."),
     ("groups", "Grup", "Pengelompokan anggota berdasarkan kelas atau bagian."),
     ("shifts", "Shift", "Jadwal, toleransi keterlambatan, dan aturan kehadiran."),
     ("devices", "Perangkat", "Pengaturan webcam dan kamera jaringan."),
-    ("attendance", "Kehadiran", "Pencatatan masuk, keluar, dan istirahat menggunakan wajah."),
-    ("reports", "Laporan", "Rekap kehadiran dan ekspor Excel maupun PDF."),
-    ("settings", "Pengaturan", "Pengaturan pengenalan wajah dan kebijakan absensi."),
     ("users", "Pengguna", "Pengelolaan akun dan hak akses aplikasi."),
+    ("settings", "Pengaturan", "Pengaturan pengenalan wajah dan kebijakan absensi."),
     ("audit", "Audit aktivitas", "Inspeksi aktivitas penting dan perubahan data."),
     ("backup", "Cadangan dan pemulihan", "Cadangan terenkripsi dan pemulihan data aplikasi."),
     ("diagnostics", "Pemeriksaan aplikasi", "Uji fondasi aplikasi tanpa mengubah data."),
 )
+HIDDEN_NAVIGATION_ROUTES = frozenset({"audit", "backup", "diagnostics"})
 
 
 class MainWindow(QMainWindow):
@@ -38,6 +39,7 @@ class MainWindow(QMainWindow):
         self.principal = principal
         self.navigation_guard = navigation_guard
         self.routes = tuple(route for route in ROUTES if route[0] in PERMISSIONS[principal.role])
+        self.navigation_routes = tuple(route for route in self.routes if route[0] not in HIDDEN_NAVIGATION_ROUTES)
         self.users_page = users_page
         self.administrative_pages = administrative_pages or {}
         self.config, self.logger, self.reporter = config, logger, reporter
@@ -93,7 +95,7 @@ class MainWindow(QMainWindow):
         self.navigation = QListWidget()
         self.navigation.setObjectName("navigation")
         self.navigation.setAccessibleName("Navigasi utama")
-        for _, title, _ in self.routes:
+        for _, title, _ in self.navigation_routes:
             self.navigation.addItem(title)
         self.navigation.currentRowChanged.connect(self._navigate_index)
         rail.addWidget(self.navigation, 1)
@@ -131,7 +133,9 @@ class MainWindow(QMainWindow):
             if key in self.administrative_pages:
                 page = self.administrative_pages[key]
             elif key == "dashboard":
-                page = OverviewPage(self.navigate)
+                page = OverviewPage(self.navigate, show_diagnostics=any(
+                    route == "diagnostics" for route, _, _ in self.navigation_routes
+                ))
             elif key == "diagnostics":
                 page = self.diagnostics
             elif key == "users" and self.users_page is not None:
@@ -160,7 +164,8 @@ class MainWindow(QMainWindow):
             if old_page is not None and hasattr(old_page, "on_leave"):
                 old_page.on_leave()
         self.navigation.blockSignals(True)
-        self.navigation.setCurrentRow(index)
+        navigation_index = next((i for i, item in enumerate(self.navigation_routes) if item[0] == route), -1)
+        self.navigation.setCurrentRow(navigation_index)
         self.navigation.blockSignals(False)
         self.pages.setCurrentIndex(index)
         self.heading.setText(self.routes[index][1])
@@ -168,8 +173,8 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(int)
     def _navigate_index(self, index):
-        if 0 <= index < len(self.routes):
-            self.navigate(self.routes[index][0])
+        if 0 <= index < len(self.navigation_routes):
+            self.navigate(self.navigation_routes[index][0])
 
     @pyqtSlot()
     def _tick(self):

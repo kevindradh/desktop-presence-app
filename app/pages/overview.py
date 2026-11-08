@@ -4,7 +4,7 @@ from app.widgets.cards import FeatureCard, text_label
 
 
 class OverviewPage(QWidget):
-    def __init__(self, navigate):
+    def __init__(self, navigate, *, show_diagnostics=True):
         super().__init__()
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -38,6 +38,8 @@ class OverviewPage(QWidget):
             row.addWidget(FeatureCard(number, title, body, action,
                                      lambda _checked=False, key=route: navigate(key)), 1)
         layout.addLayout(row, 1)
+        if not show_diagnostics:
+            return
         footer = QFrame()
         footer.setObjectName("reviewCard")
         footer_row = QHBoxLayout(footer)
