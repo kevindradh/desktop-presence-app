@@ -73,6 +73,20 @@ def rows(store):
         return list(session.scalars(select(Attendance).order_by(Attendance.id)))
 
 
+def test_timezone_change_uses_local_shift_start_and_invalidates_old_scan(attendance, store):
+    data = attendance
+    original_scan = begin(data)
+    settings = SettingsService(data.auth)
+    before = settings.load(data.token)
+    settings.save(data.token, dict(before, timezone='Asia/Makassar'), before)
+
+    data.now[0] -= timedelta(hours=1)  # 08:00 WITA, 07:00 WIB
+    assert scan(data, original_scan).restart
+    assert scan(data).saved
+    entry, = rows(store)
+    assert entry.work_date == DAY and entry.status == AttendanceStatus.PRESENT
+
+
 @pytest.mark.parametrize('minute,status', [(0,'PRESENT'), (5,'PRESENT'), (10,'PRESENT'), (11,'LATE')])
 def test_in_grace_boundaries_and_audit_after_commit(attendance, store, minute, status):
     data = attendance

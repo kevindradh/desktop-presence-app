@@ -19,7 +19,7 @@ class DashboardDemo(SessionWindow):
         self.dashboard_service.clock=data.clock.now
         self.attendance_service=data.service
         self.cameras.capture_target=synthetic_camera
-        self._accepted(data.login)
+        self._accepted(data.login, known_timezone=config.timezone)
         self.setWindowTitle('StarGate — DEMO Dashboard Tahap 11')
         self.choice=mp.get_context('spawn').Value('i',0)
         self.shell.administrative_pages['attendance'].target_factory=partial(SyntheticTarget,choice=self.choice)

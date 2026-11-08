@@ -21,7 +21,7 @@ from app.services.auth import AuthError, PERMISSIONS
 from app.services.backup_codec import canonical, photo_entry, publish, seal, unseal, ERROR, MAX_BYTES
 from app.services.database import DataValidationError
 from app.services.tasks import TaskContext, TaskCancelled
-from app.settings.defaults import DEFAULT_SETTINGS, validate_setting
+from app.settings.defaults import DEFAULT_SETTINGS, OPERATIONAL_TIMEZONE, validate_setting
 
 TABLES = tuple(Base.metadata.sorted_tables)
 RETENTION = timedelta(days=7)
@@ -140,7 +140,7 @@ class BackupService:
             if data['auth_sessions']: raise ValueError
             if not any(u['role'] == Role.SUPER_ADMIN.value and u['is_active'] for u in data['users']): raise ValueError
             for row in data['settings']: validate_setting(row['setting_key'], row['setting_value'])
-            if {r['setting_key'] for r in data['settings']} != set(DEFAULT_SETTINGS): raise ValueError
+            if {r['setting_key'] for r in data['settings']} - {OPERATIONAL_TIMEZONE} != set(DEFAULT_SETTINGS): raise ValueError
             expected_photos = {r['photo_path'] for r in data['members'] if r['photo_path'].startswith('.local/member_photos/')}
             if set(photos) != expected_photos: raise ValueError
             for name, asset in photos.items():

@@ -6,6 +6,8 @@ from PyQt6.QtCore import QTimer, Qt, pyqtSlot
 from PyQt6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QListWidget, QMainWindow,
                              QPushButton, QScrollArea, QStackedWidget, QVBoxLayout, QWidget)
 
+from app.settings.defaults import INDONESIAN_TIMEZONES
+
 from app.pages.diagnostics import DiagnosticsPage
 from app.pages.overview import OverviewPage, PlaceholderPage
 from app.services.diagnostics import run_diagnostic
@@ -120,8 +122,8 @@ class MainWindow(QMainWindow):
         self.heading = text_label("Dashboard", "pageTitle")
         header.addWidget(self.heading, 1)
         self.clock = text_label("", "muted", wrap=False)
-        self.clock.setMinimumWidth(self.clock.fontMetrics().horizontalAdvance(
-            "18 Oct 2026  20:00") + 18)
+        self.clock.setAccessibleName("Jam dan zona waktu lokasi utama")
+        self.clock.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         header.addWidget(self.clock)
         body.addLayout(header)
         self.error_banner = self.toast
@@ -180,7 +182,12 @@ class MainWindow(QMainWindow):
     def _tick(self):
         self.heartbeat_count += 1
         self.diagnostics.heartbeat.setText(f"Antarmuka aktif · {self.heartbeat_count}")
-        self.clock.setText(datetime.now(ZoneInfo(self.config.timezone)).strftime("%d %b %Y  %H:%M"))
+        now = datetime.now(ZoneInfo(self.config.timezone))
+        offset = now.strftime("%z")
+        zone = INDONESIAN_TIMEZONES.get(self.config.timezone, f"{now.tzname()} (UTC{offset[:3]}:{offset[3:]})")
+        label = f"{now:%d %b %Y  %H:%M:%S}  {zone}"
+        if self.clock.text() != label:
+            self.clock.setText(label)
 
     @pyqtSlot(bool)
     def _run_diagnostic(self, fail=False):

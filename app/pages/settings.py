@@ -1,10 +1,11 @@
 """Settings form with explicit reload, conflict protection and no polling resets."""
 from PyQt6 import sip
 from PyQt6.QtCore import QTimer
-from PyQt6.QtWidgets import (QCheckBox, QComboBox, QDoubleSpinBox, QFormLayout,
+from PyQt6.QtWidgets import (QCheckBox, QComboBox, QDoubleSpinBox, QGridLayout,
     QHBoxLayout, QPushButton, QSpinBox, QVBoxLayout, QWidget)
 
 from app.widgets.cards import text_label
+from app.settings.defaults import INDONESIAN_TIMEZONES
 
 
 class SettingsPage(QWidget):
@@ -15,11 +16,18 @@ class SettingsPage(QWidget):
         self.saved = None
         body = QVBoxLayout(self)
         body.setSpacing(14)
-        body.addWidget(text_label('Pengaturan berlaku untuk pemeriksaan baru. Pemeriksaan yang sedang berjalan tetap memakai nilai saat dimulai.'))
         self.form_widget = QWidget()
-        form = QFormLayout(self.form_widget)
-        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        form = QGridLayout(self.form_widget)
+        form.setHorizontalSpacing(20)
+        form.setVerticalSpacing(8)
+        form.setColumnStretch(0, 1)
+        form.setColumnStretch(1, 1)
         self.fields = {}
+        timezone = QComboBox()
+        for zone, label in INDONESIAN_TIMEZONES.items():
+            timezone.addItem(label, zone)
+        self.fields['timezone'] = timezone
+        inputs = [('Zona waktu lokasi utama', timezone)]
         for key, title, minimum, maximum, decimals, initial in (
             ('similarity_threshold', 'Ambang kecocokan wajah', 0, 1, 2, .60),
             ('recognition_timeout', 'Batas waktu pemeriksaan (detik)', .01, 300, 2, 3),
@@ -31,32 +39,31 @@ class SettingsPage(QWidget):
             field.setSingleStep(.01 if maximum == 1 else .1)
             field.setValue(initial)
             self.fields[key] = field
-            form.addRow(title, field)
-        for key, title, label in (
-            ('max_face_size', 'Ukuran wajah maksimum', 'Auto'),
-            ('check_in_start', 'Awal check-in', 'Shift'),
-        ):
-            field = QComboBox()
-            field.addItem(label, label)
-            self.fields[key] = field
-            form.addRow(title, field)
+            inputs.append((title, field))
         self.fields['duplicate_window'] = QSpinBox()
         self.fields['duplicate_window'].setRange(1, 86400)
         self.fields['duplicate_window'].setValue(60)
-        form.addRow('Jeda absensi berulang (detik)', self.fields['duplicate_window'])
-        for key, title in (('anti_spoof_enabled', 'Periksa keaslian wajah (anti-spoof)'),
-                           ('auto_checkout', 'Checkout otomatis')):
+        inputs.append(('Jeda absensi berulang (detik)', self.fields['duplicate_window']))
+        for index, (title, field) in enumerate(inputs):
+            row, column = divmod(index, 2)
+            label = text_label(title)
+            label.setBuddy(field)
+            form.addWidget(label, row * 2, column)
+            form.addWidget(field, row * 2 + 1, column)
+        checkbox_row = 2 * ((len(inputs) + 1) // 2)
+        for column, (key, title) in enumerate((
+                ('anti_spoof_enabled', 'Periksa keaslian wajah'),
+                ('auto_checkout', 'Checkout otomatis'))):
             self.fields[key] = QCheckBox(title)
-            form.addRow(self.fields[key])
+            form.addWidget(self.fields[key], checkbox_row, column)
         for key, field in self.fields.items():
             field.setAccessibleName(key)
         self.fields['anti_spoof_enabled'].setChecked(True)
         body.addWidget(self.form_widget)
-        self.warning = text_label('')
+        self.warning = text_label('Foto atau rekaman dapat lolos.')
         body.addWidget(self.warning)
         self.fields['anti_spoof_enabled'].toggled.connect(self.update_warning)
         self.update_warning()
-        body.addWidget(text_label('Registrasi lima sudut tetap memeriksa keaslian dengan ambang 0,85. Aturan jeda absensi, awal shift dan checkout otomatis digunakan setelah modul absensi Tahap 10 tersedia.'))
         row = QHBoxLayout()
         self.save_button = QPushButton('Simpan pengaturan')
         self.reload_button = QPushButton('Refresh')
@@ -71,17 +78,16 @@ class SettingsPage(QWidget):
         self.controls()
 
     def update_warning(self):
-        self.warning.setText('Anti-spoof aktif: pemeriksaan wajah harus lolos keaslian.' if
-            self.fields['anti_spoof_enabled'].isChecked() else
-            'Anti-spoof NONAKTIF: foto atau replay tidak diperiksa keasliannya pada uji wajah tersimpan dan pengenalan berikutnya.')
+        self.warning.setVisible(not self.fields['anti_spoof_enabled'].isChecked())
 
     def controls(self):
+        self.message.setVisible(bool(self.message.text()))
         self.form_widget.setEnabled(not self.pending and self.saved is not None)
         self.save_button.setEnabled(not self.pending and self.saved is not None)
         self.reload_button.setEnabled(not self.pending)
 
     def values(self):
-        values = {}
+        values = dict(self.saved or {})
         for key, field in self.fields.items():
             values[key] = (field.isChecked() if isinstance(field, QCheckBox) else
                 field.currentData() if isinstance(field, QComboBox) else field.value())
@@ -89,11 +95,13 @@ class SettingsPage(QWidget):
 
     def display(self, values):
         self.saved = dict(values)
-        for key, value in values.items():
-            field = self.fields[key]
+        for key, field in self.fields.items():
+            value = values[key]
             if isinstance(field, QCheckBox):
                 field.setChecked(value)
             elif isinstance(field, QComboBox):
+                if key == 'timezone' and field.findData(value) == -1:
+                    field.addItem(value, value)
                 field.setCurrentIndex(field.findData(value))
             else:
                 field.setValue(value)
@@ -116,7 +124,12 @@ class SettingsPage(QWidget):
                 controller._handle_denial(result.error)
             else:
                 self.display(result.value)
-                self.message.setText('Pengaturan tersimpan. Pemeriksaan baru akan memakai nilai ini.' if saving else 'Pengaturan dimuat dari database.')
+                self.message.setText('Pengaturan tersimpan.' if saving else '')
+                if controller.apply_timezone(result.value['timezone']):
+                    controller._open_shell()
+                    controller.navigate('settings')
+                    controller._message('Zona waktu lokasi utama diperbarui.')
+                    return
             self.controls()
         def start():
             if sip.isdeleted(self) or controller._closing or not controller.login or controller.login.token != token:

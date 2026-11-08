@@ -4,6 +4,14 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from app.services.database import DataValidationError
 
 
+INDONESIAN_TIMEZONES = {
+    "Asia/Jakarta": "WIB (UTC+07:00)",
+    "Asia/Makassar": "WITA (UTC+08:00)",
+    "Asia/Jayapura": "WIT (UTC+09:00)",
+}
+OPERATIONAL_TIMEZONE = "operational_timezone"
+
+
 DEFAULT_SETTINGS = {
     "similarity_threshold": 0.60, "max_face_size": "Auto", "recognition_timeout": 3.0,
     "anti_spoof_enabled": True, "anti_spoof_threshold": 0.85,
@@ -26,7 +34,7 @@ def validate_setting(key, value):
         valid = type(value) is bool
     elif key in {"max_face_size", "check_in_start"}:
         valid = value == DEFAULT_SETTINGS[key]
-    elif key == "timezone" and isinstance(value, str):
+    elif key in {"timezone", OPERATIONAL_TIMEZONE} and isinstance(value, str):
         try:
             ZoneInfo(value)
             valid = True

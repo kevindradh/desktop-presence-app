@@ -19,7 +19,7 @@ class BackupsDemo(SessionWindow):
         def owner():yield migration
         self.backup_service.owner=owner
         self.cameras.capture_target=synthetic_camera
-        self._accepted(login);self.checkout_timer.stop()
+        self._accepted(login, known_timezone=config.timezone);self.checkout_timer.stop()
         self.setWindowTitle('StarGate - DEMO Audit dan Pemulihan Tahap 13')
         bar=QToolBar('Demo pemulihan',self);bar.setMovable(False)
         note=QLabel(' DEMO SINTETIS • Database test sementara • Data kerja tidak diubah ');note.setWordWrap(True);bar.addWidget(note)

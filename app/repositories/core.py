@@ -5,12 +5,13 @@ import math
 import re
 
 from sqlalchemy import func, or_, select
+from sqlalchemy.orm import aliased
 
 from app.models.entities import (Attendance, AttendanceType, AuditLog, Device,
                                 FaceAngle, FaceEmbedding, Member, MemberGroup,
                                 Role, Setting, Shift, ShiftAssignment, User)
 from app.services.database import DataValidationError
-from app.settings.defaults import validate_setting
+from app.settings.defaults import DEFAULT_SETTINGS, OPERATIONAL_TIMEZONE, validate_setting
 
 
 def required(value, maximum=200):
@@ -51,9 +52,8 @@ class AuditRepository(Repository):
         if {"old_value", "new_value"} & set(details) and "setting_key" not in details:
             raise DataValidationError("Nilai audit memerlukan key pengaturan.")
         if "setting_key" in details:
-            from app.settings.defaults import DEFAULT_SETTINGS
             key = details["setting_key"]
-            if key not in DEFAULT_SETTINGS:
+            if key not in DEFAULT_SETTINGS and key != OPERATIONAL_TIMEZONE:
                 raise DataValidationError("Key audit pengaturan tidak dikenal.")
             for field in ("old_value", "new_value"):
                 if field in details and details[field] is not None:
@@ -240,6 +240,22 @@ class SettingsRepository(Repository):
 
 
 class AttendanceRepository(Repository):
+    @staticmethod
+    def open_checkins(member_id=None):
+        finished = aliased(Attendance)
+        checkout = select(finished.id).where(
+            finished.member_id == Attendance.member_id,
+            finished.shift_id == Attendance.shift_id,
+            finished.work_date == Attendance.work_date,
+            finished.attendance_type == AttendanceType.OUT,
+        )
+        statement = select(Attendance).where(
+            Attendance.attendance_type == AttendanceType.IN, ~checkout.exists()
+        )
+        if member_id is not None:
+            statement = statement.where(Attendance.member_id == member_id)
+        return statement
+
     def record(self, *, member_id, device_id, shift_id, event_type, timestamp,
                work_date, status, is_early_leave=False, is_automatic=False):
         if not isinstance(timestamp, datetime) or timestamp.utcoffset() is None:

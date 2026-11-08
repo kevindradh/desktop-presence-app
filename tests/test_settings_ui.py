@@ -3,15 +3,39 @@ import os
 from pathlib import Path
 import pytest
 from PyQt6.QtTest import QTest
+from sqlalchemy import select
 from app.services.settings import SettingsService
 from app.ui.enrollment import EnrollmentDialog
 from tests.test_auth import auth, NEW, add_role
 from tests.test_database import store, graph
 from tests.test_session_ui import views, sign_in, activate
 from tests.test_administration_ui import open_page, settled
-from app.models.entities import Role
+from app.models.entities import Location, Role
 
 pytestmark = pytest.mark.database
+
+
+def test_timezone_choice_updates_clock_and_local_schedule_after_restart(auth, store, views, wait_until):
+    service, _, _ = auth
+    view = views(service)
+    sign_in(view, 'root', NEW, wait_until)
+    page = open_page(view, 'settings', wait_until)
+    old_shell = view.shell
+    for zone, label in (('Asia/Jakarta', 'WIB'), ('Asia/Makassar', 'WITA'), ('Asia/Jayapura', 'WIT')):
+        field = page.fields['timezone']
+        assert field.itemText(field.findData(zone)).startswith(label + ' ')
+    page.fields['timezone'].setCurrentIndex(page.fields['timezone'].findData('Asia/Makassar'))
+    assert page.save_button.isEnabled(), view.error_message.text()
+    page.save_button.click()
+    settled(view, wait_until)
+    assert view.shell is not old_shell, view.error_message.text()
+    assert view.shell.clock.text().endswith('WITA (UTC+08:00)')
+    assert str(view.dashboard_service.zone) == str(view.reports_service.zone) == 'Asia/Makassar'
+    with store.db.transaction() as session:
+        assert session.scalar(select(Location.timezone).where(Location.location_code == 'LOCAL')) == 'Asia/Makassar'
+    restarted = views(service)
+    sign_in(restarted, 'root', NEW, wait_until)
+    assert restarted.shell.clock.text().endswith('WITA (UTC+08:00)')
 
 
 def test_settings_edit_focus_persist_restart_and_worker_snapshot(auth, store, views, wait_until):
@@ -33,7 +57,7 @@ def test_settings_edit_focus_persist_restart_and_worker_snapshot(auth, store, vi
         settled(view, wait_until)
         QTest.qWait(30)
         assert field.hasFocus() and field.value() == .65
-    assert 'NONAKTIF' in page.warning.text()
+    assert page.warning.isVisible()
     page.save_button.click()
     settled(view, wait_until)
     assert 'tersimpan' in page.message.text()

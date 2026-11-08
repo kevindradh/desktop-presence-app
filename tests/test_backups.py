@@ -17,6 +17,7 @@ from app.services.backup_codec import unseal, seal, MAGIC
 from app.services.database import DataValidationError
 from app.services.member_photos import PhotoStore
 from app.services.tasks import TaskContext, TaskCancelled
+from app.settings.defaults import OPERATIONAL_TIMEZONE
 from tests.test_database import store, graph, record
 from tests.test_auth import auth, add_role, NEW
 
@@ -70,7 +71,10 @@ def test_backup_encryption_assets_and_secret_exclusion(backup,store):
 
 
 def test_restore_roundtrip_all_tables_and_approved_biometric_policy(backup,store):
-    service,login,now,root=backup;path=archive(backup);payload=unseal(path,PASSWORD)
+    service,login,now,root=backup
+    with store.db.transaction() as session:
+        SettingsRepository(session).set(OPERATIONAL_TIMEZONE, 'Asia/Makassar')
+    path=archive(backup);payload=unseal(path,PASSWORD)
     with store.db.transaction() as session:
         session.scalar(select(Member)).full_name='Changed after backup'
         SettingsRepository(session).set('duplicate_window',120)

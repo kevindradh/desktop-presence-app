@@ -5,10 +5,10 @@ import json
 
 from sqlalchemy import select
 
-from app.models.entities import Setting
-from app.repositories.core import SettingsRepository
+from app.models.entities import Attendance, Device, Location, Setting
+from app.repositories.core import AttendanceRepository, SettingsRepository
 from app.services.database import DataValidationError
-from app.settings.defaults import validate_setting
+from app.settings.defaults import OPERATIONAL_TIMEZONE, validate_setting
 
 
 EDITABLE = (
@@ -49,22 +49,44 @@ def configured(config, values):
 
 
 class SettingsService:
-    def __init__(self, auth):
+    def __init__(self, auth, default_timezone='Asia/Jakarta'):
         self.auth = auth
+        self.default_timezone = default_timezone
+
+    def _timezone(self, session):
+        saved = SettingsRepository(session).get(OPERATIONAL_TIMEZONE)
+        return validate_setting('timezone', self.default_timezone if saved is None else saved)
+
+    def timezone(self):
+        with self.auth.database.transaction() as session:
+            return self._timezone(session)
 
     def load(self, token):
-        return self.auth._protected(token, 'settings', lambda session, actor: read_values(session))
+        return self.auth._protected(token, 'settings', lambda session, actor:
+            dict(read_values(session), timezone=self._timezone(session)))
 
     def save(self, token, values, expected):
         def operation(session, actor):
-            if not isinstance(values, dict) or set(values) != set(EDITABLE):
+            if not isinstance(values, dict) or set(values) != {*EDITABLE, 'timezone'}:
                 raise DataValidationError('Daftar pengaturan tidak valid.')
             for key, value in values.items():
                 validate_setting(key, value)
-            current = read_values(session, lock=True)
+            current = dict(read_values(session, lock=True), timezone=self._timezone(session))
             if current != expected:
                 raise DataValidationError('Pengaturan telah diubah oleh sesi lain. Muat ulang sebelum menyimpan.')
             repository = SettingsRepository(session)
+            zone = values['timezone']
+            location = session.scalar(select(Location).where(Location.location_code == 'LOCAL').with_for_update())
+            location_changed = location is not None and location.timezone != zone
+            if location_changed or zone != current['timezone']:
+                if location is None:
+                    raise DataValidationError('Lokasi utama belum tersedia. Jalankan seed database.')
+                if location_changed:
+                    opened = AttendanceRepository.open_checkins().join(Device).where(Device.location_id == location.id)
+                    if session.scalar(select(opened.with_only_columns(Attendance.id).exists())):
+                        raise DataValidationError('Selesaikan check-out di lokasi utama sebelum mengubah zona waktu.')
+                    location.timezone = zone
+                repository.set(OPERATIONAL_TIMEZONE, zone, actor_id=actor.id)
             for key in EDITABLE:
                 repository.set(key, values[key], actor_id=actor.id)
             return dict(values)

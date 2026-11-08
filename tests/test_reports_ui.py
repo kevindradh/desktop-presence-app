@@ -30,11 +30,13 @@ def demo(store,tmp_path,qt_app,wait_until):
     apply_theme(qt_app)
     view=ReportsDemo(config,logger,ErrorReporter(logger),data)
     view.show()
-    wait_until(lambda:view.page.snapshot is not None and not view.page.busy,timeout=15000)
-    yield view,data
-    view.close()
-    wait_until(lambda:not view.isVisible() and not view.page.busy,timeout=15000)
-    view.deleteLater();qt_app.processEvents()
+    try:
+        wait_until(lambda:view.page is not None and view.page.snapshot is not None and not view.page.busy,timeout=15000)
+        yield view,data
+    finally:
+        view.close()
+        wait_until(lambda:not view.isVisible() and (view.page is None or not view.page.busy),timeout=15000)
+        view.deleteLater();qt_app.processEvents()
 
 
 def test_viewer_demo_pagination_and_export_all_loaded_rows(demo,tmp_path,wait_until,monkeypatch):

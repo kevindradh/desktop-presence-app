@@ -10,14 +10,13 @@ import secrets
 import time
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from sqlalchemy import case, exists, func, or_, select
-from sqlalchemy.orm import aliased
+from sqlalchemy import case, func, or_, select
 
 from ai.embedding.search import identify
 from ai.enrollment import CapturePacket
 from app.models.entities import (Attendance, AttendanceStatus, AttendanceType, CalendarDay,
     Device, Location, Member, MemberGroup, MemberLeave, Shift, ShiftAssignment)
-from app.repositories.core import AuditRepository, normalized_vector
+from app.repositories.core import AttendanceRepository, AuditRepository, normalized_vector
 from app.services.database import DataValidationError
 from app.services.settings import read_policy
 
@@ -247,17 +246,8 @@ class AttendanceService:
         if self.monotonic()-data['created'] > binding['settings']['recognition_timeout']:
             raise DataValidationError('Hasil scan terlambat; transaksi dibatalkan. Mulai pemeriksaan baru.')
 
-    @staticmethod
-    def _open_query(member_id=None):
-        finished = aliased(Attendance)
-        return select(Attendance).where(Attendance.attendance_type == AttendanceType.IN,
-            Attendance.member_id == member_id if member_id is not None else True,
-            ~exists(select(finished.id).where(finished.member_id == Attendance.member_id,
-                finished.shift_id == Attendance.shift_id, finished.work_date == Attendance.work_date,
-                finished.attendance_type == AttendanceType.OUT)))
-
     def _session(self, session, member, location, now):
-        opened = session.scalar(self._open_query(member.id).order_by(Attendance.attendance_time).limit(1))
+        opened = session.scalar(AttendanceRepository.open_checkins(member.id).order_by(Attendance.attendance_time).limit(1))
         if opened:
             shift = session.get(Shift, opened.shift_id)
             source = session.get(Device, opened.device_id)
@@ -308,7 +298,7 @@ class AttendanceService:
         # SQL limits the due set before fetching; includes old sessions and inactive members.
         local_end = Attendance.work_date + Shift.end_time + case(
             (Shift.end_time < Shift.start_time, timedelta(days=1)), else_=timedelta(0))
-        statement = self._open_query(member_id).join(Shift).join(Device).join(Location, Location.id == Device.location_id)
+        statement = AttendanceRepository.open_checkins(member_id).join(Shift).join(Device).join(Location, Location.id == Device.location_id)
         statement = statement.where(func.timezone(Location.timezone, local_end) <= now)
         opened = list(session.scalars(statement.order_by(Attendance.attendance_time, Attendance.id).limit(100)))
         closed = 0

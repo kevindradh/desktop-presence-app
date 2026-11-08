@@ -11,13 +11,13 @@ from sqlalchemy import func, select, delete
 
 from ai.contracts import EngineOptions
 from ai.enrollment import CapturePacket
-from app.models.entities import AuditLog, Role, Setting
+from app.models.entities import AuditLog, Location, Role, Setting
 from app.services.auth import AuthError, AuthService
 from app.services.database import DataValidationError
 from app.services.settings import SettingsService, configured
 from app.settings.config import load_config
 from tests.test_auth import auth, add_role
-from tests.test_database import store
+from tests.test_database import graph, record, store
 from tests.test_enrollment import enrollment, fields
 from tests.test_enrollment_capture import packet, analysis
 
@@ -95,6 +95,20 @@ def test_conflicting_concurrent_edits_and_missing_rows_fail_closed(auth, store):
     with store.db.transaction() as session:
         session.execute(delete(Setting).where(Setting.setting_key == 'auto_checkout'))
     with pytest.raises(DataValidationError, match='belum lengkap'): settings.load(login.token)
+
+
+def test_timezone_change_rejects_unfinished_checkin_at_main_location(auth, store):
+    service, login, _ = auth
+    settings = SettingsService(service)
+    before = settings.load(login.token)
+    with store.db.transaction() as session:
+        _, member, shift, device = graph(session)
+        record(session, member, shift, device)
+    with pytest.raises(DataValidationError, match='Selesaikan check-out'):
+        settings.save(login.token, dict(before, timezone='Asia/Makassar'), before)
+    assert settings.timezone() == 'Asia/Jakarta'
+    with store.db.transaction() as session:
+        assert session.scalar(select(Location.timezone).where(Location.location_code == 'LOCAL')) == 'Asia/Jakarta'
 
 
 def test_failed_later_write_rolls_back_settings_and_audit(auth, store, monkeypatch):

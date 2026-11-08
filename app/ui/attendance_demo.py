@@ -96,7 +96,7 @@ class AttendanceDemo(QMainWindow):
         self.session.setWindowFlags(Qt.WindowType.Widget)
         self.session.attendance_service = data.service
         self.session.cameras.capture_target = synthetic_camera
-        self.session._accepted(data.login)
+        self.session._accepted(data.login, known_timezone=config.timezone)
         self.session.checkout_timer.stop()  # Controlled explicitly by demo time actions.
         self.page = self.session.shell.administrative_pages['attendance']
         self.page.target_factory = partial(SyntheticTarget, choice=self.choice)

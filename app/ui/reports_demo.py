@@ -8,6 +8,7 @@ from database.attendance_demo import synthetic_camera
 class ReportsDemo(SessionWindow):
     def __init__(self,config,logger,reporter,data):
         super().__init__(config,logger,reporter,data.auth,NoCredentials())
+        self.page=None
         self.reports_service.clock=data.clock.now
         self.cameras.capture_target=synthetic_camera
         self._accepted(data.login)
@@ -16,6 +17,9 @@ class ReportsDemo(SessionWindow):
         toolbar=QToolBar('Demo laporan',self);toolbar.setMovable(False)
         notice=QLabel(' DEMO SINTETIS - Akun Viewer - 65 baris, dua halaman - Ekspor memuat seluruh hasil filter ')
         notice.setWordWrap(True);toolbar.addWidget(notice);self.addToolBar(toolbar)
+
+    def _open_shell(self):
+        super()._open_shell()
         self.page=self.shell.administrative_pages['reports']
         self.auto_load=True
         self.page.tasks.settled.connect(self.prepared)

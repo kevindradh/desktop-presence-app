@@ -1,5 +1,5 @@
 """Login/session coordinator. Expensive IO and bcrypt run outside the UI thread."""
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from PyQt6.QtCore import QEvent, QObject, QTimer, Qt, pyqtSignal
 from PyQt6.QtWidgets import (QApplication, QCheckBox, QDialog, QDialogButtonBox,
@@ -113,7 +113,7 @@ class SessionWindow(QMainWindow):
         self.service, self.credentials = service, credential_store
         self.administration = AdministrationService(service, config.root)
         self.devices_service = DevicesService(service, config)
-        self.settings_service = SettingsService(service)
+        self.settings_service = SettingsService(service, config.timezone)
         self.attendance_service = AttendanceService(service, config, self.devices_service)
         self.dashboard_service = DashboardService(service, config)
         self.reports_service = ReportsService(service, config)
@@ -306,6 +306,16 @@ class SessionWindow(QMainWindow):
             return self.service.bootstrap_required()
         self.jobs.run(initialize, done)
 
+    def apply_timezone(self, zone):
+        if zone == self.config.timezone:
+            return False
+        self.config = replace(self.config, timezone=zone)
+        self.dashboard_service = DashboardService(self.service, self.config, clock=self.dashboard_service.clock)
+        self.reports_service.clear()
+        self.reports_service = ReportsService(self.service, self.config, clock=self.reports_service.clock,
+                                              monotonic=self.reports_service.monotonic)
+        return True
+
     def _restore(self):
         if self.login or self._closing or self._entry_state != "login":
             return
@@ -351,15 +361,30 @@ class SessionWindow(QMainWindow):
                 self._accepted(result.value)
         self.jobs.run(operation, done)
 
-    def _accepted(self, login):
+    def _accepted(self, login, *, known_timezone=None):
         self._entry_state = "login"
         self.login = login
         self._touched = False
         self._message("")
-        if self._remember_requested:
-            self._save_remember()
+        def open_workspace(zone):
+            self.apply_timezone(zone)
+            if self._remember_requested:
+                self._save_remember()
+            else:
+                self._open_shell()
+
+        def ready(result):
+            if self._closing or self.login != login:
+                return
+            if result.error:
+                self._return_login(result.error)
+                return
+            open_workspace(result.value)
+
+        if known_timezone is None:
+            self.jobs.run(self.settings_service.timezone, ready)
         else:
-            self._open_shell()
+            open_workspace(known_timezone)
 
     def _save_remember(self):
         def operation():
