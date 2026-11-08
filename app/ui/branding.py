@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon, QPixmap
@@ -9,7 +10,8 @@ from app.settings.paths import runtime_paths
 
 def application_icon(resource_root=None):
     root = Path(resource_root) if resource_root is not None else runtime_paths().resources
-    return QIcon(str(root / 'resources/branding/stargate.ico'))
+    filename = 'stargate.icns' if sys.platform == 'darwin' else 'stargate.ico'
+    return QIcon(str(root / 'resources/branding' / filename))
 
 
 def brand_mark(resource_root, size, *, on_dark=False):

@@ -30,7 +30,12 @@ def main():
     with Image.open(output) as icon:
         icon.save(folder / 'stargate.ico', format='ICO',
                   sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)])
-        icon.save(folder / 'stargate.icns', format='ICNS')
+        mac_plate_size = 816
+        mac_inset = (icon.width - mac_plate_size) // 2
+        mac_plate = icon.crop(icon.getbbox()).resize((mac_plate_size, mac_plate_size), Image.Resampling.LANCZOS)
+        mac_icon = Image.new('RGBA', icon.size)
+        mac_icon.paste(mac_plate, (mac_inset, mac_inset))
+        mac_icon.save(folder / 'stargate.icns', format='ICNS')
     print('Ikon aplikasi berlatar putih siap; PNG logo asli tetap dipertahankan.')
     return 0
 
