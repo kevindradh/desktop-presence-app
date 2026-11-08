@@ -10,6 +10,7 @@ from PyQt6.QtGui import QImage,QPixmap,QTransform
 from ai.enrollment import GUIDES
 from ai.enrollment_process import EnrollmentTarget
 from app.ui.ai_lab import AiLab
+from app.ui.enrollment_audio import EnrollmentAudio
 from app.widgets.toast import Toast
 
 
@@ -19,6 +20,7 @@ class CaptureLab(AiLab):
 
     def __init__(self,config,target,*,capture_target=None,verification=False):
         self.verification=verification
+        self.audio=None
         self.capture_requested=False
         self.complete=False
         self.completed_photo=None
@@ -104,6 +106,11 @@ class CaptureLab(AiLab):
             if hasattr(self,'guide'):
                 self.guide.setText(self.guides['FRONT'] if self.verification else (f'{count+1}/5 • '+self.guides[expected] if expected else 'Lima sudut lengkap. Periksa data, lalu pilih Simpan.'))
                 self._position_guide()
+            if self.audio is not None:
+                if expected:
+                    self.audio.announce(self.guides[expected])
+                elif packet is not None:
+                    self.audio.announce('Lima sudut lengkap. Pilih Simpan.')
             super().analyzed(response)
             if response.get('capture_message'):
                 self.detail.setText(response['capture_message'])
@@ -147,14 +154,21 @@ class CaptureLab(AiLab):
             self.preview.setPixmap(pixmap.transformed(QTransform().scale(-1,1)))
 
     def start(self):
+        was_active=self.cameras.busy or self.inference.active
         super().start()
         self.preview_active=self.cameras.busy or self.inference.active
         self.guide.setVisible(self.preview_active)
         self._position_guide()
+        if self.preview_active and not was_active and not self.verification:
+            if self.audio is None:
+                self.audio=EnrollmentAudio(self.config.resource_root,self)
+            self.audio.announce(self.guides['FRONT'])
 
     def engine_state(self,state):
         super().engine_state(state)
         self.state_label.setVisible(state in ('failed','timeout'))
+        if state in ('failed','timeout') and self.audio is not None:
+            self.audio.stop()
 
     def camera_state(self,device):
         super().camera_state(device)
@@ -162,6 +176,8 @@ class CaptureLab(AiLab):
             self.state_label.show()
 
     def stop(self):
+        if self.audio is not None:
+            self.audio.stop()
         self.preview_active=False
         self.submitted_at=0.
         self.capture_requested=False

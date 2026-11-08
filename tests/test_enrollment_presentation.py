@@ -5,6 +5,7 @@ import numpy as np
 
 from app.settings.config import load_config
 from app.ui.enrollment import CaptureLab
+from app.ui.enrollment_audio import EnrollmentAudio
 from app.ui.theme import apply_theme
 
 
@@ -76,6 +77,30 @@ def test_auto_capture_submits_distinct_frames_and_retains_manual_fallback(qt_app
         assert len(calls)==2
         lab.request_capture()
         assert calls[-1]=={'capture':True,'auto_capture':True} and len(calls)==3
+    finally:
+        lab.close()
+        qt_app.processEvents()
+
+
+def test_registration_audio_fallback_only_announces_new_poses_and_stops(qt_app, tmp_path, monkeypatch):
+    monkeypatch.setattr(EnrollmentAudio, '_indonesian_voice', lambda self: None)
+    prompts = []
+    monkeypatch.setattr(EnrollmentAudio, '_beep', lambda self: prompts.append(self.prompt))
+    lab = CaptureLab(load_config(tmp_path, environ={}), target=None)
+    lab.audio = EnrollmentAudio(tmp_path, lab)
+    lab.preview_active = True
+    try:
+        lab.audio.announce(lab.guides['FRONT'])
+        for count, pose in enumerate(('FRONT', 'LEFT', 'RIGHT', 'UP', 'DOWN')):
+            response = dict(event='result', expected=pose, captured=count, status='ready', face_count=1,
+                            elapsed_ms=1, has_reference=False, live_score=.99, similarity=None)
+            lab.analyzed(response)
+            lab.analyzed(response)
+        assert prompts == [lab.guides[pose] for pose in ('FRONT', 'LEFT', 'RIGHT', 'UP', 'DOWN')]
+        lab.stop()
+        assert lab.audio.prompt is None
+        lab.analyzed(response)
+        assert len(prompts) == 5
     finally:
         lab.close()
         qt_app.processEvents()
