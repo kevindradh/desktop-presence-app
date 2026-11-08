@@ -1,5 +1,7 @@
 """Explicit fictional school fixtures and test accounts, without biometric data."""
+from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
+import re
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import select, text
@@ -12,8 +14,30 @@ from app.services.database import DataValidationError
 from database.seed.defaults import seed_defaults
 
 
-VERSION = 'smp-v2'
+VERSION = 'smp-v3'
 MARKER = 'simulation.school_seeded'
+CLASSES = ('7A', '7B', '8A', '8B', '9A', '9B')
+GROUP_NAMES = {**{name: f'Kelas {name}' for name in CLASSES}, 'Guru': 'Guru', 'Staf': 'Tenaga Kependidikan'}
+SHIFTS = (
+    ('Siswa', 'Jam Belajar Siswa', time(7), time(14), 10),
+    ('Guru', 'Jam Kerja Guru', time(6, 45), time(14, 30), 5),
+    ('Tata usaha', 'Jam Kerja Tata Usaha', time(7, 30), time(15, 30), 5),
+    ('Piket malam', 'Piket Malam', time(20), time(6), 0),
+)
+DEVICES = (
+    ('Gerbang siswa', 'Kamera Gerbang Utama', DeviceType.USB),
+    ('Ruang guru', 'Kamera Ruang Guru', DeviceType.INTERNAL),
+    ('Pos piket', 'Kamera Pos Piket', DeviceType.USB),
+)
+CALENDAR_LABELS = {
+    'SIM SMP: libur akhir pekan': 'Libur Akhir Pekan',
+    'SIM SMP: libur kegiatan simulasi': 'Libur Sekolah',
+    'SIM SMP: hari uji khusus': 'Kegiatan Sekolah',
+}
+LEGACY_POSITIONS = {
+    'Siswa': 'Siswa simulasi', 'Guru': 'Guru simulasi',
+    'Staf Tata Usaha': 'Staf simulasi', 'Petugas Piket': 'Staf simulasi',
+}
 SCENARIOS = (
     'Tepat waktu', 'Terlambat', 'Batas toleransi', 'Pulang awal',
     'Istirahat lengkap', 'Checkout otomatis', 'Izin', 'Sakit',
@@ -28,21 +52,74 @@ TEST_ACCOUNTS = (
 )
 
 
-def fictional_names():
-    names = {}
+@dataclass(frozen=True)
+class SchoolMember:
+    code: str
+    name: str
+    position: str
+    legacy_names: tuple[str, ...]
+
+
+def school_members():
+    members = {}
     first_names = ('Budi', 'Citra', 'Dimas', 'Ayu', 'Farhan', 'Nadia',
                    'Rizky', 'Putri', 'Andi', 'Salsabila', 'Fajar', 'Nabila')
-    for classroom, surname in zip(('7A', '7B', '8A', '8B', '9A', '9B'),
-                                  ('Pamungkas', 'Pratama', 'Saputra', 'Wibowo', 'Kusuma', 'Permana')):
+    surnames = ('Pamungkas', 'Pratama', 'Saputra', 'Wibowo', 'Kusuma', 'Permana',
+                'Anggraini', 'Mahendra', 'Lestari', 'Hidayat', 'Wulandari', 'Ramadhan')
+    for class_index, classroom in enumerate(CLASSES):
         for index, (first, scenario) in enumerate(zip(first_names, SCENARIOS), 1):
-            names[f'SIM-SMP-{classroom}-{index:02}'] = (
-                f'{first} {surname}', f'Siswa Simulasi {classroom} {index:02} ({scenario})')
+            surname = surnames[(class_index + index - 1) % len(surnames)]
+            members[f'SIM-SMP-{classroom}-{index:02}'] = SchoolMember(
+                f'S-{classroom}-{index:03}', f'{first} {surname}', 'Siswa',
+                (f'{first} {surnames[class_index]}', f'Siswa Simulasi {classroom} {index:02} ({scenario})'))
     for index, name in enumerate(('Sri Lestari', 'Agus Santoso', 'Dewi Anggraini',
                                    'Rahmat Hidayat', 'Rina Puspita', 'Bambang Setiawan'), 1):
-        names[f'SIM-SMP-GURU-{index:02}'] = (name, f'Guru Simulasi {index:02}')
-    names['SIM-SMP-TU'] = ('Eko Nugroho', 'Staf Tata Usaha Simulasi')
-    names['SIM-SMP-PIKET'] = ('Hendra Wijaya', 'Petugas Piket Simulasi')
-    return names
+        members[f'SIM-SMP-GURU-{index:02}'] = SchoolMember(
+            f'G-{index:03}', name, 'Guru', (f'Guru Simulasi {index:02}',))
+    members['SIM-SMP-TU'] = SchoolMember('TU-001', 'Eko Nugroho', 'Staf Tata Usaha', ('Staf Tata Usaha Simulasi',))
+    members['SIM-SMP-PIKET'] = SchoolMember('PK-001', 'Hendra Wijaya', 'Petugas Piket', ('Petugas Piket Simulasi',))
+    return members
+
+
+def refresh_school_labels(session, anchor, history_days):
+    profiles = school_members()
+    changed = 0
+    for member in session.scalars(select(Member).where(Member.member_code.like('SIM-SMP-%'))):
+        profile = profiles.get(member.member_code)
+        if profile is None:
+            match = re.fullmatch(r'SIM-SMP-([789][AB])-([0-9]{2,3})', member.member_code)
+            if match is None or member.group.group_name not in (f'SIM SMP {match[1]}', GROUP_NAMES[match[1]]):
+                continue
+            profile = SchoolMember(f'S-{match[1]}-{int(match[2]):03}', member.full_name, 'Siswa', ())
+        member.member_code = profile.code
+        if member.full_name in profile.legacy_names:
+            member.full_name = profile.name
+        if member.position == LEGACY_POSITIONS[profile.position]:
+            member.position = profile.position
+        member.revision += 1
+        changed += 1
+
+    for model, field, names in (
+        (MemberGroup, MemberGroup.group_name, GROUP_NAMES),
+        (Shift, Shift.shift_name, {old: name for old, name, *_ in SHIFTS}),
+        (Device, Device.device_name, {old: name for old, name, _ in DEVICES}),
+    ):
+        labels = {f'SIM SMP {old}': name for old, name in names.items()}
+        for row in session.scalars(select(model).where(field.in_(labels))):
+            setattr(row, field.key, labels[getattr(row, field.key)])
+            if model is MemberGroup and row.description == 'Data sintetis untuk pengujian sekolah.':
+                row.description = None
+            row.revision += 1
+            changed += 1
+
+    start = anchor - timedelta(days=history_days - 1)
+    calendar = select(CalendarDay).join(Location).where(
+        Location.location_code == 'LOCAL', CalendarDay.calendar_date.between(start, anchor),
+        CalendarDay.label.in_(CALENDAR_LABELS))
+    for day in session.scalars(calendar):
+        day.label = CALENDAR_LABELS[day.label]
+        changed += 1
+    return changed
 
 
 def create_test_accounts(session):
@@ -70,20 +147,13 @@ def seed_school(session, *, anchor=None, history_days=30, timezone_name='Asia/Ja
     marker = session.scalar(select(AuditLog).where(AuditLog.action == MARKER).order_by(AuditLog.id.desc()).limit(1))
     if marker is not None:
         previous = marker.details if isinstance(marker.details, dict) else {}
-        legacy = dict(parameters, version='smp-v1')
-        if previous.get('parameters') not in (parameters, legacy) or not isinstance(previous.get('summary'), dict):
+        legacy = tuple(dict(parameters, version=version) for version in ('smp-v1', 'smp-v2'))
+        if previous.get('parameters') not in (parameters, *legacy) or not isinstance(previous.get('summary'), dict):
             raise DataValidationError('Data simulasi sudah ada dengan parameter berbeda atau penanda berubah. '
                                       'Gunakan parameter semula; fresh diperlukan untuk membuat simulasi baru.')
-        if previous['parameters'] == legacy:
-            accounts = create_test_accounts(session)
-            renamed = 0
-            names = fictional_names()
-            for member in session.scalars(select(Member).where(Member.member_code.in_(names))):
-                name, old_name = names[member.member_code]
-                if member.full_name == old_name:
-                    member.full_name = name
-                    member.revision += 1
-                    renamed += 1
+        if previous['parameters'] in legacy:
+            accounts = create_test_accounts(session) if previous['parameters']['version'] == 'smp-v1' else []
+            renamed = refresh_school_labels(session, anchor, history_days)
             summary = dict(previous['summary'], version=VERSION, accounts_created=accounts)
             session.add(AuditLog(action=MARKER, entity_type='system', details={
                 'parameters':parameters, 'summary':summary, 'record_count':renamed+len(accounts)}))
@@ -99,7 +169,7 @@ def seed_school(session, *, anchor=None, history_days=30, timezone_name='Asia/Ja
 
     seed_defaults(session)
     accounts = create_test_accounts(session)
-    names = fictional_names()
+    profiles = school_members()
     location = session.scalar(select(Location).where(Location.location_code == 'LOCAL'))
     start = anchor-timedelta(days=history_days-1)
     ended = anchor-timedelta(days=7)
@@ -111,43 +181,37 @@ def seed_school(session, *, anchor=None, history_days=30, timezone_name='Asia/Ja
     # The anchor is always available for review, even when seeded on a weekend.
     holidays.discard(anchor)
     calendar = [CalendarDay(location_id=location.id, calendar_date=day, is_workday=False,
-                label='SIM SMP: libur akhir pekan' if day.weekday() >= 5 else 'SIM SMP: libur kegiatan simulasi')
+                label='Libur Akhir Pekan' if day.weekday() >= 5 else 'Libur Sekolah')
                 for day in sorted(holidays)]
     if anchor.weekday() >= 5:
         calendar.append(CalendarDay(location_id=location.id, calendar_date=anchor, is_workday=True,
-                                    label='SIM SMP: hari uji khusus'))
+                                    label='Kegiatan Sekolah'))
     session.add_all(calendar)
-    groups = [MemberGroup(group_name=f'SIM SMP {name}', description='Data sintetis untuk pengujian sekolah.')
-              for name in ('7A', '7B', '8A', '8B', '9A', '9B', 'Guru', 'Staf')]
-    shifts = [Shift(shift_name='SIM SMP '+name, start_time=begin, end_time=end, grace_minutes=grace)
-              for name, begin, end, grace in (
-                  ('Siswa', time(7), time(14), 10),
-                  ('Guru', time(6, 45), time(14, 30), 5),
-                  ('Tata usaha', time(7, 30), time(15, 30), 5),
-                  ('Piket malam', time(20), time(6), 0))]
-    devices = [Device(device_name='SIM SMP '+name, device_type=kind, location_id=location.id,
+    groups = [MemberGroup(group_name=name) for name in GROUP_NAMES.values()]
+    shifts = [Shift(shift_name=name, start_time=begin, end_time=end, grace_minutes=grace)
+              for _, name, begin, end, grace in SHIFTS]
+    devices = [Device(device_name=name, device_type=kind, location_id=location.id,
                       camera_index=None, resolution='1280x720', fps=30)
-               for name, kind in (('Gerbang siswa', DeviceType.USB), ('Ruang guru', DeviceType.INTERNAL),
-                                  ('Pos piket', DeviceType.USB))]
+               for _, name, kind in DEVICES]
     session.add_all(groups+shifts+devices)
     session.flush()
     participants = []
-    for group in groups[:6]:
-        classroom = group.group_name.removeprefix('SIM SMP ')
+    for classroom, group in zip(CLASSES, groups):
         for index, scenario in enumerate(SCENARIOS, 1):
-            member = Member(member_code=f'SIM-SMP-{classroom}-{index:02}',
-                full_name=names[f'SIM-SMP-{classroom}-{index:02}'][0], group_id=group.id,
-                position='Siswa simulasi', photo_path='synthetic/smp/no-photo.png')
+            profile = profiles[f'SIM-SMP-{classroom}-{index:02}']
+            member = Member(member_code=profile.code, full_name=profile.name, group_id=group.id,
+                position=profile.position, photo_path='synthetic/smp/no-photo.png')
             participants.append((member, shifts[0], devices[0], scenario))
     for index in range(1, 7):
-        member = Member(member_code=f'SIM-SMP-GURU-{index:02}', full_name=names[f'SIM-SMP-GURU-{index:02}'][0],
-            group_id=groups[6].id, position='Guru simulasi', photo_path='synthetic/smp/no-photo.png')
+        profile = profiles[f'SIM-SMP-GURU-{index:02}']
+        member = Member(member_code=profile.code, full_name=profile.name,
+            group_id=groups[6].id, position=profile.position, photo_path='synthetic/smp/no-photo.png')
         participants.append((member, shifts[1], devices[1], 'Terlambat' if index == 2 else 'Tepat waktu'))
-    for code, name, shift, scenario in (
-            ('TU', 'Staf Tata Usaha Simulasi', shifts[2], 'Istirahat lengkap'),
-            ('PIKET', 'Petugas Piket Simulasi', shifts[3], 'Tepat waktu')):
-        member = Member(member_code='SIM-SMP-'+code, full_name=names['SIM-SMP-'+code][0], group_id=groups[7].id,
-            position='Staf simulasi', photo_path='synthetic/smp/no-photo.png')
+    for code, shift, scenario in (
+            ('TU', shifts[2], 'Istirahat lengkap'), ('PIKET', shifts[3], 'Tepat waktu')):
+        profile = profiles['SIM-SMP-'+code]
+        member = Member(member_code=profile.code, full_name=profile.name, group_id=groups[7].id,
+            position=profile.position, photo_path='synthetic/smp/no-photo.png')
         participants.append((member, shift, devices[2], scenario))
     session.add_all([member for member, *_ in participants])
     session.flush()

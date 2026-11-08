@@ -7,13 +7,13 @@ import pytest
 from sqlalchemy import event, func, select
 
 from app.models.entities import (Attendance, AttendanceStatus, AttendanceType, AuditLog, Base,
-    CalendarDay, Device, FaceEmbedding, Member, MemberGroup, ShiftAssignment, User)
+    CalendarDay, Device, FaceEmbedding, Member, MemberGroup, Shift, ShiftAssignment, User)
 from app.services.auth import AuthService
 from app.services.dashboard import DashboardService
 from app.services.database import DataValidationError
 from app.services.reports import ReportFilter, ReportsService
 from app.settings.config import DatabaseConfig, load_config
-from database.seed.school import seed_school, TEST_ACCOUNTS, fictional_names
+from database.seed.school import seed_school, TEST_ACCOUNTS
 from scripts.manage_database import main
 from tests.test_database import store, graph
 
@@ -37,18 +37,21 @@ def test_school_seed_counts_timestamps_flags_fictional_names_accounts_and_repeat
         assert before['users']==4 and before['face_embeddings']==0
         members=list(session.scalars(select(Member)))
         assert len({m.full_name for m in members})==80
-        assert all(m.full_name==fictional_names()[m.member_code][0] for m in members)
-        assert next(m for m in members if m.member_code=='SIM-SMP-7A-01').full_name=='Budi Pamungkas'
+        assert next(m for m in members if m.member_code=='S-7A-001').full_name=='Budi Pamungkas'
+        assert next(m for m in members if m.member_code=='S-7A-002').full_name=='Citra Pratama'
+        assert session.scalar(select(MemberGroup.id).where(MemberGroup.group_name=='Kelas 7A'))
+        assert session.scalar(select(Shift.id).where(Shift.shift_name=='Jam Belajar Siswa'))
+        assert session.scalar(select(Device.id).where(Device.device_name=='Kamera Gerbang Utama'))
         assert before['members'] == 80 and before['member_leaves'] == 12
         assert before['shift_assignments'] == 74
         assert all(d.camera_index is None and d.rtsp_url is None for d in session.scalars(select(Device)))
-        assert all(m.member_code.startswith('SIM-SMP-') for m in session.scalars(select(Member)))
+        assert all(m.member_code.startswith(('S-', 'G-', 'TU-', 'PK-')) for m in members)
         rows = list(session.scalars(select(Attendance)))
         assert all(r.attendance_time <= NOW for r in rows)
         assert sum(r.is_early_leave for r in rows) > 0
         assert sum(r.is_automatic for r in rows) > 0
         assert {r.attendance_type for r in rows} == set(AttendanceType)
-        tolerance = session.scalar(select(Member).where(Member.member_code=='SIM-SMP-7A-03'))
+        tolerance = session.scalar(select(Member).where(Member.member_code=='S-7A-003'))
         row = next(r for r in rows if r.member_id==tolerance.id and r.work_date==DAY and r.attendance_type==AttendanceType.IN)
         assert row.status == AttendanceStatus.PRESENT
         assert row.attendance_time.astimezone(ZONE).strftime('%H:%M') == '07:10'
@@ -84,14 +87,14 @@ def test_school_seed_real_dashboard_reports_and_overnight_semantics(store,tmp_pa
     holiday = dashboard.load(login.token,date.fromisoformat(result['holiday']))
     assert (holiday.present,holiday.absent,holiday.pending,holiday.on_leave)==(0,0,0,0)
     with store.db.transaction() as session:
-        night = session.scalar(select(Member).where(Member.member_code=='SIM-SMP-PIKET'))
+        night = session.scalar(select(Member).where(Member.member_code=='PK-001'))
         events = list(session.scalars(select(Attendance).where(Attendance.member_id==night.id)))
         assert events
         for row in events:
             local = row.attendance_time.astimezone(ZONE)
             assert local.date()==row.work_date+timedelta(days=row.attendance_type==AttendanceType.OUT)
             assert local.hour==(20 if row.attendance_type==AttendanceType.IN else 6)
-        inactive = session.scalar(select(Member).where(Member.member_code=='SIM-SMP-7A-10'))
+        inactive = session.scalar(select(Member).where(Member.member_code=='S-7A-010'))
         assert not inactive.is_active
         assert session.scalar(select(func.count()).select_from(Attendance).where(Attendance.member_id==inactive.id))>0
 
@@ -232,26 +235,53 @@ def test_existing_reserved_username_causes_atomic_refusal_without_password_reset
 
 
 @pytest.mark.database
-def test_legacy_school_seed_can_upgrade_without_resetting_attendance_or_custom_names(store,monkeypatch):
+@pytest.mark.parametrize('version', ['smp-v1', 'smp-v2'])
+def test_legacy_school_seed_can_upgrade_without_resetting_attendance_or_custom_names(store,monkeypatch,version):
     import database.seed.school as school
-    legacy_names={code:(old,old) for code,(_,old) in fictional_names().items()}
     with monkeypatch.context() as patch:
-        patch.setattr(school,'VERSION','smp-v1')
-        patch.setattr(school,'create_test_accounts',lambda session:[])
-        patch.setattr(school,'fictional_names',lambda:legacy_names)
+        patch.setattr(school, 'VERSION', version)
+        if version == 'smp-v1':
+            patch.setattr(school,'create_test_accounts',lambda session:[])
         with store.db.transaction() as session:
-            seed_school(session,anchor=DAY,now=NOW)
-            changed=session.scalar(select(Member).where(Member.member_code=='SIM-SMP-7A-03'))
+            seeded = seed_school(session,anchor=DAY,now=NOW)
+            first = session.scalar(select(Member).where(Member.member_code=='S-7A-001'))
+            first.member_code = 'SIM-SMP-7A-01'
+            first.position = 'Siswa simulasi'
+            if version == 'smp-v1':
+                first.full_name = 'Siswa Simulasi 7A 01 (Tepat waktu)'
+            changed=session.scalar(select(Member).where(Member.member_code=='S-7A-003'))
+            changed.member_code='SIM-SMP-7A-03'
             changed.full_name='Nama Pilihan Penguji'
+            changed.position='Ketua Kelas'
+            extra = session.scalar(select(Member).where(Member.member_code=='S-7A-004'))
+            extra.member_code = 'SIM-SMP-7A-13'
+            extra.full_name = 'Fikri Ramadhan'
+            first.group.group_name = 'SIM SMP 7A'
+            first.group.description = 'Catatan wali kelas'
+            session.scalar(select(Shift).where(Shift.shift_name=='Jam Belajar Siswa')).shift_name = 'SIM SMP Siswa'
+            session.scalar(select(Device).where(Device.device_name=='Kamera Gerbang Utama')).device_name = 'SIM SMP Gerbang siswa'
+            holiday = session.scalar(select(CalendarDay).where(CalendarDay.calendar_date==date.fromisoformat(seeded['holiday'])))
+            holiday.label = 'SIM SMP: libur kegiatan simulasi'
+            events_before = session.execute(select(Attendance.id, Attendance.member_id, Attendance.attendance_time)
+                                            .order_by(Attendance.id)).all()
             previous=counts(session)
     with store.db.transaction() as session:
         result=seed_school(session,anchor=DAY,now=NOW)
-        assert result['upgraded'] and len(result['accounts_created'])==4
+        assert result['upgraded'] and len(result['accounts_created']) == (4 if version == 'smp-v1' else 0)
         after=counts(session)
-        assert after['attendance']==previous['attendance']
-        assert after['members']==previous['members']
-        assert session.scalar(select(Member.full_name).where(Member.member_code=='SIM-SMP-7A-01'))=='Budi Pamungkas'
-        assert session.scalar(select(Member.full_name).where(Member.member_code=='SIM-SMP-7A-03'))=='Nama Pilihan Penguji'
+        for key in ('attendance', 'members', 'shift_assignments', 'devices', 'member_groups'):
+            assert after[key] == previous[key]
+        assert session.execute(select(Attendance.id, Attendance.member_id, Attendance.attendance_time)
+                               .order_by(Attendance.id)).all() == events_before
+        first = session.scalar(select(Member).where(Member.member_code=='S-7A-001'))
+        assert first.full_name == 'Budi Pamungkas' and first.position == 'Siswa'
+        assert first.group.group_name == 'Kelas 7A' and first.group.description == 'Catatan wali kelas'
+        changed = session.scalar(select(Member).where(Member.member_code=='S-7A-003'))
+        assert changed.full_name == 'Nama Pilihan Penguji' and changed.position == 'Ketua Kelas'
+        assert session.scalar(select(Member.full_name).where(Member.member_code=='S-7A-013')) == 'Fikri Ramadhan'
+        assert session.scalar(select(Shift.id).where(Shift.shift_name=='Jam Belajar Siswa'))
+        assert session.scalar(select(Device.id).where(Device.device_name=='Kamera Gerbang Utama'))
+        assert session.scalar(select(CalendarDay.id).where(CalendarDay.label=='Libur Sekolah'))
     with store.db.transaction() as session:
         assert not seed_school(session,anchor=DAY,now=NOW)['upgraded']
         assert counts(session)==after

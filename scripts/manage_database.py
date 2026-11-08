@@ -88,7 +88,7 @@ def main(argv=None):
                         history_days=30 if args.days is None else args.days,
                         timezone_name=load_config(data_root, env_file=args.config).timezone)
                 print(json.dumps(result, indent=2))
-                print('Data SIM SMP siap. Nama anggota fiktif; wajah belum terdaftar.')
+                print('Data contoh sekolah siap. Nama anggota fiktif.')
                 if result['accounts_created']:
                     print('Akun uji lokal yang baru dibuat (hanya untuk testing):')
                     for username, fullname, role, password in TEST_ACCOUNTS:
