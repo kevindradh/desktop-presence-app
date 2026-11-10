@@ -1,10 +1,12 @@
 """Fresh reset is destructive only inside explicitly owned disposable test schemas."""
+from datetime import date, time
 from types import SimpleNamespace
 
 import pytest
 from sqlalchemy import select,func,text
 
 from app.models.entities import Base,Member
+from app.repositories.core import ShiftRepository
 from app.services.auth import AuthService
 from app.services.database import DataValidationError
 from app.settings.config import DatabaseConfig
@@ -48,7 +50,12 @@ def test_fresh_cli_refuses_before_opening_any_database(monkeypatch,capsys):
 @pytest.mark.database
 def test_fresh_recreates_tables_defaults_without_accounts_and_is_repeatable(store):
     with store.db.transaction() as session:
-        graph(session)
+        _, member, night, _ = graph(session)
+        shifts = ShiftRepository(session)
+        day = date(2026, 10, 18)
+        earlier = shifts.create('Sebelum shift malam', time(12), time(20))
+        shifts.assign(member.id, earlier.id, day, day)
+        shifts.assign(member.id, night.id, day)
     AuthService(store.db).bootstrap('before-reset','Penguji','Synthetic-fresh-2026!')
     for _ in range(2):
         with store.migration.begin() as connection:

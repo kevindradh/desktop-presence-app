@@ -98,6 +98,25 @@ def test_migration_schema_matches_models_and_can_roundtrip_in_isolation(store):
         assert schema_status(conn)["schema_valid"]
 
 
+def test_same_day_shift_migration_preserves_existing_assignment_and_attendance(store):
+    day = date(2026, 10, 18)
+    with store.migration.begin() as conn:
+        command.downgrade(alembic_config(conn), '0006_search_storage')
+    with store.db.transaction() as session:
+        _, member, shift, device = graph(session)
+        assignment = ShiftRepository(session).assign(member.id, shift.id, day, day)
+        event = record(session, member, shift, device)
+        member_id, assignment_id, event_id = member.id, assignment.id, event.id
+
+    with store.migration.begin() as conn:
+        upgrade(conn)
+    with store.db.transaction() as session:
+        assert session.get(ShiftAssignment, assignment_id).ends_on == day
+        assert session.get(Attendance, event_id).work_date == day
+        other = ShiftRepository(session).create('Sebelum shift malam', time(12), time(20))
+        assert ShiftRepository(session).assign(member_id, other.id, day, day).id != assignment_id
+
+
 def test_seed_is_idempotent_and_preserves_admin_changes(store):
     with store.db.transaction() as session:
         assert seed_defaults(session) == {"settings_inserted": 12, "locations_inserted": 1}

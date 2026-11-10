@@ -70,11 +70,15 @@ def test_backup_encryption_assets_and_secret_exclusion(backup,store):
     assert (root/'synthetic.png').exists()
 
 
-def test_restore_roundtrip_all_tables_and_approved_biometric_policy(backup,store):
+@pytest.mark.parametrize('legacy_revision', [False, True])
+def test_restore_roundtrip_all_tables_and_approved_biometric_policy(backup,store,legacy_revision):
     service,login,now,root=backup
     with store.db.transaction() as session:
         SettingsRepository(session).set(OPERATIONAL_TIMEZONE, 'Asia/Makassar')
     path=archive(backup);payload=unseal(path,PASSWORD)
+    if legacy_revision:
+        payload['revision'] = '0006_search_storage'
+        path.write_bytes(seal(payload,PASSWORD))
     with store.db.transaction() as session:
         session.scalar(select(Member)).full_name='Changed after backup'
         SettingsRepository(session).set('duplicate_window',120)

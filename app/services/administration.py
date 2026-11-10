@@ -9,6 +9,7 @@ from app.models.entities import (Attendance, Member, MemberGroup, Shift, ShiftAs
 from app.repositories.core import AuditRepository, GroupRepository, MemberRepository, ShiftRepository, required
 from app.services.database import DataValidationError
 from app.services.member_photos import PhotoStore
+from app.services.shift_schedule import consecutive
 
 
 @dataclass(frozen=True)
@@ -344,17 +345,20 @@ class AdministrationService:
     def assign_shift(self, token, member_id, revision, shift_id, starts, ends=None):
         def operation(session, actor):
             member = self._row(session, Member, member_id, identifier(revision))
-            self._row(session, Shift, shift_id)
+            shift = self._row(session, Shift, shift_id)
             if not member.is_active:
                 raise DataValidationError("Anggota nonaktif tidak dapat menerima penugasan baru.")
             if type(starts) is not date or (ends is not None and type(ends) is not date) or (ends is not None and ends < starts):
                 raise DataValidationError("Rentang tanggal penugasan tidak valid.")
-            overlap = select(ShiftAssignment.id).where(ShiftAssignment.member_id == member.id,
-                or_(ShiftAssignment.ends_on.is_(None), ShiftAssignment.ends_on >= starts))
+            new = ShiftAssignment(starts_on=starts, ends_on=ends)
+            overlap = select(ShiftAssignment.id).join(Shift).where(ShiftAssignment.member_id == member.id,
+                or_(ShiftAssignment.ends_on.is_(None), ShiftAssignment.ends_on >= starts),
+                ~or_(consecutive(ShiftAssignment, Shift, new, shift),
+                     consecutive(new, shift, ShiftAssignment, Shift)))
             if ends is not None:
                 overlap = overlap.where(ShiftAssignment.starts_on <= ends)
             if session.scalar(overlap.limit(1)) is not None:
-                raise DataValidationError("Tanggal penugasan bertumpang tindih. Atur tanggal terakhir sebelum shift baru, atau batalkan penugasan yang salah input.")
+                raise DataValidationError("Penugasan bertumpang tindih. Di hari yang sama, shift baru harus dimulai setelah shift lama selesai.")
             row = ShiftRepository(session).assign(member.id, shift_id, starts, ends)
             member.revision += 1
             self._audit(session, actor, "schedule.created", "schedule", row, ["member_id", "shift_id", "starts_on", "ends_on"])

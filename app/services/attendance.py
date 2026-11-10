@@ -10,7 +10,7 @@ import secrets
 import time
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from sqlalchemy import case, func, or_, select
+from sqlalchemy import case, func, select
 
 from ai.embedding.search import identify
 from ai.enrollment import CapturePacket
@@ -19,6 +19,7 @@ from app.models.entities import (Attendance, AttendanceStatus, AttendanceType, C
 from app.repositories.core import AttendanceRepository, AuditRepository, normalized_vector
 from app.services.database import DataValidationError
 from app.services.settings import read_policy
+from app.services.shift_schedule import active_on, conflicting_assignments
 
 MODES = ('AUTO', 'IN', 'OUT', 'BREAK_OUT', 'BREAK_IN')
 EVENTS = {'IN': 'Masuk', 'OUT': 'Keluar', 'BREAK_OUT': 'Mulai istirahat', 'BREAK_IN': 'Selesai istirahat'}
@@ -220,12 +221,16 @@ class AttendanceService:
                 self._close_due(session, actor, now, member_id=member.id)
             latest = session.scalar(select(Attendance).where(Attendance.member_id == member.id)
                 .order_by(Attendance.attendance_time.desc(), Attendance.id.desc()).limit(1))
-            if latest and now < latest.attendance_time + timedelta(seconds=values['duplicate_window']):
-                flow['latched'] = member.id
-                return AttendanceFeedback(False, 'Absensi berulang ditolak; tunggu sampai jeda selesai.', member_id=member.id, reason='already_recorded')
             try:
                 shift, work_date, start, end, previous, status = self._session(session, member, location, now)
                 event = next_event(previous, binding['mode'])
+                if latest and now < latest.attendance_time + timedelta(seconds=values['duplicate_window']):
+                    handover = (event == AttendanceType.IN and latest.attendance_type == AttendanceType.OUT
+                                and latest.work_date == work_date and latest.shift_id != shift.id
+                                and latest.attendance_time <= now)
+                    if not handover:
+                        flow['latched'] = member.id
+                        raise AlreadyRecorded('Absensi berulang ditolak; tunggu sampai jeda selesai.')
                 if event in (AttendanceType.IN, AttendanceType.BREAK_OUT) and now >= end:
                     raise DataValidationError('Shift sudah berakhir. Tutup sesi masuk yang masih terbuka.')
                 if event == AttendanceType.IN:
@@ -260,15 +265,14 @@ class AttendanceService:
         zone = self._zone(location)
         today = now.astimezone(zone).date()
         for work_date in (today-timedelta(days=1), today):
-            assignments = list(session.scalars(select(ShiftAssignment).where(ShiftAssignment.member_id == member.id,
-                ShiftAssignment.starts_on <= work_date, or_(ShiftAssignment.ends_on.is_(None), ShiftAssignment.ends_on >= work_date))))
-            if len(assignments) > 1:
+            shifts = list(session.scalars(select(Shift).join(ShiftAssignment).where(
+                ShiftAssignment.member_id == member.id, active_on(ShiftAssignment, work_date))))
+            if len(shifts) > 1 and session.scalar(select(conflicting_assignments(member.id, work_date))):
                 raise DataValidationError('Penugasan shift bertumpang tindih. Hubungi Admin.')
-            if not assignments:
-                continue
-            shift = session.get(Shift, assignments[0].shift_id)
-            start, end = shift_window(shift, work_date, zone)
-            if start <= now < end:
+            for shift in shifts:
+                start, end = shift_window(shift, work_date, zone)
+                if not start <= now < end:
+                    continue
                 previous = session.scalar(select(Attendance).where(Attendance.member_id == member.id,
                     Attendance.shift_id == shift.id, Attendance.work_date == work_date)
                     .order_by(Attendance.attendance_time.desc(), Attendance.id.desc()).limit(1))

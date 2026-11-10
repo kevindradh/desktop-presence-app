@@ -26,7 +26,7 @@ Layanan memeriksa izin saat membaca maupun menyimpan. Menyembunyikan menu bukan 
 3. Di **Anggota**, isi ID, nama, grup dan informasi lain yang diperlukan. ID harus unik.
 4. Pilih **Registrasi wajah**, kamera yang sesuai, lalu **Mulai**. Ikuti arahan depan, kiri, kanan, atas dan bawah. Auto capture membutuhkan wajah yang layak dan posisi yang stabil; **Capture** tersedia sesuai keadaan dialog.
 5. Simpan setelah lima sudut lengkap. Pembatalan tidak mengganti set wajah lama. Registrasi ulang mengganti set lama setelah penyimpanan set baru berhasil.
-6. Pada tab penugasan, pilih shift serta rentang tanggal. Hindari penugasan yang bertumpang tindih. Tab riwayat menampilkan peristiwa kehadiran yang tersimpan.
+6. Pada tab penugasan, pilih shift dan rentang tanggal. Untuk pergantian pada hari yang sama, akhiri penugasan lama pada hari itu lalu buat penugasan baru mulai hari itu. Jam mulai shift baru harus sama dengan atau lebih lambat dari jam selesai shift lama. Selesaikan check-out lama sebelum check-in ke shift baru. Kedua shift tampil terpisah di laporan.
 7. **Tes wajah** memeriksa kecocokan anggota terpilih tanpa membuat kehadiran baru.
 
 Nonaktif anggota menghapus embedding dan foto kelolaan sesuai [kebijakan biometrik](biometric-retention.md); data anggota dan riwayat kehadiran dipertahankan. Untuk memakai biometrik kembali, anggota memerlukan registrasi wajah baru sesuai alur yang tersedia.

@@ -12,12 +12,15 @@ from sqlalchemy import func, select
 from ai.attendance_process import signed_packet
 from ai.enrollment import CapturePacket
 from app.models.entities import (Attendance, AttendanceType, AttendanceStatus, AuditLog, CalendarDay,
-    Device, DeviceType, FaceAngle, FaceEmbedding, Member, MemberLeave, Role)
+    Device, DeviceType, FaceAngle, FaceEmbedding, Member, MemberLeave, Role, ShiftAssignment)
 from app.repositories.core import (DeviceRepository, EmbeddingRepository, SettingsRepository, ShiftRepository)
+from app.services.administration import AdministrationService
 from app.services.attendance import AttendanceService, next_event, shift_window
 from app.services.auth import AuthError
+from app.services.dashboard import DashboardService
 from app.services.database import DataValidationError, DatabaseUnavailable
 from app.services.devices import DevicesService
+from app.services.reports import ReportFilter, ReportsService
 from app.services.settings import SettingsService
 from app.settings.config import load_config
 from tests.test_auth import auth, add_role
@@ -71,6 +74,41 @@ def scan(data, binding=None, **kwargs):
 def rows(store):
     with store.db.transaction() as session:
         return list(session.scalars(select(Attendance).order_by(Attendance.id)))
+
+
+def test_used_shift_can_end_and_handover_on_its_start_date(attendance, store, tmp_path):
+    data = attendance
+    admin = AdministrationService(data.auth, tmp_path)
+    member = admin.member(data.token, data.member)
+    first_assignment, = member.assignments
+    assert scan(data, begin(data, 'IN')).saved
+    with pytest.raises(DataValidationError, match='riwayat'):
+        admin.cancel_assignment(data.token, data.member, member.member.revision, first_assignment.id)
+    admin.end_assignment(data.token, data.member, member.member.revision, first_assignment.id, DAY)
+    member = admin.member(data.token, data.member).member
+    overlap = admin.save_shift(data.token, 'Tumpang tindih', time(16), time(21), 5)
+    with pytest.raises(DataValidationError, match='tumpang tindih'):
+        admin.assign_shift(data.token, data.member, member.revision, overlap.id, DAY)
+    second = admin.save_shift(data.token, 'Sore', time(17), time(21), 5)
+    admin.assign_shift(data.token, data.member, member.revision, second.id, DAY)
+
+    data.now[0] += timedelta(hours=9)
+    assert scan(data, begin(data, 'OUT')).saved
+    config = load_config(tmp_path, environ={})
+    reports = ReportsService(data.auth, config, clock=lambda: data.now[0])
+    filters = ReportFilter(DAY, DAY)
+    assert {row.shift: row.status for row in reports.build(data.token, filters).rows} == {
+        'Pagi absensi': 'PRESENT', 'Sore': 'PENDING'}
+    assert scan(data, begin(data, 'IN')).saved
+    assert [(row.shift_id, row.attendance_type.value, row.work_date) for row in rows(store)] == [
+        (data.shift, 'IN', DAY), (data.shift, 'OUT', DAY), (second.id, 'IN', DAY)]
+    with store.db.transaction() as session:
+        assert session.get(ShiftAssignment, first_assignment.id).ends_on == DAY
+    dashboard = DashboardService(data.auth, config, clock=lambda: data.now[0]).load(data.token, DAY)
+    assert dashboard.present == 1 and dashboard.conflicts == 0
+    assert {row.label: row.present for row in dashboard.shifts} == {'Pagi absensi': 1, 'Sore': 1}
+    snapshot = reports.build(data.token, filters)
+    assert {row.shift: row.status for row in snapshot.rows} == {'Pagi absensi': 'PRESENT', 'Sore': 'PRESENT'}
 
 
 def test_timezone_change_uses_local_shift_start_and_invalidates_old_scan(attendance, store):

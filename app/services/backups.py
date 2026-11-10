@@ -118,8 +118,11 @@ class BackupService:
         try:
             if not isinstance(payload, dict) or set(payload) != {'format','schema','revision','created_at',
                     'expires_at','restore_policy','tables','photos','model_manifest_sha256'}: raise ValueError
+            # Revision 0007 relaxes a unique constraint without changing the archived columns.
+            compatible = (payload['revision'] == expected_revision or
+                          (payload['revision'], expected_revision) == ('0006_search_storage', '0007_same_day_shift'))
             if (payload['format'] != 1 or payload['schema'] != schema_signature()
-                    or payload['revision'] != expected_revision or payload['restore_policy'] != 'reenroll'):
+                    or not compatible or payload['restore_policy'] != 'reenroll'):
                 raise ValueError
             created = datetime.fromisoformat(payload['created_at']); expires = datetime.fromisoformat(payload['expires_at'])
             if created.utcoffset() is None or expires.utcoffset() is None or expires-created != RETENTION: raise ValueError

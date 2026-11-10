@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import select
 
 from app.models.entities import (Attendance, AttendanceStatus, AttendanceType, CalendarDay, Device, Location,
-    Member, MemberLeave, Role, Shift)
+    Member, MemberLeave, Role, Shift, ShiftAssignment)
 from app.repositories.core import AttendanceRepository, MemberRepository, ShiftRepository
 from app.services.auth import AuthError
 from app.services.dashboard import DashboardService
@@ -113,6 +113,22 @@ def test_conflicting_assignments_not_reported_as_absent(attendance, store, tmp_p
         ShiftRepository(session).assign(data.member,other.id,DAY-timedelta(days=1),None)
     result=service.load(data.token,DAY)
     assert result.conflicts==1 and result.pending==result.absent==0
+
+
+def test_consecutive_shifts_stay_pending_until_the_last_shift_ends(attendance, store, tmp_path):
+    data = attendance
+    service = dashboard(data, tmp_path)
+    with store.db.transaction() as session:
+        assignment = session.scalar(select(ShiftAssignment).where(ShiftAssignment.member_id == data.member))
+        assignment.ends_on = DAY
+        other = ShiftRepository(session).create('Sore', time(17), time(21))
+        ShiftRepository(session).assign(data.member, other.id, DAY)
+    data.now[0] += timedelta(hours=9)
+    result = service.load(data.token, DAY)
+    assert result.pending == 1 and result.conflicts == result.absent == 0
+    data.now[0] += timedelta(hours=4)
+    result = service.load(data.token, DAY)
+    assert result.absent == 1 and result.conflicts == result.pending == 0
 
 
 @pytest.mark.parametrize('role',list(Role))

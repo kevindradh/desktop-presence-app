@@ -3,11 +3,12 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import case, exists, func, literal, or_, select, tuple_
+from sqlalchemy import case, exists, func, literal, select, tuple_
 
 from app.models.entities import (Attendance, AttendanceStatus, AttendanceType, CalendarDay,
     Device, Location, Member, MemberGroup, MemberLeave, Shift, ShiftAssignment)
 from app.services.database import DataValidationError
+from app.services.shift_schedule import active_on, conflicting_assignments
 
 
 @dataclass(frozen=True)
@@ -86,15 +87,13 @@ class DashboardService:
             MemberLeave.starts_on <= day, MemberLeave.ends_on >= day))
         end = func.timezone(str(self.zone), literal(day)+Shift.end_time+
             case((Shift.end_time < Shift.start_time, timedelta(days=1)), else_=timedelta(0)))
-        scheduled = (select(Member.id.label('member'), func.count(ShiftAssignment.id).label('assignments'),
-            func.min(end).label('end'), leave.label('leave'))
+        scheduled = (select(Member.id.label('member'), func.max(end).label('end'), leave.label('leave'))
             .join(ShiftAssignment, ShiftAssignment.member_id == Member.id)
             .join(Shift, Shift.id == ShiftAssignment.shift_id)
-            .where(Member.is_active.is_(True), ShiftAssignment.starts_on <= day,
-                   or_(ShiftAssignment.ends_on.is_(None), ShiftAssignment.ends_on >= day), ~holiday)
+            .where(Member.is_active.is_(True), active_on(ShiftAssignment, day), ~holiday)
             .group_by(Member.id).subquery())
         checked_in = select(Attendance.member_id).where(*today)
-        status = case((scheduled.c.assignments > 1, 'conflict'),
+        status = case((conflicting_assignments(scheduled.c.member, day), 'conflict'),
                       (scheduled.c.leave, 'leave'), (scheduled.c.end <= now, 'absent'), else_='pending')
         counts = dict(session.execute(select(status, func.count()).where(~scheduled.c.member.in_(checked_in))
                                       .group_by(status)).all())

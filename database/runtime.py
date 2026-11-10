@@ -69,6 +69,9 @@ def fresh(connection, *, application_role=None):
     if tables & application_tables and revision is None:
         raise DataValidationError("Fresh dibatalkan: tabel aplikasi tidak memiliki riwayat migrasi yang valid.")
     if revision is not None:
+        if 'shift_assignments' in tables:
+            # Fresh discards these rows anyway. An older revision cannot represent shared dates.
+            connection.execute(text('TRUNCATE TABLE shift_assignments'))
         command.downgrade(alembic_config(connection, application_role=application_role), "base")
     upgrade(connection, application_role=application_role)
     with Session(bind=connection, join_transaction_mode="create_savepoint") as session:

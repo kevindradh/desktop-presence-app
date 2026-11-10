@@ -14,6 +14,7 @@ from app.models.entities import (Attendance, AttendanceType, CalendarDay, Device
 from app.services.attendance import shift_window
 from app.services.auth import digest
 from app.services.database import DataValidationError
+from app.services.shift_schedule import active_on, conflicting_assignments
 
 STATUS = {'PRESENT':'Hadir tepat waktu','LATE':'Terlambat','ABSENT':'Absent',
           'LEAVE':'Izin','PENDING':'Belum masuk','CONFLICT':'Perlu diperiksa'}
@@ -163,8 +164,7 @@ class ReportsService:
         holiday=exists(select(CalendarDay.id).join(Location).where(Location.location_code=='LOCAL',
             CalendarDay.calendar_date==days.c.day,CalendarDay.is_workday.is_(False)))
         schedules=(select(Member.id.label('member'),ShiftAssignment.shift_id.label('shift'),days.c.day.label('day'))
-            .select_from(days).join(ShiftAssignment,and_(ShiftAssignment.starts_on<=days.c.day,
-                or_(ShiftAssignment.ends_on.is_(None),ShiftAssignment.ends_on>=days.c.day)))
+            .select_from(days).join(ShiftAssignment,active_on(ShiftAssignment,days.c.day))
             .join(Member,Member.id==ShiftAssignment.member_id).where(Member.is_active.is_(True),~holiday))
         event_filter=(Attendance.work_date>=f.start,Attendance.work_date<=f.end,Attendance.attendance_time<=now)
         actual=select(Attendance.member_id,Attendance.shift_id,Attendance.work_date).where(*event_filter)
@@ -175,10 +175,9 @@ class ReportsService:
         same=lambda table:and_(table.c.member==keys.c.member,table.c.shift==keys.c.shift,table.c.day==keys.c.day)
         leave=exists(select(MemberLeave.id).where(MemberLeave.member_id==keys.c.member,
             MemberLeave.starts_on<=keys.c.day,MemberLeave.ends_on>=keys.c.day))
-        assignments=(select(func.count()).select_from(ShiftAssignment).where(ShiftAssignment.member_id==keys.c.member,
-            ShiftAssignment.starts_on<=keys.c.day,or_(ShiftAssignment.ends_on.is_(None),ShiftAssignment.ends_on>=keys.c.day)).scalar_subquery())
+        conflict=conflicting_assignments(keys.c.member,keys.c.day)
         base=(select(keys.c.member,keys.c.shift,keys.c.day,Member.member_code,Member.full_name,
-            MemberGroup.group_name,Shift,leave.label('leave'),assignments.label('assignments'))
+            MemberGroup.group_name,Shift,leave.label('leave'),conflict.label('conflict'))
             .join(Member,Member.id==keys.c.member).join(Shift,Shift.id==keys.c.shift)
             .outerjoin(incoming,same(incoming)).join(MemberGroup,MemberGroup.id==func.coalesce(incoming.c.group,Member.group_id)))
         if f.group:base=base.where(MemberGroup.id==f.group)
@@ -196,13 +195,13 @@ class ReportsService:
         for event,device in details:
             by_key.setdefault((event.member_id,event.shift_id,event.work_date),[]).append((event,device))
         rows=[];events=[]
-        for index,(member,shift_id,day,code,name,group,shift,on_leave,count) in enumerate(records):
+        for index,(member,shift_id,day,code,name,group,shift,on_leave,has_conflict) in enumerate(records):
             if context and index%250==0:context.checkpoint()
             items=by_key.get((member,shift_id,day),[])
             ins=[event for event,device in items if event.attendance_type==AttendanceType.IN]
             outs=[event for event,device in items if event.attendance_type==AttendanceType.OUT]
             if ins:status=ins[0].status.value
-            elif items or count>1:status='CONFLICT'
+            elif items or has_conflict:status='CONFLICT'
             elif on_leave:status='LEAVE'
             else:status='ABSENT' if now>=shift_window(shift,day,self.zone)[1] else 'PENDING'
             if f.status not in ('ALL',status) and not (f.status=='ATTENDED' and status in ('PRESENT','LATE')):continue

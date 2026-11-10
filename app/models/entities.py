@@ -140,7 +140,7 @@ class ShiftAssignment(Identified, Created, Base):
     shift_id: Mapped[int] = mapped_column(ForeignKey("shifts.id", ondelete="RESTRICT"), index=True)
     starts_on: Mapped[date] = mapped_column(Date)
     ends_on: Mapped[date | None] = mapped_column(Date)
-    __table_args__ = (UniqueConstraint("member_id", "starts_on"),
+    __table_args__ = (UniqueConstraint("member_id", "shift_id", "starts_on", name="uq_shift_assignments_member_shift_start"),
                       CheckConstraint("ends_on IS NULL OR ends_on >= starts_on", name="date_range"))
 
 
