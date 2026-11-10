@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 from app.services.attendance import EVENTS
 from app.services.database import DataValidationError
 from app.services.reports import STATUS
+from app.settings.colors import BORDER, MUTED, PRIMARY, TEXT, TITLE, WORKSPACE
 
 HEADERS=('Tanggal kerja','ID anggota','Nama','Grup','Shift','Status','Masuk','Keluar',
          'Mulai istirahat','Selesai istirahat','Pulang awal','Sumber OUT','Perangkat')
@@ -60,19 +61,19 @@ def write_xlsx(snapshot,path,context):
             sheet=writer.sheets[name]
             sheet.sheet_view.showGridLines=False
             sheet.merge_cells(start_row=1,start_column=1,end_row=1,end_column=len(headers))
-            sheet.cell(1,1,'StarGate - Laporan Kehadiran').font=Font(name='Arial',size=16,bold=True,color='213E31')
+            sheet.cell(1,1,'StarGate - Laporan Kehadiran').font=Font(name='Arial',size=16,bold=True,color=TITLE[1:])
             sheet.row_dimensions[1].height=32
             for i,text in enumerate(metadata(snapshot),3):
                 sheet.merge_cells(start_row=i,start_column=1,end_row=i,end_column=len(headers))
                 sheet.cell(i,1,text).alignment=Alignment(wrap_text=True,vertical='center')
-                sheet.cell(i,1).font=Font(name='Arial',size=10,color='60736B')
+                sheet.cell(i,1).font=Font(name='Arial',size=10,color=MUTED[1:])
                 capacity=323 if name=='Kehadiran' else 151
                 sheet.row_dimensions[i].height=max(30,math.ceil(len(text)/capacity)*15+8)
             widths=(15,20,34,24,24,23,23,23,35,35,15,16,28) if name=='Kehadiran' else (15,20,34,24,24,28,16)
             from openpyxl.utils import get_column_letter
             for i,width in enumerate(widths,1):sheet.column_dimensions[get_column_letter(i)].width=width
             for cell in sheet[8]:
-                cell.font=Font(name='Arial',size=11,bold=True,color='FFFFFF');cell.fill=PatternFill('solid',fgColor='2D6240')
+                cell.font=Font(name='Arial',size=11,bold=True,color='FFFFFF');cell.fill=PatternFill('solid',fgColor=PRIMARY[1:])
                 cell.alignment=Alignment(wrap_text=True,vertical='center',horizontal='center')
             sheet.row_dimensions[8].height=30
             for row in sheet.iter_rows(min_row=9):
@@ -80,7 +81,7 @@ def write_xlsx(snapshot,path,context):
                 for i,cell in enumerate(row):
                     # User-controlled text is literal, including leading '='.
                     if isinstance(cell.value,str):cell.data_type='s'
-                    cell.font=Font(name='Arial',size=11,color='243A33')
+                    cell.font=Font(name='Arial',size=11,color=TEXT[1:])
                     cell.alignment=Alignment(wrap_text=True,vertical='top',horizontal='left',indent=1)
                     if isinstance(cell.value,datetime):cell.number_format='DD/MM/YYYY HH:MM:SS'
                     elif isinstance(cell.value,date):cell.number_format='DD/MM/YYYY'
@@ -141,7 +142,7 @@ def write_pdf(snapshot,path,context):
     from reportlab.platypus import SimpleDocTemplate,LongTable,Paragraph,Spacer,TableStyle
     pdf_fonts()
     text=ParagraphStyle('body',fontName='StarGateVera',fontSize=8.5,leading=12,wordWrap='CJK')
-    heading=ParagraphStyle('heading',parent=text,fontName='StarGateVeraBold',fontSize=16,leading=21,textColor=colors.HexColor('#213e31'))
+    heading=ParagraphStyle('heading',parent=text,fontName='StarGateVeraBold',fontSize=16,leading=21,textColor=colors.HexColor(TITLE))
     header=ParagraphStyle('table_header',parent=text,textColor=colors.white,fontName='StarGateVeraBold')
     paragraph=lambda value:Paragraph(pdf_text(value),text)
     body=[Paragraph('StarGate - Laporan Kehadiran',heading),Spacer(1,10)]
@@ -164,16 +165,16 @@ def write_pdf(snapshot,path,context):
     if not snapshot.rows:body.append(paragraph('Tidak ada data sesuai filter.'))
     else:
         table=LongTable(data,colWidths=widths,repeatRows=1,splitByRow=1,splitInRow=int(oversized),hAlign='LEFT')
-        table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#2d6240')),
-            ('ROWBACKGROUNDS',(0,1),(-1,-1),[colors.white,colors.HexColor('#f1f5f0')]),
+        table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor(PRIMARY)),
+            ('ROWBACKGROUNDS',(0,1),(-1,-1),[colors.white,colors.HexColor(WORKSPACE)]),
             ('VALIGN',(0,0),(-1,-1),'TOP'),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7),
             ('TOPPADDING',(0,0),(-1,-1),7),('BOTTOMPADDING',(0,0),(-1,-1),7),
-            ('LINEBELOW',(0,0),(-1,0),.6,colors.HexColor('#cbd9ce'))]))
+            ('LINEBELOW',(0,0),(-1,0),.6,colors.HexColor(BORDER))]))
         body.append(table)
     def page(canvas,doc):
         context.checkpoint()
         canvas.saveState();canvas.setFont('StarGateVera',8)
-        canvas.setFillColor(colors.HexColor('#60736b'))
+        canvas.setFillColor(colors.HexColor(MUTED))
         canvas.drawString(28,20,'StarGate | '+snapshot.zone+' | '+f'{snapshot.filters.start} - {snapshot.filters.end}')
         canvas.drawRightString(landscape(A4)[0]-28,20,f'Halaman {doc.page}')
         canvas.restoreState()

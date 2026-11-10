@@ -14,6 +14,7 @@ from app.pages.administration import fill_table, table
 from app.services.cameras import FINAL
 from app.services.inference import InferenceController
 from app.services.settings import configured
+from app.settings.colors import BORDER, CAMERA_BACKGROUND, TINT, TITLE
 from app.widgets.cards import text_label
 
 
@@ -22,12 +23,12 @@ class AttendancePreview(QLabel):
         super().__init__()
         self.setMinimumSize(480, 360)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.setStyleSheet('background: #142d25; border: 1px solid #d3ded4; border-radius: 6px;')
+        self.setStyleSheet(f'background: {CAMERA_BACKGROUND}; color: white; border: 1px solid {BORDER}; border-radius: 6px;')
         self.notice = text_label('')
         self.notice.setParent(self)
         self.notice.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.notice.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        self.notice.setStyleSheet('background: #e6eee1; color: #213e31; border: 1px solid #d3ded4; '
+        self.notice.setStyleSheet(f'background: {TINT}; color: {TITLE}; border: 1px solid {BORDER}; '
                                  'border-radius: 8px; padding: 10px 14px; font-size: 18px; font-weight: 650;')
         self.notice.hide()
         self.notice_timer = QTimer(self)
@@ -317,7 +318,7 @@ class AttendancePage(QWidget):
             width, height = pixmap.width(), pixmap.height()
             rect = QRectF(box.x()*width, box.y()*height, box.width()*width, box.height()*height)
             painter = QPainter(pixmap)
-            painter.setPen(QPen(QColor('#142d25'), 5))
+            painter.setPen(QPen(QColor(CAMERA_BACKGROUND), 5))
             painter.drawRect(rect)
             painter.setPen(QPen(QColor('#f5bd42'), 3))
             painter.drawRect(rect)

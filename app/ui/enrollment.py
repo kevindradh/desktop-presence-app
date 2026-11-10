@@ -9,6 +9,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QImage,QPixmap,QTransform
 from ai.enrollment import GUIDES
 from ai.enrollment_process import EnrollmentTarget
+from app.settings.colors import BORDER, CAMERA_BACKGROUND, TINT, TITLE
 from app.ui.ai_lab import AiLab
 from app.ui.enrollment_audio import EnrollmentAudio
 from app.widgets.toast import Toast
@@ -39,7 +40,7 @@ class CaptureLab(AiLab):
         self.stop_button.setText('Hentikan && hapus')
         self.preview.setMinimumSize(640,360)
         self.preview.setMaximumHeight(16777215)
-        self.preview.setStyleSheet('background: #142d25; border: 1px solid #d3ded4; border-radius: 6px;')
+        self.preview.setStyleSheet(f'background: {CAMERA_BACKGROUND}; color: white; border: 1px solid {BORDER}; border-radius: 6px;')
         self.preview.clear()
         for widget in (self.clear_button,self.record_button,self.condition,self.summary,
                        self.state_label,self.detail,self.threshold_label):
@@ -53,7 +54,7 @@ class CaptureLab(AiLab):
         self.guide.setWordWrap(True)
         self.guide.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.guide.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        self.guide.setStyleSheet('background: #e6eee1; color: #213e31; border: 1px solid #d3ded4; '
+        self.guide.setStyleSheet(f'background: {TINT}; color: {TITLE}; border: 1px solid {BORDER}; '
                                 'border-radius: 8px; padding: 10px 14px; font-size: 18px; font-weight: 650;')
         self.preview.installEventFilter(self)
         self._position_guide()

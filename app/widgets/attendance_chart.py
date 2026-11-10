@@ -3,10 +3,11 @@ from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import QColor, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import QFrame, QHBoxLayout, QWidget
 
+from app.settings.colors import BORDER, MUTED, PRIMARY, TEXT
 from app.widgets.cards import text_label
 
 
-PRESENT_COLOR = '#2d6240'
+PRESENT_COLOR = PRIMARY
 LATE_COLOR = '#b36b19'
 
 
@@ -53,16 +54,16 @@ class AttendanceChart(QWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), QColor('#ffffff'))
         if not self.rows or not any(r.present for r in self.rows):
-            painter.setPen(QColor('#60736b'))
+            painter.setPen(QColor(MUTED))
             painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, self.empty_text)
             painter.end()
             return
         maximum = max(r.present for r in self.rows) or 1
         if self.trend:
             area = QRectF(35, 16, max(1, self.width()-55), self.height()-55)
-            painter.setPen(QColor('#cbd9ce'))
+            painter.setPen(QColor(BORDER))
             painter.drawLine(area.bottomLeft(), area.bottomRight())
-            painter.setPen(QColor('#60736b'))
+            painter.setPen(QColor(MUTED))
             painter.drawText(QRectF(0, 0, 32, 30), Qt.AlignmentFlag.AlignCenter, str(maximum))
             for attribute, color in (('present', PRESENT_COLOR), ('late', LATE_COLOR)):
                 path = QPainterPath()
@@ -72,7 +73,7 @@ class AttendanceChart(QWidget):
                     path.moveTo(point) if i == 0 else path.lineTo(point)
                 painter.setPen(QPen(QColor(color), 2))
                 painter.drawPath(path)
-            painter.setPen(QColor('#60736b'))
+            painter.setPen(QColor(MUTED))
             painter.drawText(QRectF(area.left(), area.bottom()+6, area.width(), 24),
                 Qt.AlignmentFlag.AlignLeft, self.rows[0].label)
             painter.drawText(QRectF(area.left(), area.bottom()+6, area.width(), 24),
@@ -82,7 +83,7 @@ class AttendanceChart(QWidget):
             width = max(1, self.width()-label_width-72)
             for i, row in enumerate(self.rows):
                 y = 8+i*28
-                painter.setPen(QColor('#243a33'))
+                painter.setPen(QColor(TEXT))
                 label = painter.fontMetrics().elidedText(row.label, Qt.TextElideMode.ElideRight, int(label_width)-8)
                 painter.drawText(QRectF(0, y, label_width-8, 24), Qt.AlignmentFlag.AlignVCenter, label)
                 painter.fillRect(QRectF(label_width, y+3, width*row.present/maximum, 8), QColor(PRESENT_COLOR))

@@ -7,11 +7,14 @@ from PyQt6.QtCore import QRectF, Qt
 from PyQt6.QtGui import QColor, QImage, QPainter
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from app.ui.branding import brand_image
 
 
 def main():
     folder = ROOT / 'resources/branding'
-    mark = QImage(str(folder / 'stargate.png'))
+    mark = brand_image(ROOT)
     if mark.isNull():
         raise ValueError('Logo StarGate tidak dapat dibaca.')
     canvas = QImage(1024, 1024, QImage.Format.Format_ARGB32_Premultiplied)
