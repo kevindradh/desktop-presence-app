@@ -203,24 +203,20 @@ def test_users_form_create_edit_reset_and_deactivate(auth, views, wait_until):
     assert page.selected_id is None and not page.username.text()
 
 
-def test_idle_background_does_not_extend_session_and_database_failure_locks_ui(auth, views, wait_until, monkeypatch):
+def test_idle_background_keeps_session_and_database_failure_locks_ui(auth, views, wait_until, monkeypatch):
     service, _, now = auth
     view = views(service)
     sign_in(view, "root", NEW, wait_until, remember=True)
-    now[0] += timedelta(minutes=15)
+    now[0] += timedelta(days=31)
     view._touched = False
     view._check_session()
     idle(view, wait_until)
-    assert view.login is None and view.shell is None
-    # The local OS entry cannot bypass the server-revoked remember grant.
-    restarted = views(service, view.credentials)
-    assert restarted.login is None
-    sign_in(restarted, "root", NEW, wait_until)
+    assert view.login is not None and view.shell is not None
     monkeypatch.setattr(service, "inspect", lambda *a, **kw: (_ for _ in ()).throw(DatabaseUnavailable()))
-    restarted._check_session()
-    idle(restarted, wait_until)
-    assert restarted.login is None and restarted.shell is None
-    assert "Database" in restarted.error_message.text()
+    view._check_session()
+    idle(view, wait_until)
+    assert view.login is None and view.shell is None
+    assert "Database" in view.error_message.text()
 
 
 def test_keychain_unavailable_keeps_password_login_usable(auth, views, wait_until):

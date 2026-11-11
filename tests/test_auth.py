@@ -126,19 +126,22 @@ def test_full_permission_matrix_enforced_at_service(auth, role):
                 action()
 
 
-def test_idle_boundary_input_touch_and_remember_restart(auth):
+def test_interactive_session_survives_inactivity_and_legacy_expiry(auth, store):
     service, admin, now = auth
-    remembered = service.remember(admin.token)
-    now[0] += timedelta(minutes=14, seconds=59)
-    assert service.inspect(admin.token, touch=True)
-    now[0] += timedelta(minutes=14, seconds=59)
-    assert service.inspect(admin.token)
-    now[0] += timedelta(seconds=1)
-    with pytest.raises(AuthError, match="Sesi berakhir"):
-        service.inspect(admin.token, touch=True)
+    with store.db.transaction() as session:
+        record = session.scalar(select(AuthSession).where(AuthSession.token_hash == digest(admin.token)))
+        record.expires_at = now[0] + timedelta(days=1)
+    for delta in (timedelta(minutes=15), timedelta(days=2), timedelta(days=31)):
+        now[0] += delta
+        assert service.inspect(admin.token)
+        assert service.authorize(admin.token, 'users')
+    service.close_session(admin.token)
     with pytest.raises(AuthError):
-        service.resume(remembered.token)
-    current = service.login("root", NEW)
+        service.inspect(admin.token)
+
+
+def test_remember_restart_close_and_explicit_logout(auth):
+    service, current, now = auth
     remembered = service.remember(current.token)
     service.close_session(current.token)
     now[0] += timedelta(days=2)

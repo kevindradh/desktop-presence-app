@@ -110,7 +110,7 @@ def test_already_recorded_notice_only_once_while_face_remains(attendance,store,v
     wait_until(lambda:not page.busy and not view.cameras.busy,timeout=8000)
 
 
-@pytest.mark.parametrize('action',['stop','navigation','password','logout','close','timeout'])
+@pytest.mark.parametrize('action',['stop','navigation','password','logout','close','revoked'])
 def test_attendance_lifecycle_releases_workers_and_camera(attendance, store, views, wait_until, auth, action):
     view,page=ready(attendance,views,wait_until,store,status='spoof')
     page.start_button.click()
@@ -121,7 +121,7 @@ def test_attendance_lifecycle_releases_workers_and_camera(attendance, store, vie
     elif action=='logout':view.logout()
     elif action=='close':view.close()
     else:
-        auth[2][0]+=timedelta(minutes=16)
+        auth[0].close_session(view.login.token)
         view._check_session()
     wait_until(lambda:not page.busy and not view.cameras.busy,timeout=12000)
     assert not attendance.service.flows and not rows(store) and page.sound.plays==0

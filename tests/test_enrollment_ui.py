@@ -144,7 +144,7 @@ def test_auto_capture_completes_without_capture_click_and_still_requires_save(au
         assert session.scalar(select(func.count()).select_from(FaceEmbedding))==5
 
 
-@pytest.mark.parametrize('action',['cancel','logout','password','close','timeout'])
+@pytest.mark.parametrize('action',['cancel','logout','password','close','revoked'])
 def test_capture_cancel_and_session_end_leave_no_member(auth,store,views,wait_until,monkeypatch,action):
     view,page=ready(auth,views,wait_until)
     install(view,monkeypatch)
@@ -160,8 +160,7 @@ def test_capture_cancel_and_session_end_leave_no_member(auth,store,views,wait_un
     elif action=='password':view.open_password()
     elif action=='close':view.close()
     else:
-        from datetime import timedelta
-        auth[2][0]+=timedelta(minutes=16)
+        auth[0].close_session(view.login.token)
         view._check_session()
     wait_until(lambda:view.enrollment_dialog is None,timeout=10000)
     assert not dialog.lab.cameras.busy and not dialog.lab.inference.active

@@ -131,7 +131,7 @@ def test_local_disconnect_requires_manual_restart(auth,views,wait_until,tmp_path
     wait_until(lambda:view.cameras.nodes[device].frames>0,timeout=6000)
 
 
-@pytest.mark.parametrize("action",["logout","password","close","expired"])
+@pytest.mark.parametrize("action",["logout","password","close","revoked"])
 def test_session_actions_stop_owned_camera(auth,views,wait_until,action):
     view,page=ready(auth,views,wait_until)
     device=create(page,view,wait_until)
@@ -146,13 +146,12 @@ def test_session_actions_stop_owned_camera(auth,views,wait_until,action):
     elif action=="close":
         view.close()
     else:
-        from datetime import timedelta
-        auth[2][0]+=timedelta(minutes=16)
+        auth[0].close_session(view.login.token)
         view._check_session()
     wait_until(lambda: not view.cameras.busy,timeout=6000)
     wait_until(lambda: not view.jobs.tasks.busy,timeout=10000)
     assert view.cameras.nodes[device].process is None
-    if action in {"logout","expired"}:
+    if action in {"logout","revoked"}:
         assert view.login is None
     if action=="close":
         wait_until(lambda: not view.isVisible(),timeout=5000)

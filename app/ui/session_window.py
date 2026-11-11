@@ -644,7 +644,7 @@ class SessionWindow(QMainWindow):
     def _check_session(self):
         if self._maintenance or not self.login or self.jobs.tasks.busy or self._closing:
             return
-        # Only real input renews idle time. Timer/worker progress never counts.
+        # Record input activity while polling the account's current access.
         touch, self._touched = self._touched, False
         token = self.login.token
         def done(result):

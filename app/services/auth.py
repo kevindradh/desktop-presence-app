@@ -100,8 +100,9 @@ class AuthService:
     def _issue(self, session, user, remember=False):
         now = self.clock()
         token = secrets.token_urlsafe(32)
+        expires = now + timedelta(days=30) if remember else datetime.max.replace(tzinfo=timezone.utc)
         session.add(AuthSession(user_id=user.id, token_hash=digest(token), is_remember=remember,
-            last_activity=now, expires_at=now + timedelta(days=30 if remember else 1)))
+            last_activity=now, expires_at=expires))
         return Login(principal(user), token)
 
     def bootstrap(self, username, fullname, password):
@@ -154,8 +155,7 @@ class AuthService:
         if record is None or record.revoked or record.is_remember != remember:
             return None, AuthError("Sesi berakhir. Silakan masuk kembali.")
         user = session.get(User, record.user_id)
-        idle = SettingsRepository(session).get("session_timeout_minutes")
-        expired = now >= record.expires_at or (not remember and now >= record.last_activity + timedelta(minutes=idle))
+        expired = remember and now >= record.expires_at
         if expired or not user.is_active or (user.locked_until and now < user.locked_until):
             self._revoke(session, user.id)
             self._audit(session, "auth.session_expired", user, user)

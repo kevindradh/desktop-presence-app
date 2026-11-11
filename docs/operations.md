@@ -17,7 +17,7 @@ Untuk ruang simulasi yang disiapkan di Parallels, buka **StarGate Uji Parallels.
 | Operator | Dashboard, Anggota, Kehadiran, Laporan, Pemeriksaan aplikasi |
 | Viewer | Laporan |
 
-Layanan memeriksa izin saat membaca maupun menyimpan. Menyembunyikan menu bukan satu-satunya pemeriksaan akses. Reset password dan penonaktifan akun mencabut sesi sesuai aturan aplikasi. Jangan membagikan akun Super Admin untuk kegiatan harian.
+Layanan memeriksa izin saat membaca maupun menyimpan. Menyembunyikan menu bukan satu-satunya pemeriksaan akses. Reset password dan penonaktifan akun mencabut sesi sesuai aturan aplikasi. Sesi tetap aktif saat aplikasi didiamkan. Gunakan **Keluar akun** untuk logout. Jangan membagikan akun Super Admin untuk kegiatan harian.
 
 ## Zona waktu
 
