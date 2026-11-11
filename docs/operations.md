@@ -19,6 +19,10 @@ Untuk ruang simulasi yang disiapkan di Parallels, buka **StarGate Uji Parallels.
 
 Layanan memeriksa izin saat membaca maupun menyimpan. Menyembunyikan menu bukan satu-satunya pemeriksaan akses. Reset password dan penonaktifan akun mencabut sesi sesuai aturan aplikasi. Jangan membagikan akun Super Admin untuk kegiatan harian.
 
+## Zona waktu
+
+Pilih WIB, WITA, atau WIT di Pengaturan. Sesi yang sudah check-in tetap memakai zona waktu saat masuk untuk menentukan akhir shift dan pulang awal. Sesi baru memakai zona waktu lokasi yang terbaru. Jam pada layar dan laporan mengikuti zona waktu yang dipilih.
+
 ## Grup, shift dan anggota
 
 1. Buat grup sesuai kelas atau unit kerja.

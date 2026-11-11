@@ -104,9 +104,9 @@ class AttendanceService:
         return value.astimezone(UTC)
 
     @staticmethod
-    def _zone(location):
+    def _zone(location, timezone_name=None):
         try:
-            return ZoneInfo(location.timezone)
+            return ZoneInfo(timezone_name or location.timezone)
         except (ZoneInfoNotFoundError, ValueError, AttributeError):
             raise DataValidationError('Zona waktu lokasi tidak valid.') from None
 
@@ -222,7 +222,7 @@ class AttendanceService:
             latest = session.scalar(select(Attendance).where(Attendance.member_id == member.id)
                 .order_by(Attendance.attendance_time.desc(), Attendance.id.desc()).limit(1))
             try:
-                shift, work_date, start, end, previous, status = self._session(session, member, location, now)
+                shift, work_date, start, end, previous, status, zone = self._session(session, member, location, now)
                 event = next_event(previous, binding['mode'])
                 if latest and now < latest.attendance_time + timedelta(seconds=values['duplicate_window']):
                     handover = (event == AttendanceType.IN and latest.attendance_type == AttendanceType.OUT
@@ -240,7 +240,7 @@ class AttendanceService:
                     reason='already_recorded' if isinstance(error, AlreadyRecorded) else '')
             self._fresh(data, binding)
             row = self._record(session, actor, member, device.id, shift.id, work_date, event,
-                now, status, early=(event == AttendanceType.OUT and now < end))
+                now, status, timezone_name=str(zone), early=(event == AttendanceType.OUT and now < end))
             self._fresh(data, binding)
             flow['latched'] = member.id
             return AttendanceFeedback(True, f'{member.full_name} — {EVENTS[event.value]} berhasil tersimpan.',
@@ -256,12 +256,12 @@ class AttendanceService:
         if opened:
             shift = session.get(Shift, opened.shift_id)
             source = session.get(Device, opened.device_id)
-            zone = self._zone(session.get(Location, source.location_id))
+            zone = self._zone(session.get(Location, source.location_id), opened.timezone_name)
             start, end = shift_window(shift, opened.work_date, zone)
             last = session.scalar(select(Attendance).where(Attendance.member_id == member.id,
                 Attendance.shift_id == shift.id, Attendance.work_date == opened.work_date)
                 .order_by(Attendance.attendance_time.desc(), Attendance.id.desc()).limit(1))
-            return shift, opened.work_date, start, end, last.attendance_type.value, opened.status
+            return shift, opened.work_date, start, end, last.attendance_type.value, opened.status, zone
         zone = self._zone(location)
         today = now.astimezone(zone).date()
         for work_date in (today-timedelta(days=1), today):
@@ -284,13 +284,13 @@ class AttendanceService:
                     MemberLeave.starts_on <= work_date, MemberLeave.ends_on >= work_date).limit(1))
                 if (calendar and not calendar.is_workday) or on_leave is not None:
                     raise DataValidationError('Tidak dapat check-in pada hari libur atau periode izin anggota.')
-                return shift, work_date, start, end, None, AttendanceStatus.PRESENT
+                return shift, work_date, start, end, None, AttendanceStatus.PRESENT, zone
         raise DataValidationError('Belum masuk jam shift atau tidak ada penugasan shift yang berlaku.')
 
     @staticmethod
-    def _record(session, actor, member, device_id, shift_id, work_date, event, timestamp, status, *, early=False, automatic=False, group_id=None):
+    def _record(session, actor, member, device_id, shift_id, work_date, event, timestamp, status, *, timezone_name, early=False, automatic=False, group_id=None):
         row = Attendance(member_id=member.id, device_id=device_id, shift_id=shift_id, work_date=work_date,
-            attendance_type=event, attendance_time=timestamp, status=status,
+            attendance_type=event, attendance_time=timestamp, timezone_name=timezone_name, status=status,
             group_id=member.group_id if group_id is None else group_id, is_early_leave=early, is_automatic=automatic)
         session.add(row)
         session.flush()
@@ -303,7 +303,7 @@ class AttendanceService:
         local_end = Attendance.work_date + Shift.end_time + case(
             (Shift.end_time < Shift.start_time, timedelta(days=1)), else_=timedelta(0))
         statement = AttendanceRepository.open_checkins(member_id).join(Shift).join(Device).join(Location, Location.id == Device.location_id)
-        statement = statement.where(func.timezone(Location.timezone, local_end) <= now)
+        statement = statement.where(func.timezone(func.coalesce(Attendance.timezone_name, Location.timezone), local_end) <= now)
         opened = list(session.scalars(statement.order_by(Attendance.attendance_time, Attendance.id).limit(100)))
         closed = 0
         for entry in opened:
@@ -311,13 +311,13 @@ class AttendanceService:
                 break
             shift = session.get(Shift, entry.shift_id)
             device = session.get(Device, entry.device_id)
-            zone = self._zone(session.get(Location, device.location_id))
+            zone = self._zone(session.get(Location, device.location_id), entry.timezone_name)
             _, end = shift_window(shift, entry.work_date, zone)
             if now < end:
                 continue
             member = session.scalar(select(Member).where(Member.id == entry.member_id).with_for_update())
             self._record(session, actor, member, entry.device_id, entry.shift_id, entry.work_date,
-                AttendanceType.OUT, end, entry.status, automatic=True, group_id=entry.group_id)
+                AttendanceType.OUT, end, entry.status, timezone_name=str(zone), automatic=True, group_id=entry.group_id)
             closed += 1
         return closed
 

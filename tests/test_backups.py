@@ -12,7 +12,7 @@ from sqlalchemy import select, text
 from app.models.entities import Base, FaceAngle, FaceEmbedding, Member, Role, User, AuditLog
 from app.repositories.core import MemberRepository, EmbeddingRepository, SettingsRepository
 from app.services.auth import AuthError
-from app.services.backups import BackupService, REMOVED_PHOTO, TABLES
+from app.services.backups import BackupService, REMOVED_PHOTO, TABLES, schema_signature
 from app.services.backup_codec import unseal, seal, MAGIC
 from app.services.database import DataValidationError
 from app.services.member_photos import PhotoStore
@@ -70,14 +70,17 @@ def test_backup_encryption_assets_and_secret_exclusion(backup,store):
     assert (root/'synthetic.png').exists()
 
 
-@pytest.mark.parametrize('legacy_revision', [False, True])
+@pytest.mark.parametrize('legacy_revision', [None, '0006_search_storage', '0007_same_day_shift'])
 def test_restore_roundtrip_all_tables_and_approved_biometric_policy(backup,store,legacy_revision):
     service,login,now,root=backup
     with store.db.transaction() as session:
         SettingsRepository(session).set(OPERATIONAL_TIMEZONE, 'Asia/Makassar')
     path=archive(backup);payload=unseal(path,PASSWORD)
     if legacy_revision:
-        payload['revision'] = '0006_search_storage'
+        payload['revision'] = legacy_revision
+        payload['schema'] = schema_signature(legacy_timezone=True)
+        for row in payload['tables']['attendance']:
+            del row['timezone_name']
         path.write_bytes(seal(payload,PASSWORD))
     with store.db.transaction() as session:
         session.scalar(select(Member)).full_name='Changed after backup'
@@ -90,6 +93,8 @@ def test_restore_roundtrip_all_tables_and_approved_biometric_policy(backup,store
         elif table=='members':
             assert recovered[table]==[dict(r,photo_path=REMOVED_PHOTO,revision=r['revision']+1) for r in values]
         elif table=='face_embeddings':assert recovered[table]==[]
+        elif table=='attendance' and legacy_revision:
+            assert recovered[table]==[dict(row, timezone_name='Asia/Jakarta') for row in values]
         else:assert recovered[table]==values
     assert result['reenrollment_required'] and not result['cleanup_pending']
     safety=unseal(result['safety_backup'],PASSWORD)

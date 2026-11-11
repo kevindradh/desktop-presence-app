@@ -14,6 +14,7 @@ Dari folder proyek pada macOS:
 ```
 
 Perintah kedua memakai tanggal hari ini dan riwayat 30 hari, mengikuti zona waktu aplikasi.
+Zona waktu yang sudah dipilih di Pengaturan juga digunakan saat mengisi data sekolah. Setelah seeder, Anda bisa mengganti WIB, WITA, atau WIT melalui Pengaturan meskipun ada sesi contoh yang belum check-out. Sesi tersebut tetap memakai zona waktu saat masuk untuk menentukan akhir shift.
 Pengaturan bawaan dibuat jika belum ada. Akun dan password yang sudah dibuat tetap dapat digunakan.
 Seeder membuat empat akun uji. Jika belum ada akun sebelumnya, Anda dapat langsung login dengan Super Admin uji berikut.
 

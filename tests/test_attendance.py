@@ -111,6 +111,27 @@ def test_used_shift_can_end_and_handover_on_its_start_date(attendance, store, tm
     assert {row.shift: row.status for row in snapshot.rows} == {'Pagi absensi': 'PRESENT', 'Sore': 'PRESENT'}
 
 
+@pytest.mark.parametrize('automatic', [False, True])
+def test_open_session_keeps_original_zone_after_location_changes(attendance, store, automatic):
+    data = attendance
+    assert scan(data, begin(data, 'IN')).saved
+    settings = SettingsService(data.auth)
+    before = settings.load(data.token)
+    settings.save(data.token, dict(before, timezone='Asia/Makassar', auto_checkout=automatic), before)
+    data.now[0] += timedelta(hours=8)  # 16:00 WIB and 17:00 WITA.
+    if automatic:
+        assert data.service.auto_checkout(data.token) == 0
+        data.now[0] += timedelta(hours=1)
+        assert data.service.auto_checkout(data.token) == 1
+    else:
+        assert scan(data, begin(data, 'OUT')).saved
+    entries = rows(store)
+    assert len(entries) == 2
+    assert all(row.timezone_name == 'Asia/Jakarta' for row in entries)
+    assert entries[-1].is_early_leave is (not automatic)
+    assert entries[-1].attendance_time == data.now[0]
+
+
 def test_timezone_change_uses_local_shift_start_and_invalidates_old_scan(attendance, store):
     data = attendance
     original_scan = begin(data)

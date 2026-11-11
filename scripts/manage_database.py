@@ -77,16 +77,20 @@ def main(argv=None):
         else:
             db = Database(engine)
             if args.action == 'seed-school':
+                from app.repositories.core import SettingsRepository
                 from app.settings.config import load_config
+                from app.settings.defaults import OPERATIONAL_TIMEZONE
                 from database.seed.school import seed_school, TEST_ACCOUNTS
                 with engine.connect() as connection:
                     status = schema_status(connection)
                 if not status['at_head'] or not status['schema_valid']:
                     raise DataValidationError('Jalankan upgrade terlebih dahulu; schema belum sesuai versi aplikasi.')
                 with db.transaction() as session:
+                    zone = (SettingsRepository(session).get(OPERATIONAL_TIMEZONE)
+                            or load_config(data_root, env_file=args.config).timezone)
                     result = seed_school(session, anchor=args.date,
                         history_days=30 if args.days is None else args.days,
-                        timezone_name=load_config(data_root, env_file=args.config).timezone)
+                        timezone_name=zone)
                 print(json.dumps(result, indent=2))
                 print('Data contoh sekolah siap. Nama anggota fiktif.')
                 if result['accounts_created']:

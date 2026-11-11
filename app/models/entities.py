@@ -219,6 +219,7 @@ class Attendance(Identified, Created, Base):
     shift_id: Mapped[int] = mapped_column(ForeignKey("shifts.id", ondelete="RESTRICT"), index=True)
     attendance_type: Mapped[AttendanceType] = mapped_column(enum_column(AttendanceType, "attendance_type"))
     attendance_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    timezone_name: Mapped[str | None] = mapped_column(String(80))
     status: Mapped[AttendanceStatus] = mapped_column(enum_column(AttendanceStatus, "attendance_status"))
     work_date: Mapped[date] = mapped_column(Date, index=True)
     group_id: Mapped[int] = mapped_column(ForeignKey("member_groups.id", ondelete="RESTRICT"))

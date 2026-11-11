@@ -3,7 +3,7 @@ from dataclasses import replace
 import hashlib
 import json
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from app.models.entities import Attendance, Device, Location, Setting
 from app.repositories.core import AttendanceRepository, SettingsRepository
@@ -83,8 +83,9 @@ class SettingsService:
                     raise DataValidationError('Lokasi utama belum tersedia. Jalankan seed database.')
                 if location_changed:
                     opened = AttendanceRepository.open_checkins().join(Device).where(Device.location_id == location.id)
-                    if session.scalar(select(opened.with_only_columns(Attendance.id).exists())):
-                        raise DataValidationError('Selesaikan check-out di lokasi utama sebelum mengubah zona waktu.')
+                    session.execute(update(Attendance).where(
+                        Attendance.id.in_(opened.with_only_columns(Attendance.id)),
+                        Attendance.timezone_name.is_(None)).values(timezone_name=location.timezone))
                     location.timezone = zone
                 repository.set(OPERATIONAL_TIMEZONE, zone, actor_id=actor.id)
             for key in EDITABLE:

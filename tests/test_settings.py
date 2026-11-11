@@ -11,7 +11,7 @@ from sqlalchemy import func, select, delete
 
 from ai.contracts import EngineOptions
 from ai.enrollment import CapturePacket
-from app.models.entities import AuditLog, Location, Role, Setting
+from app.models.entities import Attendance, AuditLog, Location, Role, Setting
 from app.services.auth import AuthError, AuthService
 from app.services.database import DataValidationError
 from app.services.settings import SettingsService, configured
@@ -97,18 +97,20 @@ def test_conflicting_concurrent_edits_and_missing_rows_fail_closed(auth, store):
     with pytest.raises(DataValidationError, match='belum lengkap'): settings.load(login.token)
 
 
-def test_timezone_change_rejects_unfinished_checkin_at_main_location(auth, store):
+def test_timezone_change_preserves_unfinished_checkin_timezone_at_main_location(auth, store):
     service, login, _ = auth
     settings = SettingsService(service)
     before = settings.load(login.token)
     with store.db.transaction() as session:
         _, member, shift, device = graph(session)
-        record(session, member, shift, device)
-    with pytest.raises(DataValidationError, match='Selesaikan check-out'):
-        settings.save(login.token, dict(before, timezone='Asia/Makassar'), before)
-    assert settings.timezone() == 'Asia/Jakarta'
+        entry = record(session, member, shift, device)
+        entry_id, stamp = entry.id, entry.attendance_time
+    settings.save(login.token, dict(before, timezone='Asia/Makassar'), before)
+    assert settings.timezone() == 'Asia/Makassar'
     with store.db.transaction() as session:
-        assert session.scalar(select(Location.timezone).where(Location.location_code == 'LOCAL')) == 'Asia/Jakarta'
+        assert session.scalar(select(Location.timezone).where(Location.location_code == 'LOCAL')) == 'Asia/Makassar'
+        entry = session.get(Attendance, entry_id)
+        assert entry.timezone_name == 'Asia/Jakarta' and entry.attendance_time == stamp
 
 
 def test_failed_later_write_rolls_back_settings_and_audit(auth, store, monkeypatch):

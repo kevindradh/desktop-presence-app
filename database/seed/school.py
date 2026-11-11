@@ -8,9 +8,10 @@ from sqlalchemy import select, text
 
 from app.models.entities import (Attendance, AttendanceStatus, AttendanceType, AuditLog, CalendarDay,
     Device, DeviceType, Location, Member, MemberGroup, MemberLeave, Role, Shift, ShiftAssignment)
-from app.repositories.core import UserRepository
+from app.repositories.core import SettingsRepository, UserRepository
 from app.services.auth import password_hash
 from app.services.database import DataValidationError
+from app.settings.defaults import OPERATIONAL_TIMEZONE
 from database.seed.defaults import seed_defaults
 
 
@@ -171,6 +172,10 @@ def seed_school(session, *, anchor=None, history_days=30, timezone_name='Asia/Ja
     accounts = create_test_accounts(session)
     profiles = school_members()
     location = session.scalar(select(Location).where(Location.location_code == 'LOCAL'))
+    location.timezone = str(zone)
+    settings = SettingsRepository(session)
+    if settings.get(OPERATIONAL_TIMEZONE) != str(zone):
+        settings.set(OPERATIONAL_TIMEZONE, str(zone))
     start = anchor-timedelta(days=history_days-1)
     ended = anchor-timedelta(days=7)
     days = tuple(start+timedelta(days=i) for i in range(history_days))
@@ -245,7 +250,7 @@ def seed_school(session, *, anchor=None, history_days=30, timezone_name='Asia/Ja
             for kind, stamp, early, automatic in timeline:
                 if stamp <= now:
                     events.append(Attendance(member_id=member.id, device_id=device.id, shift_id=shift.id,
-                        attendance_type=kind, attendance_time=stamp, status=status, work_date=day,
+                        attendance_type=kind, attendance_time=stamp, timezone_name=str(zone), status=status, work_date=day,
                         group_id=member.group_id, is_early_leave=early, is_automatic=automatic))
         if scenario == 'Nonaktif':
             member.is_active = False

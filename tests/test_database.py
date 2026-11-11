@@ -100,8 +100,6 @@ def test_migration_schema_matches_models_and_can_roundtrip_in_isolation(store):
 
 def test_same_day_shift_migration_preserves_existing_assignment_and_attendance(store):
     day = date(2026, 10, 18)
-    with store.migration.begin() as conn:
-        command.downgrade(alembic_config(conn), '0006_search_storage')
     with store.db.transaction() as session:
         _, member, shift, device = graph(session)
         assignment = ShiftRepository(session).assign(member.id, shift.id, day, day)
@@ -109,10 +107,12 @@ def test_same_day_shift_migration_preserves_existing_assignment_and_attendance(s
         member_id, assignment_id, event_id = member.id, assignment.id, event.id
 
     with store.migration.begin() as conn:
+        command.downgrade(alembic_config(conn), '0006_search_storage')
         upgrade(conn)
     with store.db.transaction() as session:
         assert session.get(ShiftAssignment, assignment_id).ends_on == day
         assert session.get(Attendance, event_id).work_date == day
+        assert session.get(Attendance, event_id).timezone_name == 'Asia/Jakarta'
         other = ShiftRepository(session).create('Sebelum shift malam', time(12), time(20))
         assert ShiftRepository(session).assign(member_id, other.id, day, day).id != assignment_id
 

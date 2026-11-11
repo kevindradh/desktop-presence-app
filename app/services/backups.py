@@ -28,8 +28,10 @@ RETENTION = timedelta(days=7)
 REMOVED_PHOTO = 'resources/samples/profile-removed.svg'
 
 
-def schema_signature():
-    shape = {t.name: {c.name: str(c.type) for c in t.columns} for t in TABLES}
+def schema_signature(*, legacy_timezone=False):
+    shape = {t.name: {c.name: str(c.type) for c in t.columns
+                      if not (legacy_timezone and t.name == 'attendance' and c.name == 'timezone_name')}
+             for t in TABLES}
     return hashlib.sha256(canonical(shape)).hexdigest()
 
 
@@ -118,10 +120,12 @@ class BackupService:
         try:
             if not isinstance(payload, dict) or set(payload) != {'format','schema','revision','created_at',
                     'expires_at','restore_policy','tables','photos','model_manifest_sha256'}: raise ValueError
-            # Revision 0007 relaxes a unique constraint without changing the archived columns.
+            legacy_timezone = (expected_revision == '0008_attendance_timezone'
+                               and payload['revision'] in {'0006_search_storage', '0007_same_day_shift'})
             compatible = (payload['revision'] == expected_revision or
-                          (payload['revision'], expected_revision) == ('0006_search_storage', '0007_same_day_shift'))
-            if (payload['format'] != 1 or payload['schema'] != schema_signature()
+                          (payload['revision'], expected_revision) == ('0006_search_storage', '0007_same_day_shift')
+                          or legacy_timezone)
+            if (payload['format'] != 1 or payload['schema'] != schema_signature(legacy_timezone=legacy_timezone)
                     or not compatible or payload['restore_policy'] != 'reenroll'):
                 raise ValueError
             created = datetime.fromisoformat(payload['created_at']); expires = datetime.fromisoformat(payload['expires_at'])
@@ -137,10 +141,19 @@ class BackupService:
                 if not isinstance(rows, list): raise ValueError
                 total += len(rows)
                 if total > 200_000: raise ValueError
-                converted[table.name] = [typed_row(table, row) for row in rows]
+                converted[table.name] = [typed_row(table, dict(row, timezone_name=None)
+                                                 if legacy_timezone and table.name == 'attendance' else row)
+                                         for row in rows]
                 ids = [row['id'] for row in rows]
                 if any(type(value) is not int or not 0 < value < 2**63-1 for value in ids) or len(set(ids)) != len(ids): raise ValueError
             if data['auth_sessions']: raise ValueError
+            locations = {row['id']: row['timezone'] for row in converted['locations']}
+            devices = {row['id']: row['location_id'] for row in converted['devices']}
+            for row in converted['attendance']:
+                if row['timezone_name'] is None and legacy_timezone:
+                    row['timezone_name'] = locations[devices[row['device_id']]]
+                if row['timezone_name'] is not None:
+                    validate_setting('timezone', row['timezone_name'])
             if not any(u['role'] == Role.SUPER_ADMIN.value and u['is_active'] for u in data['users']): raise ValueError
             for row in data['settings']: validate_setting(row['setting_key'], row['setting_value'])
             if {r['setting_key'] for r in data['settings']} - {OPERATIONAL_TIMEZONE} != set(DEFAULT_SETTINGS): raise ValueError

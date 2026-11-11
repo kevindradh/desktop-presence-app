@@ -7,11 +7,12 @@ import pytest
 from sqlalchemy import event, func, select
 
 from app.models.entities import (Attendance, AttendanceStatus, AttendanceType, AuditLog, Base,
-    CalendarDay, Device, FaceEmbedding, Member, MemberGroup, Shift, ShiftAssignment, User)
+    CalendarDay, Device, FaceEmbedding, Location, Member, MemberGroup, Shift, ShiftAssignment, User)
 from app.services.auth import AuthService
 from app.services.dashboard import DashboardService
 from app.services.database import DataValidationError
 from app.services.reports import ReportFilter, ReportsService
+from app.services.settings import SettingsService
 from app.settings.config import DatabaseConfig, load_config
 from database.seed.school import seed_school, TEST_ACCOUNTS
 from scripts.manage_database import main
@@ -65,6 +66,36 @@ def test_school_seed_counts_timestamps_flags_fictional_names_accounts_and_repeat
         assert session.get(Member,tolerance.id).full_name == 'Siswa Simulasi Diubah Penguji'
         with pytest.raises(DataValidationError, match='parameter berbeda'):
             seed_school(session, anchor=DAY, history_days=14, now=NOW)
+
+
+@pytest.mark.database
+def test_timezone_can_change_after_school_seed_with_open_sessions(store):
+    morning = NOW.replace(hour=9)
+    with store.db.transaction() as session:
+        seed_school(session, anchor=DAY, now=morning)
+        before = [(row.id, row.attendance_time, row.work_date, row.timezone_name)
+                  for row in session.scalars(select(Attendance).order_by(Attendance.id))]
+    auth = AuthService(store.db, clock=lambda: morning)
+    login = auth.login('smp.superadmin', 'SmpSuperadmin2026!')
+    settings = SettingsService(auth)
+    for zone in ('Asia/Makassar', 'Asia/Jayapura', 'Asia/Jakarta'):
+        values = settings.load(login.token)
+        settings.save(login.token, dict(values, timezone=zone), values)
+        assert settings.timezone() == zone
+    with store.db.transaction() as session:
+        assert [(row.id, row.attendance_time, row.work_date, row.timezone_name)
+                for row in session.scalars(select(Attendance).order_by(Attendance.id))] == before
+
+
+@pytest.mark.database
+def test_school_seed_uses_requested_timezone_for_location_and_session_rows(store):
+    zone = 'Asia/Makassar'
+    with store.db.transaction() as session:
+        seed_school(session, anchor=DAY, now=NOW, timezone_name=zone)
+        assert set(session.scalars(select(Attendance.timezone_name))) == {zone}
+        assert session.scalar(select(Location.timezone).where(Location.location_code == 'LOCAL')) == zone
+    auth = AuthService(store.db, clock=lambda: NOW)
+    assert SettingsService(auth).timezone() == zone
 
 
 @pytest.mark.database
